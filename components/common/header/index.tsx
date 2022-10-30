@@ -20,6 +20,13 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
     const clickTheme = () => {
         const index = status.indexOf(theme);
         const next = status[(index + 1) % status.length];
+        if (next === 'dark') {
+            document.documentElement.classList.add('dark')
+            localStorage.theme = 'dark'
+        } else {
+            document.documentElement.classList.remove('dark')
+            localStorage.theme = 'light'
+        }
         setTheme(next);
     };
     useEffect(() => {
@@ -35,15 +42,7 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
         }
     }, []);
 
-    useEffect(() => {
-        if (theme === 'dark') {
-            document.documentElement.classList.add('dark')
-            localStorage.theme = 'dark'
-        } else {
-            document.documentElement.classList.remove('dark')
-            localStorage.theme = 'light'
-        }
-    }, [theme]);
+
 
 
     const user = useSelector(selectUser);
@@ -78,7 +77,7 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
                                                     <Link
                                                         href={child.path}
                                                         className={classNames(
-                                                            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                            active ? 'bg-gray-100 text-gray-900 dark:bg-gray-800' : 'text-gray-700',
                                                             'block px-4 py-2 text-sm dark:text-white'
                                                         )}
                                                     >
