@@ -1,4 +1,4 @@
-import '@/styles/globals.css'
+import '@/styles/globals.scss'
 import '@/styles/App.scss';
 import '@/styles/button.scss';
 import '@/styles/header.scss';
@@ -10,7 +10,7 @@ import type {AppProps} from 'next/app'
 import React from 'react';
 import {wrapper} from "@/store";
 import {Layout} from "@/components/layout";
-import {themeSlice} from "@/store/common/theme";
+import {Provider} from "react-redux";
 
 export const getServerSideProps = wrapper.getServerSideProps(
     () =>
@@ -20,14 +20,15 @@ export const getServerSideProps = wrapper.getServerSideProps(
 );
 
 function App({Component, pageProps}: AppProps) {
+    const {store} = wrapper.useWrappedStore({Component, pageProps});
     return (
-
-        <Layout>
-            <Component {...pageProps}/>
-        </Layout>
-
+        <Provider store={store}>
+            <Layout>
+                <Component {...pageProps}/>
+            </Layout>
+        </Provider>
     );
 }
 
-export default wrapper.withRedux(App);
+export default App;
 ;

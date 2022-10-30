@@ -1,15 +1,11 @@
-@import "themes/register.scss";
+@import "../themes/register.scss";
 
-.container {
+.document {
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
-
-  .display-none {
-    display: none;
-  }
 
 }
 

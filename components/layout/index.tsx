@@ -9,7 +9,7 @@ export const Layout = ({children}: { children: ReactNode }) => {
     const theme = useSelector(selectTheme);
 
     return (
-        <div className={cn("container", `theme-${theme.name}`)}>
+        <div className={cn("document w-screen", `theme-${theme.name}`)}>
             <Header/>
             {children}
             <Footer/>
