@@ -1,11 +1,9 @@
-import React, { ReactNode } from "react";
+import React, {ReactNode} from "react";
 import cn from "classnames";
-import { Header } from "@/components/common/header";
-import { Footer } from "@/components/common/footer";
-import { useSelector } from "react-redux";
-import { selectTheme } from "@/store/common/theme";
+import {Header} from "@/components/common/header";
+import {Footer} from "@/components/common/footer";
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const Layout = ({children}: { children: ReactNode }) => {
 
 
     const menus = [{
@@ -28,24 +26,24 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         name: '归档',
         path: '/archive'
     },
-    {
-        name: '留言',
-        path: '/message'
-    },
-    {
-        name: '友链',
-        path: '/link'
-    }, {
-        name: '关于',
-        path: '/about'
-    },];
+        {
+            name: '留言',
+            path: '/message'
+        },
+        {
+            name: '友链',
+            path: '/link'
+        }, {
+            name: '关于',
+            path: '/about'
+        },];
 
 
     return (
         <div className={cn("document w-screen dark:bg-dark dark:text-white")}>
-            <Header logo="lyp123" menus={menus} />
+            <Header logo="lyp123" menus={menus}/>
             {children}
-            <Footer logo="lyp123" />
+            <Footer logo="lyp123"/>
         </div>
     )
 

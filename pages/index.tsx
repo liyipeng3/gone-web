@@ -19,11 +19,11 @@ export default function Index() {
             <div className="hidden">Now in index</div>
             <Link href='/about'>about</Link>
             uid: <input onChange={(e) => {
-                setUid(Number(e.target.value))
-            }}/>
+            setUid(Number(e.target.value))
+        }}/>
             username: <input onChange={(e) => {
-                setUsername(e.target.value)
-            }}/>
+            setUsername(e.target.value)
+        }}/>
             <Button onClick={() => {
                 setUser()
             }}>login

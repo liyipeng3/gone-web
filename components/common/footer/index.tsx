@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {AiOutlineGithub} from "react-icons/ai";
-import {IoPersonCircleSharp} from "react-icons/io5";
 
 interface FooterProps {
     logo?: string

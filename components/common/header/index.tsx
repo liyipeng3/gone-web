@@ -93,10 +93,9 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
                         </Menu>
                     ) : <Link key={menu.name} className='hover:underline' href={menu.path}>{menu.name}</Link>
                 })}
-                <div className='w-6'>
+                <div className='w-6  hover:cursor-pointer' onClick={clickTheme}>
                     {
-                        theme === 'light' ? <SunIcon className='w-6 h-6 hover:cursor-pointer' onClick={clickTheme}/> :
-                            <MoonIcon className='w-5 h-5 hover:cursor-pointer' onClick={clickTheme}/>
+                        theme === 'light' ? <SunIcon className='w-6 h-6'/> : <MoonIcon className='w-5 h-5'/>
                     }
                 </div>
 
