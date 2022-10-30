@@ -1,0 +1,25 @@
+footer {
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  svg {
+    cursor: pointer;
+    margin-right: .5rem;
+    color: rgb(156, 163, 175);
+
+  }
+
+  .github {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .head {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
