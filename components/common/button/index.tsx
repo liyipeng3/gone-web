@@ -14,13 +14,13 @@ interface ButtonProps {
      */
     size?: 'small' | 'medium' | 'large';
     /**
-     * Button contents
-     */
-    label: string;
-    /**
      * Optional click handler
      */
     onClick?: () => void;
+    /**
+     * 
+     */
+    children?: React.ReactNode;
 }
 
 /**
@@ -30,7 +30,7 @@ export const Button = ({
                            primary = false,
                            size = 'medium',
                            backgroundColor,
-                           label,
+                           children,
                            ...props
                        }: ButtonProps) => {
     const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
@@ -41,7 +41,7 @@ export const Button = ({
             style={{backgroundColor}}
             {...props}
         >
-            {label}
+            {children}
         </button>
     );
 };

@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppState} from '@/store';
 import {fetchCount} from "@/services/user";
-import {HYDRATE} from "next-redux-wrapper";
 
 interface user {
     uid: number;
@@ -65,12 +64,6 @@ export const userSlice = createSlice({
     //             //state.value += action.payload;
     //         });
     // },
-    extraReducers: {
-        [HYDRATE]: (state, {payload}) => ({
-            ...state,
-            ...payload.user,
-        }),
-    },
 
 });
 

@@ -1,7 +1,6 @@
 import Link from "next/link";
-import {wrapper} from "@/store";
 
-export default function AboutScreen() {
+export default function About() {
     return (
         <div>
             <div>about</div>
@@ -9,11 +8,4 @@ export default function AboutScreen() {
         </div>
     )
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(
-    () =>
-        async () => {
-            return {props: {}};
-        }
-);
 

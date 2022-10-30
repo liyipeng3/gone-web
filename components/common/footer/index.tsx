@@ -10,10 +10,10 @@ interface FooterProps {
 export const Footer = ({logo = ''}: FooterProps) => {
 
     return (
-        <footer>
-            <span>lyp123</span>
-            <div>
-                <IoPersonCircleSharp className="head" onClick={() => window.open("https://lyp123.com", "_blank")}/>
+        <footer className='dark:bg-dark-light '>
+            <span>{logo}</span>
+            <div className='flex flex-row'>
+                {/*<IoPersonCircleSharp className="head" onClick={() => window.open("https://lyp123.com", "_blank")}/>*/}
                 <AiOutlineGithub className="github"
                                  onClick={() => window.open("https://github.com/liyipeng123", "_blank")}/>
             </div>

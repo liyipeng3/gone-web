@@ -1,9 +1,9 @@
-import {Menu} from "@/components/common/menu";
 import {logout, userSlice} from "@/store/user";
 import {useRef, useState} from "react";
 import {themeSlice} from "@/store/common/theme";
 import Link from "next/link";
-import {useAppDispatch, wrapper} from "@/store";
+import {useAppDispatch} from "@/store";
+import {Button} from "@/components/common/button";
 // import CompState from "@/components/test/state";
 
 export default function IndexScreen() {
@@ -21,32 +21,7 @@ export default function IndexScreen() {
     const [username, setUsername] = useState('未登录');
     const [count, setCount] = useState(0)
     return (
-        <div>
-            <h1 className="text-3xl font-bold underline">
-                Hello world!
-            </h1>
-            <Menu data={[{
-                title: 'title1',
-                children: [
-                    {title: 'title1-1', path: '/about'},
-                    {title: 'title1-1', path: '/about'},
-                    {title: 'title1-1', path: '/'},
-                    {title: 'title1-1', path: '/'},
-                    {title: 'title1-1', path: '/'}
-                ]
-            }, {
-                title: 'title2',
-                children: [
-                    {title: 'title1-1', path: '/'},
-                    {title: 'title1-1', path: '/'},
-                    {title: 'title1-1', path: '/'}
-                ]
-            }, {
-                title: 'title3',
-                path: '/about'
-            }, {
-                title: 'title4'
-            }]}/>
+        <div className='space-x-2'>
             <div className="hidden">Now in index</div>
             <Link href='/about'>about</Link>
             <div className='main'>
@@ -60,10 +35,10 @@ export default function IndexScreen() {
             username: <input onChange={(e) => {
             setUsername(e.target.value)
         }}/>
-            <button onClick={() => {
+            <Button onClick={() => {
                 setUser()
             }}>login
-            </button>
+            </Button>
             {count}
 
             <button onClick={() => {
@@ -71,11 +46,15 @@ export default function IndexScreen() {
             }}>logout
             </button>
             <button onClick={() => {
-                setMyTheme('dark')
+                //setMyTheme('dark')
+                localStorage.theme = 'dark'
+                document.documentElement.classList.add('dark')
             }}>dark
             </button>
             <button onClick={() => {
-                setMyTheme('light')
+                //setMyTheme('light');
+                localStorage.theme = 'light'
+                document.documentElement.classList.remove('dark')
             }}>light
             </button>
             {/*<DemoComponent></DemoComponent>*/}
@@ -86,8 +65,3 @@ export default function IndexScreen() {
         </div>
     )
 }
-
-
-export const getServerSideProps = wrapper.getServerSideProps(
-    () => async () => ({props: {}})
-);

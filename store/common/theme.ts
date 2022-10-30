@@ -1,31 +1,23 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {HYDRATE} from "next-redux-wrapper";
 import {AppState} from "@/store";
 
-export interface skinState {
+export interface themeState {
     name: 'light' | 'dark';
 }
 
-const initialState: skinState = {
+const initialState: themeState = {
     name: 'light',
 };
 
 export const themeSlice = createSlice({
     name: "theme",
 
-    initialState: {name: "light", temp: 0},
+    initialState,
 
     reducers: {
         setTheme(state,{payload}: PayloadAction<{name: string}>) {
-            state.name = payload.name;
+            state.name = payload.name as 'light' | 'dark';
         }
-    },
-
-    extraReducers: {
-        [HYDRATE]: (state, {payload}) => ({
-            ...state,
-            ...payload.theme,
-        }),
     },
 });
 
