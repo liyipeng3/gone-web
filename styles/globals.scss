@@ -30,6 +30,50 @@ a {
   }
 }
 
+header {
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  svg {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  h1 {
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 1;
+    margin: 6px 0 6px 10px;
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+
+footer {
+  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  svg {
+    cursor: pointer;
+    margin-right: .5rem;
+    color: rgb(156, 163, 175);
+
+  }
+
+  .github {
+    height: 2rem;
+    width: 2rem;
+  }
+}
+
+
 
 .document {
   text-align: center;
@@ -37,6 +81,13 @@ a {
   flex-direction: column;
   justify-content: space-between;
   min-height: 100vh;
+}
+
+.dark {
+  input {
+    background: #1a202c;
+    color: white;
+  }
 }
 
 

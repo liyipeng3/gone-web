@@ -10,7 +10,7 @@ interface FooterProps {
 export const Footer = ({logo = ''}: FooterProps) => {
 
     return (
-        <footer className='dark:bg-dark-light '>
+        <footer className='dark:bg-dark-light  dark:border-t-dark-line border-t border-solid'>
             <span>{logo}</span>
             <div className='flex flex-row'>
                 {/*<IoPersonCircleSharp className="head" onClick={() => window.open("https://lyp123.com", "_blank")}/>*/}

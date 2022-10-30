@@ -18,9 +18,6 @@ export default function Index() {
         <div className='space-x-2'>
             <div className="hidden">Now in index</div>
             <Link href='/about'>about</Link>
-            <div className='main'>
-                <div className='box'>aa</div>
-            </div>
             uid: <input onChange={(e) => {
                 setUid(Number(e.target.value))
             }}/>
@@ -31,20 +28,9 @@ export default function Index() {
                 setUser()
             }}>login
             </Button>
-            {count}
             <button onClick={() => {
                 dispatch(logout())
             }}>logout
-            </button>
-            <button onClick={() => {
-                localStorage.theme = 'dark'
-                document.documentElement.classList.add('dark')
-            }}>dark
-            </button>
-            <button onClick={() => {
-                localStorage.theme = 'light'
-                document.documentElement.classList.remove('dark')
-            }}>light
             </button>
         </div>
     )
