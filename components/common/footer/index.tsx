@@ -28,7 +28,7 @@ export const Footer = ({logo = ''}: FooterProps) => {
                     target='_blank'>黑ICP备18007630号-2</a></div>
             </div>
             <div className='flex flex-row'>
-                <AiOutlineGithub className="github"
+                <AiOutlineGithub className="github hover:text-black dark:hover:text-white transition-all"
                                  onClick={() => window.open("https://github.com/liyipeng123", "_blank")}/>
             </div>
         </footer>

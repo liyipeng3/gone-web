@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind screens;
 
 
 html,
@@ -91,7 +92,6 @@ footer {
 }
 
 .nav-icon {
-  position: relative;
   float: right;
   width: 28px;
   height: 28px;
@@ -101,7 +101,11 @@ footer {
     position: absolute;
     transition: .2s;
     content: "";
+  }
 
+  span {
+    visibility: hidden;
+    transition: .2s;
   }
 
   &::before {
@@ -109,8 +113,6 @@ footer {
     position: absolute;
     transition: .2s;
   }
-
-
 }
 
 .search {
@@ -157,6 +159,44 @@ footer {
       border: 0;
       border-radius: 0;
       transform: rotate(45deg);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .search {
+    .nav-icon {
+      &::after {
+        left: 6px;
+        width: 18px;
+        height: 2px;
+        background: currentColor;
+        border: 0;
+        border-radius: 0;
+        transform: none;
+        top: 21px;
+      }
+
+      span {
+        position: absolute;
+        display: block;
+        left: 6px;
+        width: 18px;
+        height: 2px;
+        background: currentColor;
+        visibility: visible;
+      }
+
+      &::before {
+        top: 7px;
+        left: 6px;
+        width: 18px;
+        height: 2px;
+        background: currentColor;
+        border: 0;
+        border-radius: 0;
+        transform: none;
+      }
     }
   }
 }

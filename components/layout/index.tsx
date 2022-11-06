@@ -43,7 +43,7 @@ export const Layout = ({children}: { children: ReactNode }) => {
         <div className={cn("document w-screen dark:bg-dark dark:text-white")}>
             <Header logo="lyp123" menus={menus}/>
             {children}
-            <Footer logo="lyp123"/>
+            <Footer />
         </div>
     )
 
