@@ -1,4 +1,4 @@
-import React, {Fragment, ReactNode, useEffect} from 'react';
+import React, {Fragment, ReactNode, useEffect, useState} from 'react';
 
 import {selectUser} from "@/store/user";
 
@@ -15,11 +15,11 @@ interface HeaderProps {
 }
 
 export const Header = ({logo = "", menus = []}: HeaderProps) => {
-    const status = ['dark', 'light'];
+    const themes = ['dark', 'light'];
     const [theme, setTheme] = React.useState('light');
     const clickTheme = () => {
-        const index = status.indexOf(theme);
-        const next = status[(index + 1) % status.length];
+        const index = themes.indexOf(theme);
+        const next = themes[(index + 1) % themes.length];
         if (next === 'dark') {
             document.documentElement.classList.add('dark')
             localStorage.theme = 'dark'
@@ -41,11 +41,9 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
             }
         }
     }, []);
-
-
-
-
     const user = useSelector(selectUser);
+
+    const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>('search');
 
     return (
         <header
@@ -92,6 +90,11 @@ export const Header = ({logo = "", menus = []}: HeaderProps) => {
                         </Menu>
                     ) : <Link key={menu.name} className='hover:underline' href={menu.path}>{menu.name}</Link>
                 })}
+                <div className={menuType} onClick={() => {setMenuType(menuType === 'close' ? 'search' : 'close')}}>
+                    <button className='nav-icon'>
+                        <span></span>
+                    </button>
+                </div>
                 <div className='w-6  hover:cursor-pointer' onClick={clickTheme}>
                     {
                         theme === 'light' ? <SunIcon className='w-6 h-6'/> : <MoonIcon className='w-5 h-5'/>

@@ -8,7 +8,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 a {
@@ -24,6 +24,7 @@ a {
   html {
     color-scheme: dark;
   }
+
   body {
     color: white;
     background: black;
@@ -74,7 +75,6 @@ footer {
 }
 
 
-
 .document {
   text-align: center;
   display: flex;
@@ -90,5 +90,73 @@ footer {
   }
 }
 
+.nav-icon {
+  position: relative;
+  float: right;
+  width: 28px;
+  height: 28px;
+  background: 0;
+
+  &::after {
+    position: absolute;
+    transition: .2s;
+    content: "";
+
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    transition: .2s;
+  }
 
 
+}
+
+.search {
+  .nav-icon {
+    &::after {
+      top: 19px;
+      left: 17px;
+      width: 6px;
+      height: 2px;
+      transform: rotate(45deg);
+      background: currentColor;
+    }
+
+    &::before {
+      top: 7px;
+      left: 7px;
+      width: 13px;
+      height: 13px;
+      border: solid 2px currentColor;
+      border-radius: 50%;
+    }
+  }
+}
+
+.close {
+  .nav-icon {
+    &::after {
+      top: 14px;
+      left: 6px;
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+      border: 0;
+      border-radius: 0;
+      transform: rotate(-45deg);
+    }
+
+    &::before {
+      top: 14px;
+      left: 6px;
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+      border: 0;
+      border-radius: 0;
+      transform: rotate(45deg);
+    }
+  }
+}
