@@ -91,7 +91,7 @@ footer {
   }
 }
 
-.nav-icon {
+.nav-icon, .search-icon {
   float: right;
   width: 28px;
   height: 28px;
@@ -116,7 +116,7 @@ footer {
 }
 
 .search {
-  .nav-icon {
+  .nav-icon, .search-icon {
     &::after {
       top: 19px;
       left: 17px;
