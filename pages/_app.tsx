@@ -1,20 +1,19 @@
 import '@/styles/globals.scss'
 
-import type {AppProps} from 'next/app'
-import React from 'react';
-import {Layout} from "@/components/layout";
-import {Provider} from "react-redux";
-import {store} from "@/store";
+import type { AppProps } from 'next/app'
+import React from 'react'
+import { Layout } from '@/components/layout'
+import { Provider } from 'react-redux'
+import { store } from '@/stores'
 
-function App({Component, pageProps}: AppProps) {
-    return (
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
+  return (
         <Provider store={store}>
             <Layout>
                 <Component {...pageProps}/>
             </Layout>
         </Provider>
-    );
+  )
 }
 
-export default App;
-
+export default App

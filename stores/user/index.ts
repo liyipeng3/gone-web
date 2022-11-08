@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppState} from '@/store';
+import {AppState} from '@/stores';
 import {fetchCount} from "@/services/user";
 
 interface user {

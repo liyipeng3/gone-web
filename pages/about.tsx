@@ -1,11 +1,13 @@
-import Link from "next/link";
+import Link from 'next/link'
+import React from 'react'
 
-export default function About() {
-    return (
+const About: React.FC = () => {
+  return (
         <div>
             <div>about</div>
             <Link href="/">index</Link>
         </div>
-    )
+  )
 }
 
+export default About
