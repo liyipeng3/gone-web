@@ -44,11 +44,6 @@
     "tailwindcss": "^3.2.2",
     "typescript": "*"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
