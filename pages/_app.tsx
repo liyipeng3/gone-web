@@ -1,4 +1,5 @@
 import '@/styles/globals.scss'
+import 'prismjs/themes/prism-okaidia.min.css'
 
 import type { AppProps } from 'next/app'
 import React from 'react'

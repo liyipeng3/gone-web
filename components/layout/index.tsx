@@ -37,10 +37,10 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   }]
 
   return (
-        <div className={cn('document w-screen dark:bg-dark dark:text-white')}>
-            <Header logo="lyp123" menus={menus}/>
-            {children}
-            <Footer />
-        </div>
+    <div className={cn('document w-screen dark:bg-dark dark:text-white')}>
+      <Header logo="lyp123" menus={menus}/>
+      {children}
+      <Footer/>
+    </div>
   )
 }
