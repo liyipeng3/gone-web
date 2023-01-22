@@ -1,7 +1,7 @@
 import mysql from 'mysql2'
 // @ts-expect-error
 import wrapper from 'co-mysql'
-import { DBConfig } from '@/configs'
+import { DBConfig } from '@configs'
 
 const config = DBConfig
 

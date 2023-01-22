@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import React from 'react'
 import duration from 'dayjs/plugin/duration'
 import { AiOutlineGithub } from 'react-icons/ai'
-import { getDurationTime } from '@/utils'
+import { getDurationTime } from '@utils'
 
 dayjs.extend(duration)
 

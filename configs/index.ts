@@ -2,10 +2,10 @@
 // 系统配置
 
 export const DBConfig = {
-  host: 'lyp123.com', // 服务器地址
+  host: 'localhost', // 服务器地址
   port: 3306, // 数据库端口号
   username: 'blog', // 数据库用户名
-  password: 'xxx', // 数据库密码
+  password: 'jWW6LYjPfexBi84e', // 数据库密码
   database: 'blog' // 数据库名称
 }
 

@@ -1,8 +1,8 @@
 import { AnyAction, configureStore, ThunkAction } from '@reduxjs/toolkit'
 
 import { useDispatch } from 'react-redux'
-import { themeSlice } from '@/stores/common/theme'
-import { userSlice } from '@/stores/user'
+import { themeSlice } from '@stores/common/theme'
+import { userSlice } from '@stores/user'
 
 export const store = configureStore({
   reducer: {

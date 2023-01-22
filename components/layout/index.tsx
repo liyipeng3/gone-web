@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import cn from 'classnames'
-import { Header } from '@/components/common/header'
-import { Footer } from '@/components/common/footer'
+import { Header } from '@components/common/header'
+import { Footer } from '@components/common/footer'
 
 export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const menus = [{
