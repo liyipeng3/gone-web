@@ -9,11 +9,7 @@ module.exports = {
     // error_file: 'logs/error.log',
     max_memory_restart: '1G',
     env: {
-      NODE_ENV: 'development'
-    },
-    env_production: {
-      PORT: 3003,
-      NODE_ENV: 'production'
+      PORT: 3003
     },
     exec_mode: 'cluster',
     instances: '1',
