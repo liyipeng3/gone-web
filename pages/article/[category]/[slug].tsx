@@ -40,10 +40,10 @@ const Content: React.FC<ContentProps> = ({
   // } = router.query
 
   return (
-    <div className="flex justify-center items-start min-h-full flex-1">
+    <div className="flex justify-center items-start min-h-full flex-1 ">
       <article className="prose text-left">
-        <h2 className='my-10'>{title}</h2>
-        <main dangerouslySetInnerHTML={{ __html: content }}></main>
+        <h2 className='my-10 dark:text-white'>{title}</h2>
+        <main className='dark:text-gray-200' dangerouslySetInnerHTML={{ __html: content }}></main>
       </article>
     </div>)
 }

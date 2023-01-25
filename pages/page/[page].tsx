@@ -19,16 +19,15 @@ export async function getServerSideProps (context: { params: { page: number } })
 }
 
 const Page: React.FC<PageProps> = ({ list }) => {
-  console.log(list)
   return <div className="space-y-3 flex flex-col items-start justify-start flex-1 mt-8 md:w-3/5 mx-auto">{
     list?.map(item => <Link className='text-left' key={item.slug as string} href={`/article/${item?.category as string}/${item?.slug as string}`}>
-      <div className='text-base font-bold'>{item.title}</div>
-      <div className='text-xs text-gray-500 space-x-3 mt-2'>
+      <div className='text-base font-bold dark:text-white'>{item.title}</div>
+      <div className='text-xs text-gray-500 space-x-3 mt-2 dark:text-gray-400'>
         <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
         <span>{item.name}</span>
       </div>
-      <div className='text-sm mt-4 text-gray-600' dangerouslySetInnerHTML={{ __html: item.text?.split('<!--more-->')[0].slice(15, 150) }} />
-      <div className='text-center text-sm text-gray-500 my-5'>- 阅读全文 -</div>
+      <div className='text-sm mt-4 text-gray-600 dark:text-gray-300' dangerouslySetInnerHTML={{ __html: item.text?.split('<!--more-->')[0].slice(15, 150) }} />
+      <div className='text-center text-sm text-gray-500 my-5 dark:text-gray-00'>- 阅读全文 -</div>
     </Link>)
   }</div>
 }
