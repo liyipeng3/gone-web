@@ -48,9 +48,9 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className="min-h-48 border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle">
-      <div>
+      <a href='/'>
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
-      </div>
+      </a>
       <div className="flex space-x-5 text-sm text-gray-700 items-center dark:text-white">
         <div className={cn('flex-1 space-x-5', menuType === 'search' ? 'visible' : 'invisible')}>
           {menus.map((menu, index) => {

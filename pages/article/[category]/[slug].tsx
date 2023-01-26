@@ -3,6 +3,7 @@ import React from 'react'
 import db from '@utils/db'
 import { marked } from 'marked'
 import highlight from 'highlight.js'
+import Sidebar from '@components/common/sidebar'
 
 interface ContentProps {
   title: string
@@ -40,12 +41,14 @@ const Content: React.FC<ContentProps> = ({
   // } = router.query
 
   return (
-    <div className="flex justify-center items-start min-h-full flex-1 ">
-      <article className="prose text-left">
-        <h2 className='my-10 dark:text-white'>{title}</h2>
+    <div className="flex justify-center items-start min-h-full flex-1 py-12 px-32">
+      <article className="prose text-left max-w-[70%] w-[70%]">
+        <h2 className='mb-10 dark:text-white'>{title}</h2>
         <main className='dark:text-gray-200' dangerouslySetInnerHTML={{ __html: content }}></main>
       </article>
-    </div>)
+      <Sidebar />
+    </div>
+  )
 }
 
 export default Content
