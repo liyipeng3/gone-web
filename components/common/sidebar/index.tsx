@@ -12,7 +12,8 @@ const Sidebar = () => {
     }
   }, [])
   return (
-    <div id="sidebar" className={cn('w-[30%] sticky h-fit left-[75%] py-4', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
+    <div id="sidebar"
+         className={cn('w-72 sticky h-fit py-4', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
       <div className="sidebar__header">
         <div className="sidebar__header__title">Sidebar</div>
       </div>

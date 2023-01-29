@@ -35,7 +35,7 @@ const Content: React.FC<ContentProps> = ({
 
   return (
     <div className="flex justify-center items-start min-h-full flex-1 py-6 px-32">
-      <article className="prose text-left w-full max-w-full py-6 ">
+      <article className="prose max-w-none text-left flex-1 py-6 ">
         <h2 className="mb-10 dark:text-white">{title}</h2>
         <Prose content={content}/>
       </article>

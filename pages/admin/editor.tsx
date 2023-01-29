@@ -12,7 +12,7 @@ const Editor = () => {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}/>
       </div>
-      <Prose content={marked.parse(content)} className='w-[50vw] text-left px-4'/>
+      <Prose content={marked.parse(content)} className="w-[50vw] text-left px-4"/>
     </div>
   )
 }

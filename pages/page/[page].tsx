@@ -39,7 +39,7 @@ const Page: React.FC<PageProps> = ({
            className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
   return <div className="relative px-32 py-6 flex">
-    <div className=" py-6 space-y-3 flex flex-col items-start justify-start flex-1 w-[70%] mx-auto">{
+    <div className=" py-6 space-y-3 flex flex-col items-start justify-start flex-1 w-full mx-auto">{
       (list)?.map(item => <Link className="text-left w-full" key={item.slug as string}
                                 href={`/article/${item?.category as string}/${item?.slug as string}`}>
         <div className="text-base font-bold dark:text-white">{item.title}</div>
@@ -53,13 +53,15 @@ const Page: React.FC<PageProps> = ({
       </Link>)
     }
       <div className="text-center space-x-10 w-full  border-black text-sm pt-10 pb-5 flex-row flex justify-center">
-        { currentPage !== 1 && <Link href={`/page/${parseInt(page as string) - 1}`} className="border-inherit hover:border-b">上一页</Link> }
-        <div className='space-x-3 border-inherit'>
-        {
-          pagination
-        }
+        {currentPage !== 1 &&
+          <Link href={`/page/${parseInt(page as string) - 1}`} className="border-inherit hover:border-b">上一页</Link>}
+        <div className="space-x-3 border-inherit">
+          {
+            pagination
+          }
         </div>
-        { currentPage !== pageNum && <Link href={`/page/${parseInt(page as string) + 1}`} className="border-inherit hover:border-b">下一页</Link> }
+        {currentPage !== pageNum &&
+          <Link href={`/page/${parseInt(page as string) + 1}`} className="border-inherit hover:border-b">下一页</Link>}
       </div>
     </div>
     <Sidebar/>
