@@ -20,6 +20,14 @@ a {
   box-sizing: border-box;
 }
 
+.prose {
+  *:not(pre)>code:not([class]) {
+    @apply before:content-none after:content-none;
+    @apply bg-gray-100 rounded px-2 py-0.5 font-mono text-sm leading-5 tabular-nums;
+    @apply mx-1;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
