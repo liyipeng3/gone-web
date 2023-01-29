@@ -54,7 +54,7 @@ const Page: React.FC<PageProps> = ({
     }
       <div className="text-center space-x-10 w-full  border-black text-sm pt-10 pb-5 flex-row flex justify-center">
         { currentPage !== 1 && <Link href={`/page/${parseInt(page as string) - 1}`} className="border-inherit hover:border-b">上一页</Link> }
-        <div className='space-x-3'>
+        <div className='space-x-3 border-inherit'>
         {
           pagination
         }
