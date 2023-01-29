@@ -4,9 +4,9 @@ import Page, { getServerSideProps, PageProps } from './page/[page]'
 
 export { getServerSideProps }
 
-const Index: React.FC<PageProps> = ({ list }) => {
+const Index: React.FC<PageProps> = ({ list, total }) => {
   return (
-    <Page list={list}/>
+    <Page list={list} total={total}/>
   )
 }
 

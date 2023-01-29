@@ -30,11 +30,11 @@ const pageHelper: (sql: string, pageIndex: number, pageSize: number) => string =
 }
 
 const db: {
-  query: (sql: string, params?: any[], pageIndex?: number, pageSize?: number, isTotal?: boolean) => Promise<any>
+  query: (sql: string, params?: any[], pageIndex?: number, pageSize?: number, total?: boolean) => Promise<any>
 } = {
-  query: async (sql = '', params = [], pageIndex = -1, pageSize = -1, isTotal = false) => {
+  query: async (sql = '', params = [], pageIndex = -1, pageSize = -1, total = false) => {
     const data = await database.query(pageHelper(sql, pageIndex, pageSize), [...params, pageSize * (pageIndex - 1), Number(pageSize)])
-    if (isTotal) {
+    if (total) {
       const tempSql = sql.replace(/select.*?from/, 'select count(*) as total from')
       const total = await db.query(tempSql, params)
       data.total = total[0].total
