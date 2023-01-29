@@ -12,7 +12,7 @@ const Sidebar = () => {
     }
   }, [])
   return (
-    <div id="sidebar" className={cn('w-[30%] sticky h-fit left-[75%] pt-4', sticky ? 'bottom-0' : 'top-0')}>
+    <div id="sidebar" className={cn('w-[30%] sticky h-fit left-[75%] py-4', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
       <div className="sidebar__header">
         <div className="sidebar__header__title">Sidebar</div>
       </div>
@@ -40,6 +40,20 @@ const Sidebar = () => {
         <div className="sidebar__content__item">Item 2</div>
         <div className="sidebar__content__item">Item 3</div>
         <div className="sidebar__content__item">Item 4</div>
+        <div className="sidebar__content__item">Item 1</div>
+        <div className="sidebar__content__item">Item 2</div>
+        <div className="sidebar__content__item">Item 1</div>
+        <div className="sidebar__content__item">Item 2</div>
+        <div className="sidebar__content__item">Item 3</div>
+        <div className="sidebar__content__item">Item 4</div>
+        <div className="sidebar__content__item">Item 1</div>
+        <div className="sidebar__content__item">Item 1</div>
+        <div className="sidebar__content__item">Item 2</div>
+        <div className="sidebar__content__item">Item 1</div>
+        <div className="sidebar__content__item">Item 2</div>
+        <div className="sidebar__content__item">Item 3</div>
+        <div className="sidebar__content__item">Item 4</div>
+        <div className="sidebar__content__item">Item 1</div>
         <div className="sidebar__content__item">Item 1</div>
         <div className="sidebar__content__item">Item 2</div>
         <div className="sidebar__content__item">Item 1</div>

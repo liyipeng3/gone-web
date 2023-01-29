@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className="min-h-48 border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle">
-      <Link href='/'>
+      <Link href="/">
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>
       <div className="flex space-x-5 text-sm text-gray-700 items-center dark:text-white">
@@ -113,7 +113,6 @@ export const Header: React.FC<HeaderProps> = ({
             theme === 'light' ? <SunIcon className="w-6 h-6"/> : <MoonIcon className="w-5 h-5"/>
           }
         </div>
-
       </div>
     </header>
   )
