@@ -1,9 +1,8 @@
 // import { useRouter } from 'next/router'
 import React from 'react'
 import db from '@utils/db'
-import { marked } from 'marked'
-import highlight from 'highlight.js'
 import Sidebar from '@components/common/sidebar'
+import marked from '@utils/marked'
 
 interface ContentProps {
   title: string
@@ -13,13 +12,6 @@ interface ContentProps {
 export async function getServerSideProps (context: { params: { slug: any } }) {
   const res = await db.query('select * from contents where slug = ?', [context.params.slug])
   const data = res?.[0]
-
-  marked.setOptions({
-    highlight: function (code, lang) {
-      const language = (highlight.getLanguage(lang) != null) ? lang : 'plaintext'
-      return highlight.highlightAuto(code, [language]).value
-    }
-  })
 
   const content = marked.parse(data.text)
   return {
@@ -42,11 +34,11 @@ const Content: React.FC<ContentProps> = ({
 
   return (
     <div className="flex justify-center items-start min-h-full flex-1 py-12 px-32">
-      <article className="prose text-left max-w-[70%] w-[70%]">
-        <h2 className='mb-10 dark:text-white'>{title}</h2>
-        <main className='dark:text-gray-200' dangerouslySetInnerHTML={{ __html: content }}></main>
+      <article className="prose text-left max-w-[70%] w-[70%] ">
+        <h2 className="mb-10 dark:text-white">{title}</h2>
+        <main className="dark:text-gray-200" dangerouslySetInnerHTML={{ __html: content }}></main>
       </article>
-      <Sidebar />
+      <Sidebar/>
     </div>
   )
 }

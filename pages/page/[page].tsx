@@ -20,8 +20,8 @@ export async function getServerSideProps (context: { params: { page: number } })
 }
 
 const Page: React.FC<PageProps> = ({ list }) => {
-  return <div className='flex flex-row justify-center px-32 py-12'>
-    <div className="space-y-3 flex flex-col items-start justify-start flex-1 w-[70%] mx-auto">{
+  return <div className='relative px-32 py-6 flex'>
+    <div className=" py-6 space-y-3 flex flex-col items-start justify-start flex-1 w-[70%] mx-auto">{
       list?.map(item => <Link className="text-left w-full" key={item.slug as string}
                               href={`/article/${item?.category as string}/${item?.slug as string}`}>
         <div className="text-base font-bold dark:text-white">{item.title}</div>
