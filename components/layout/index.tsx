@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import cn from 'classnames'
 import { Header } from '@components/common/header'
 import { Footer } from '@components/common/footer'
