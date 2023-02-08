@@ -1,9 +1,12 @@
 // import { useRouter } from 'next/router'
 import React from 'react'
-import db from '@utils/db'
 import Sidebar from '@components/common/sidebar'
 import marked from '@utils/marked'
 import Prose from '@components/common/prose'
+
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 interface ContentProps {
   title: string
@@ -11,10 +14,22 @@ interface ContentProps {
 }
 
 export async function getServerSideProps (context: { params: { slug: any } }) {
-  const res = await db.query('select * from contents where slug = ?', [context.params.slug])
-  const data = res?.[0]
+  const data = await prisma.contents.findUnique({
+    where: {
+      slug: context.params.slug
+    },
+    select: {
+      title: true,
+      text: true
+    }
+  })
+  if (data === null) {
+    return {
+      notFound: true
+    }
+  }
 
-  const content = marked.parse(data.text)
+  const content = marked.parse(data.text ?? '')
   return {
     props: {
       title: data.title,

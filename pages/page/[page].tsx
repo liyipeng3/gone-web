@@ -1,10 +1,12 @@
 import React from 'react'
-import db from '@utils/db'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import Sidebar from '@components/common/sidebar'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export interface PageProps {
   list: any[]
@@ -16,11 +18,54 @@ const pageSize = 7
 export async function getServerSideProps (context: { params: { page: number } }) {
   const page = context.params?.page ?? 1
 
-  const res = await db.query('select contents.text as text, title, contents.slug as slug, created, modified, metas.slug as category, name from contents inner join relationships on contents.cid = relationships.cid inner join metas on relationships.mid = metas.mid where contents.status = ? and metas.type = ?', ['publish', 'category'], page, pageSize, true)
+  const data = await prisma.relationships.findMany({
+    include: {
+      contents: {
+        select: {
+          title: true,
+          slug: true,
+          created: true,
+          modified: true,
+          text: true
+        }
+      },
+      metas: {
+        select: {
+          name: true,
+          slug: true
+        }
+      }
+    },
+    where: {
+      metas: {
+        type: 'category'
+      },
+      contents: {
+        status: 'publish',
+        type: 'post'
+      }
+    },
+    skip: (page - 1) * pageSize,
+    take: pageSize
+  })
+  // console.log(data)
+  const total = await prisma.contents.count({
+    where: {
+      status: 'publish',
+      type: 'post'
+    }
+  })
+
+  const list = data.map(item => ({
+    ...item.contents,
+    category: item.metas.slug,
+    name: item.metas.name
+  }))
+
   return {
     props: {
-      list: res,
-      total: res.total
+      list,
+      total
     }
   }
 }
