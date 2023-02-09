@@ -3,10 +3,7 @@ import React from 'react'
 import Sidebar from '@components/common/sidebar'
 import marked from '@utils/marked'
 import Prose from '@components/common/prose'
-
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@utils/prisma'
 
 interface ContentProps {
   title: string

@@ -3,7 +3,15 @@ import cn from 'classnames'
 import { Header } from '@components/common/header'
 import { Footer } from '@components/common/footer'
 
-export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface LayoutProps {
+  children: ReactNode
+  visitTimes?: number
+}
+
+export const Layout: React.FC<LayoutProps> = ({
+  children,
+  visitTimes
+}) => {
   const menus = [{
     name: '首页',
     path: '/'
@@ -40,7 +48,7 @@ export const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
     <div className={cn('document w-screen dark:bg-dark dark:text-white')}>
       <Header logo="lyp123" menus={menus}/>
       {children}
-      <Footer/>
+      <Footer visitTimes={visitTimes}/>
     </div>
   )
 }

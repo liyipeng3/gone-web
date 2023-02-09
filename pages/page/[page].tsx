@@ -4,9 +4,7 @@ import dayjs from 'dayjs'
 import Sidebar from '@components/common/sidebar'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@utils/prisma'
 
 export interface PageProps {
   list: any[]

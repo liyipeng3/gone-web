@@ -98,7 +98,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={cn('w-48 search absolute right-28 translate-x-3 -top-4 transition-all opacity-0 float-right', menuType === 'close' && 'top-4 opacity-100')}>
           <input
             className="border-b border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
-            placeholder="请输入关键词搜索" value={search} onChange={(e) => { setSearch(e.target.value) }}/>
+            placeholder="请输入关键词搜索" value={search} onChange={(e) => {
+              setSearch(e.target.value)
+            }}/>
           <button className="search-icon absolute right-0"></button>
         </div>
         <div className={cn(menuType, 'md:menu')} onClick={() => {

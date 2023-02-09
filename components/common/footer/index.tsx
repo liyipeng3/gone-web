@@ -8,13 +8,15 @@ dayjs.extend(duration)
 
 interface FooterProps {
   logo?: string
+  visitTimes?: number
 }
 
-const now = dayjs()
-
-export const Footer: React.FC<FooterProps> = ({ logo = '' }) => {
-  const visitTimes = 123
+export const Footer: React.FC<FooterProps> = ({
+  logo = '',
+  visitTimes = 0
+}) => {
   const establishTime = dayjs('2019-03-27 00:00:00')
+  const now = dayjs()
 
   return (
     <footer className="dark:bg-dark-light  dark:border-t-dark-line border-t border-solid">
