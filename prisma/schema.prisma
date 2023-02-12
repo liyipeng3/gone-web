@@ -103,11 +103,8 @@ model metas {
 }
 
 model options {
-  name  String  @db.VarChar(32)
-  user  Int     @default(0) @db.UnsignedInt
-  value String? @db.Text
-
-  @@id([name, user])
+  name  String @id @db.VarChar(32)
+  value Int
 }
 
 model relationships {

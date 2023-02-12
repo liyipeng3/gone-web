@@ -1,4 +1,4 @@
-import { AnyAction, configureStore, ThunkAction } from '@reduxjs/toolkit'
+import { type AnyAction, configureStore, type ThunkAction } from '@reduxjs/toolkit'
 
 import { useDispatch } from 'react-redux'
 import { themeSlice } from '@stores/common/theme'
@@ -14,11 +14,9 @@ export const store = configureStore({
 export type AppStore = typeof store
 export type AppState = ReturnType<AppStore['getState']>
 export type AppDispatch = AppStore['dispatch']
-export type AppThunkAction<ReturnType = Promise<void>> = ThunkAction<
-ReturnType,
+export type AppThunkAction<ReturnType = Promise<void>> = ThunkAction<ReturnType,
 AppState,
 unknown,
-AnyAction
->
+AnyAction>
 
 export const useAppDispatch = () => useDispatch<AppDispatch>()

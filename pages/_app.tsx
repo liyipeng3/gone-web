@@ -2,7 +2,7 @@ import '@styles/globals.scss'
 import 'highlight.js/scss/github-dark-dimmed.scss'
 
 import NextApp, { type AppContext, type AppProps } from 'next/app'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Layout } from '@components/layout'
 import { Provider } from 'react-redux'
 import { store } from '@stores'
@@ -17,6 +17,16 @@ const App: React.FC<AppProps & CustomAppProps> = ({
   pageProps,
   visitTimes
 }) => {
+  useEffect(() => {
+    const v = sessionStorage.getItem('_v')
+    if (v == null) {
+      sessionStorage.setItem('_v', '1')
+      void fetch('/api/v', {
+        method: 'GET'
+      }).then(_ => undefined)
+    }
+  }, [])
+
   return (
     <Provider store={store}>
       <Layout visitTimes={visitTimes}>

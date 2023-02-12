@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AppState } from '@stores'
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { type AppState } from '@stores'
 import { fetchCount } from '@services/user'
 
 interface user {
@@ -67,7 +67,11 @@ export const userSlice = createSlice({
 
 })
 
-export const { login, logout, incrementByAmount } = userSlice.actions
+export const {
+  login,
+  logout,
+  incrementByAmount
+} = userSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

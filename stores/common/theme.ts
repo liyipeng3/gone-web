@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AppState } from '@stores'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { type AppState } from '@stores'
 
 export interface themeState {
   name: 'light' | 'dark'
