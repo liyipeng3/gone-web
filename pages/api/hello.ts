@@ -9,10 +9,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 //   req: NextApiRequest,
 //   res: NextApiResponse<Data>
 //
-export default function handler (
+export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse
-): void {
+): Promise<void> {
   // console.log(req.headers['user-agent'])
   const ua: string = req.headers['user-agent'] ?? ''
   const uaReg: RegExp = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|iPhone)(\)|;\s*([^()]*?)\))/
@@ -25,10 +25,30 @@ export default function handler (
   if (ip.startsWith('::ffff:')) {
     ip = ip.slice(7)
   }
+  const localIps = ['0.0.0.0', '::1', '::ffff:', '172', '192', '127', '10']
+  if (localIps.some(localIp => ip.startsWith(localIp))) {
+    ip = 'local'
+  }
+  ip = '115.171.61.194'
+  let city = 'unknown'
+  let country = 'unknown'
+  if (ip !== 'local') {
+    try {
+      const data = await fetch(`http://ip-api.com/json/${ip}?fields=25&lang=zh-CN`).then(async res => await res.json())
+      // console.log(data)
+      city = data.city
+      country = data.country
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   const info = {
     ip,
     // ua: req.headers['user-agent'] ?? '',
-    device
+    device,
+    city,
+    country
   }
   res.status(200).json(info)
 }
