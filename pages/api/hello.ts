@@ -29,7 +29,6 @@ export default async function handler (
   if (localIps.some(localIp => ip.startsWith(localIp))) {
     ip = 'local'
   }
-  ip = '115.171.61.194'
   let city = 'unknown'
   let country = 'unknown'
   if (ip !== 'local') {
