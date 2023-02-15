@@ -3,6 +3,7 @@ import React from 'react'
 import duration from 'dayjs/plugin/duration'
 import { AiOutlineGithub } from 'react-icons/ai'
 import { getDurationTime } from '@utils'
+import { Assistant } from '@components/custom/Assistant'
 
 dayjs.extend(duration)
 
@@ -34,6 +35,7 @@ export const Footer: React.FC<FooterProps> = ({
         <AiOutlineGithub className="github hover:text-black dark:hover:text-white transition-all"
                          onClick={() => window.open('https://github.com/liyipeng123', '_blank')}/>
       </div>
+      <Assistant />
     </footer>
   )
 }

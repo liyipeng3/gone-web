@@ -25,6 +25,7 @@ const App: React.FC<AppProps & CustomAppProps> = ({
         method: 'GET'
       }).then(_ => undefined)
     }
+    console.log('%c lyp123 %c https://lyp123.com ', 'color: #fff; margin: 1em 0; padding: 5px 0; background: #00a9e0;', 'margin: 1em 0; padding: 5px 0; background: #efefef;')
   }, [])
 
   return (
