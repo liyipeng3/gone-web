@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div
           className={cn('w-48 search md:absolute md:right-28 translate-x-3 -top-4 duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0')}>
           <input
-            className="border-b border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
+            className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {
               setSearch(e.target.value)
             }}/>
