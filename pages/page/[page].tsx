@@ -43,6 +43,11 @@ export async function getServerSideProps (context: { params: { page: number } })
         type: 'post'
       }
     },
+    orderBy: {
+      contents: {
+        created: 'desc'
+      }
+    },
     skip: (page - 1) * pageSize,
     take: pageSize
   })
@@ -79,10 +84,10 @@ const Page: React.FC<PageProps> = ({
   const pageArr = [...(new Array(pageNum)).fill(null)]
   const pagination = pageArr.map((_, index) =>
     (<Link key={index}
-           className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
+           className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
-  return <div className="relative px-32 py-6 flex">
-    <div className=" py-6 space-y-3 flex flex-col items-start justify-start flex-1 w-full mx-auto">{
+  return <div className="relative md:px-32 px-4 md:py-6 py-4 flex">
+    <div className=" md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 w-full mx-auto">{
       (list)?.map(item => <Link className="text-left w-full" key={item.slug as string}
                                 href={`/article/${item?.category as string}/${item?.slug as string}`}>
         <div className="text-base font-bold dark:text-white">{item.title}</div>
@@ -92,13 +97,14 @@ const Page: React.FC<PageProps> = ({
         </div>
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 w-full"
              dangerouslySetInnerHTML={{ __html: item.text?.split('<!--more-->')[0].slice(15, 150) }}/>
-        <div className="text-center text-sm text-gray-500 my-5 dark:text-gray-00">- 阅读全文 -</div>
+        <div className="text-center text-sm text-gray-500 my-5 dark:text-gray-500">- 阅读全文 -</div>
       </Link>)
     }
-      <div className="text-center space-x-10 w-full  border-black text-sm pt-10 pb-5 flex-row flex justify-center">
+      <div
+        className="text-center md:space-x-10 space-x-5 w-full py-2  border-black text-sm md:pt-10 md:pb-5 flex-row flex justify-center">
         {currentPage !== 1 &&
           <Link href={`/page/${parseInt(page as string) - 1}`} className="border-inherit hover:border-b">上一页</Link>}
-        <div className="space-x-3 border-inherit">
+        <div className="md:space-x-3 space-x-1 border-inherit">
           {
             pagination
           }

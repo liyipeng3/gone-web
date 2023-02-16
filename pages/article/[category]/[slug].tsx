@@ -46,9 +46,9 @@ const Content: React.FC<ContentProps> = ({
   // } = router.query
 
   return (
-    <div className="flex justify-center items-start min-h-full flex-1 py-6 px-32">
-      <article className="prose max-w-none text-left flex-1 py-6 ">
-        <h2 className="mb-10 dark:text-white">{title}</h2>
+    <div className="flex justify-center items-start min-h-full flex-1 md:py-6 py-4 px-4 md:px-32">
+      <article className="prose max-w-full text-left flex-1 md:py-6 py-2 ">
+        <h2 className="md:mb-10 mb-4 dark:text-white">{title}</h2>
         <Prose content={content}/>
       </article>
       <Sidebar/>

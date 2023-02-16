@@ -46,6 +46,7 @@
 
 .close {
   .nav-icon {
+    transform: translateY(-5%);
     &::after {
       top: 14px;
       left: 6px;

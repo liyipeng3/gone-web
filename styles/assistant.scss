@@ -39,13 +39,11 @@
     opacity: 0;
     z-index: -1;
     font-size: .8em;
-    background: #fff;
     padding: .75em 1em;
     border-radius: 1em;
     visibility: hidden;
     position: absolute;
     word-break: break-all;
-    border: 1px solid #eee;
     transition: opacity .3s, visibility .3s;
 }
 

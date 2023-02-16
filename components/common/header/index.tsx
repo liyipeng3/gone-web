@@ -47,12 +47,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="min-h-48 border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle">
-      <Link href="/">
+      className="min-h-48 border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle flex items-start ">
+      <Link href="/" className="md:mr-auto">
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>
-      <div className="flex space-x-5 text-sm text-gray-700 items-center dark:text-white">
-        <div className={cn('flex-1 space-x-5', menuType === 'search' ? 'visible' : 'invisible')}>
+      <div
+        className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto transition-all duration-200', menuType === 'close' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
+        <div
+          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-200 transition-all', menuType === 'close' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
           {menus.map((menu, index) => {
             return ((menu.children?.length) != null)
               ? (
@@ -91,11 +93,11 @@ export const Header: React.FC<HeaderProps> = ({
                   </Transition>
                 </Menu>
                 )
-              : <Link key={menu.name} className="hover:underline" href={menu.path}>{menu.name}</Link>
+              : <Link key={menu.name} className="hover:underline text" href={menu.path}>{menu.name}</Link>
           })}
         </div>
         <div
-          className={cn('w-48 search absolute right-28 translate-x-3 -top-4 transition-all opacity-0 float-right', menuType === 'close' && 'top-4 opacity-100')}>
+          className={cn('w-48 search md:absolute md:right-28 translate-x-3 -top-4 duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0')}>
           <input
             className="border-b border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {
@@ -103,6 +105,9 @@ export const Header: React.FC<HeaderProps> = ({
             }}/>
           <button className="search-icon absolute right-0"></button>
         </div>
+
+      </div>
+      <div className="flex justify-center items-center space-x-3 md:ml-8 md:translate-y-[3%]">
         <div className={cn(menuType, 'md:menu')} onClick={() => {
           setMenuType(menuType === 'close' ? 'search' : 'close')
         }}>
@@ -110,9 +115,9 @@ export const Header: React.FC<HeaderProps> = ({
             <span></span>
           </button>
         </div>
-        <div className="w-6 hover:cursor-pointer" onClick={clickTheme}>
+        <div className="w-6 hover:cursor-pointer flex justify-center" onClick={clickTheme}>
           {
-            theme === 'light' ? <SunIcon className="w-6 h-6"/> : <MoonIcon className="w-5 h-5"/>
+            theme === 'light' ? <SunIcon className="md:w-6 md:h-6 h-7 w-7"/> : <MoonIcon className="md:w-5 md:h-5 w-6 h-6"/>
           }
         </div>
       </div>
