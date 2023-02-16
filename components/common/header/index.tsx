@@ -14,9 +14,9 @@ export const Header: React.FC<HeaderProps> = ({
   menus = []
 }) => {
   const themes = ['dark', 'light']
-  const [theme, setTheme] = React.useState('light')
+  const [currentTheme, setCurrentTheme] = React.useState('light')
   const clickTheme = (): void => {
-    const index = themes.indexOf(theme)
+    const index = themes.indexOf(currentTheme)
     const next = themes[(index + 1) % themes.length]
     if (next === 'dark') {
       document.documentElement.classList.add('dark')
@@ -25,19 +25,36 @@ export const Header: React.FC<HeaderProps> = ({
       document.documentElement.classList.remove('dark')
       localStorage.theme = 'light'
     }
-    setTheme(next)
+    setCurrentTheme(next)
   }
+
+  const setTheme = (theme: 'dark' | 'light') => {
+    setCurrentTheme(theme)
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark')
         setTheme('dark')
       } else {
-        document.documentElement.classList.remove('dark')
         setTheme('light')
       }
     }
+
+    const mediaQueryListDark = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQueryListDark.addEventListener('change', (event) => {
+      if (event.matches) {
+        setTheme('dark')
+      } else {
+        setTheme('light')
+      }
+    })
   }, [])
   // const user = useSelector(selectUser)
 
@@ -117,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
         <div className="hover:cursor-pointer flex justify-center translate-y-[1px] w-7" onClick={clickTheme}>
           {
-            theme === 'light' ? <SunIcon className="md:w-6 w-7"/> : <MoonIcon className="md:w-5 w-6"/>
+            currentTheme === 'light' ? <SunIcon className="md:w-6 w-7"/> : <MoonIcon className="md:w-5 w-6"/>
           }
         </div>
       </div>

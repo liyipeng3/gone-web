@@ -5,6 +5,7 @@ import Sidebar from '@components/common/sidebar'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 import prisma from '@utils/prisma'
+import Head from 'next/head'
 
 export interface PageProps {
   list: any[]
@@ -87,6 +88,9 @@ const Page: React.FC<PageProps> = ({
            className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
   return <div className="relative md:px-32 px-4 md:py-6 py-4 flex">
+    <Head>
+      <title>lyp123 - 做自己</title>
+    </Head>
     <div className=" md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 w-full mx-auto">{
       (list)?.map(item => <Link className="text-left w-full" key={item.slug as string}
                                 href={`/article/${item?.category as string}/${item?.slug as string}`}>
