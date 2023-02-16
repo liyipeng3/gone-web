@@ -63,9 +63,9 @@ export const Header: React.FC<HeaderProps> = ({
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>
       <div
-        className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto transition-all duration-200', menuType === 'close' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
+        className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto duration-200 transition-[height] transition-[opacity]', menuType === 'close' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
         <div
-          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-200 transition-all', menuType === 'close' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
+          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-200 transition-[opacity]', menuType === 'close' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
           {menus.map((menu, index) => {
             return ((menu.children?.length) != null)
               ? (
@@ -108,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
         <div
-          className={cn('w-48 search md:absolute md:right-28 translate-x-3 -top-4 duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0')}>
+          className={cn('w-48 search md:absolute md:right-28 translate-x-3  duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0 md:-top-4')}>
           <input
             className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {

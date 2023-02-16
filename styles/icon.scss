@@ -6,19 +6,22 @@
 
   &::after {
     position: absolute;
-    transition: .2s;
+    transition-property: transform;
+    transition-duration: .2s;
     content: "";
   }
 
   span {
     visibility: hidden;
-    transition: .2s;
+    transition-property: transform;
+    transition-duration: .2s;
   }
 
   &::before {
     content: "";
     position: absolute;
-    transition: .2s;
+    transition-property: transform;
+    transition-duration: .2s;
   }
 }
 
