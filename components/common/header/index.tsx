@@ -13,27 +13,21 @@ export const Header: React.FC<HeaderProps> = ({
   logo = '',
   menus = []
 }) => {
-  const themes = ['dark', 'light']
-  const [currentTheme, setCurrentTheme] = React.useState('light')
   const clickTheme = (): void => {
-    const index = themes.indexOf(currentTheme)
-    const next = themes[(index + 1) % themes.length]
-    if (next === 'dark') {
+    if (localStorage.theme === 'light') {
+      setTheme('dark')
+    } else {
+      setTheme('light')
+    }
+  }
+
+  const setTheme = (theme: 'dark' | 'light') => {
+    if (theme === 'dark') {
       document.documentElement.classList.add('dark')
       localStorage.theme = 'dark'
     } else {
       document.documentElement.classList.remove('dark')
       localStorage.theme = 'light'
-    }
-    setCurrentTheme(next)
-  }
-
-  const setTheme = (theme: 'dark' | 'light') => {
-    setCurrentTheme(theme)
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
     }
   }
 
@@ -133,9 +127,8 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
         <div className="hover:cursor-pointer flex justify-center translate-y-[1px] w-7" onClick={clickTheme}>
-          {
-            currentTheme === 'light' ? <SunIcon className="md:w-6 w-7"/> : <MoonIcon className="md:w-5 w-6"/>
-          }
+          <SunIcon className="md:w-6 w-7 block dark:hidden"/>
+          <MoonIcon className="md:w-5 w-6 hidden dark:block"/>
         </div>
       </div>
     </header>
