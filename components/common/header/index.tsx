@@ -111,13 +111,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div className={cn(menuType, 'md:menu')} onClick={() => {
           setMenuType(menuType === 'close' ? 'search' : 'close')
         }}>
-          <button className="nav-icon relative">
+          <button className="nav-icon relative translate-y-[1%]">
             <span></span>
           </button>
         </div>
-        <div className="w-6 hover:cursor-pointer flex justify-center" onClick={clickTheme}>
+        <div className="hover:cursor-pointer flex justify-center translate-y-[1px] w-7" onClick={clickTheme}>
           {
-            theme === 'light' ? <SunIcon className="md:w-6 md:h-6 h-7 w-7"/> : <MoonIcon className="md:w-5 md:h-5 w-6 h-6"/>
+            theme === 'light' ? <SunIcon className="md:w-6 w-7"/> : <MoonIcon className="md:w-5 w-6"/>
           }
         </div>
       </div>
