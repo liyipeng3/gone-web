@@ -27,7 +27,7 @@ export const Footer: React.FC<FooterProps> = ({
         <div>Copyright &copy; 2018-{now.year()} <span className="text-gray-600 dark:text-gray-300">小明难亡</span> All
           Rights Reserved
         </div>
-        <div className="mt-1 flex flex-col space-y-1 md:flex-row md:space-x-1">
+        <div className="mt-1 flex flex-col space-y-1 md:flex-row md:space-x-1 md:items-baseline">
           <span className="flex space-x-1">
             <span>本站总访问量 {visitTimes} 次</span>
             <span>|</span>
