@@ -1,5 +1,5 @@
 import React from 'react'
-import Page, { getServerSideProps, type PageProps } from './page/[page]'
+import Page, { getServerSideProps, type PageProps } from './page/[num]'
 // import CompState from "@/components/test/state";
 
 export { getServerSideProps }

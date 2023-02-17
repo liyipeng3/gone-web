@@ -5,7 +5,7 @@ import React from 'react'
 
 export default function Document () {
   return (
-    <Html className="dark [--scroll-mt:9.875rem] lg:[--scroll-mt:6.3125rem]">
+    <Html className="dark">
       <Head>
         <meta name="theme-color" content="#ffffff"/>
         <script

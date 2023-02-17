@@ -14,8 +14,8 @@ export interface PageProps {
 
 const pageSize = 7
 
-export async function getServerSideProps (context: { params: { page: number } }) {
-  const page = context.params?.page ?? 1
+export async function getServerSideProps (context: { params: { num: number } }) {
+  const pageNum = context.params?.num ?? 1
 
   const data = await prisma.relationships.findMany({
     include: {
@@ -49,7 +49,7 @@ export async function getServerSideProps (context: { params: { page: number } })
         created: 'desc'
       }
     },
-    skip: (page - 1) * pageSize,
+    skip: (pageNum - 1) * pageSize,
     take: pageSize
   })
   // console.log(data)
