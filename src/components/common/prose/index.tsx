@@ -12,7 +12,7 @@ const Prose: FC<ProseProps> = ({
 }) => {
   return (
     <div className={cn('prose text-left max-w-none dark:prose-invert dark:prose-pre:bg-[#1f2937]', className)}>
-      <main className="dark:text-gray-200 prose-code-custom"
+      <main className="dark:text-gray-200 text-justify"
             dangerouslySetInnerHTML={{ __html: content }}></main>
     </div>
   )

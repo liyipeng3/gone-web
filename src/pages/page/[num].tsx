@@ -79,8 +79,8 @@ const Page: React.FC<PageProps> = ({
   total
 }) => {
   const router = useRouter()
-  const { page = '1' } = router.query
-  const currentPage = parseInt(page as string)
+  const { num = '1' } = router.query
+  const currentPage = parseInt(num as string)
   const pageNum = Math.ceil((total ?? 0) / pageSize)
   const pageArr = [...(new Array(pageNum)).fill(null)]
   const pagination = pageArr.map((_, index) =>
@@ -107,14 +107,14 @@ const Page: React.FC<PageProps> = ({
       <div
         className="text-center md:space-x-10 space-x-5 w-full py-2  border-black text-sm md:pt-10 md:pb-5 flex-row flex justify-center">
         {currentPage !== 1 &&
-          <Link href={`/page/${parseInt(page as string) - 1}`} className="border-inherit hover:border-b">上一页</Link>}
+          <Link href={`/page/${currentPage - 1}`} className="border-inherit hover:border-b">上一页</Link>}
         <div className="md:space-x-3 space-x-1 border-inherit">
           {
             pagination
           }
         </div>
         {currentPage !== pageNum &&
-          <Link href={`/page/${parseInt(page as string) + 1}`} className="border-inherit hover:border-b">下一页</Link>}
+          <Link href={`/page/${currentPage + 1}`} className="border-inherit hover:border-b">下一页</Link>}
       </div>
     </div>
     <Sidebar/>

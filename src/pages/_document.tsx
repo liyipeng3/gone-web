@@ -1,4 +1,4 @@
-// In `pages/_document.js`
+// In `pages/_document.tsx`
 import { Head, Html, Main, NextScript } from 'next/document'
 import Script from 'next/script'
 import React from 'react'
@@ -25,8 +25,8 @@ export default function Document () {
       </Head>
       <body>
       <Main/>
-      <NextScript/>
       <Script src="/lib/l2d.js" strategy="beforeInteractive"/>
+      <NextScript/>
       </body>
     </Html>
   )
