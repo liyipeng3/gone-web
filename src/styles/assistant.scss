@@ -1,72 +1,73 @@
 
 .assistant-container {
-    bottom: 0;
-    left: 0;
-    z-index: 52;
-    position: fixed;
-    user-select: none;
+  bottom: 0;
+  left: 0;
+  z-index: 52;
+  position: fixed;
+  user-select: none;
 }
 
 .assistant-container.left {
-    left: 0
+  left: 0
 }
 
 .assistant-container.right {
-    right: 0
+  right: 0
 }
 
 .assistant-container.active {
-    cursor: move
+  cursor: move
 }
 
 .assistant-action span {
-    color: #fff;
-    width: 1.5em;
-    height: 1.5em;
-    display: block;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 66%;
-    margin-bottom: .5em;
-    border: 1px solid #666;
-    background: #fff center/70% no-repeat;
+  color: #fff;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 66%;
+  margin-bottom: .5rem;
+  border: 1px solid #666;
+  background: #fff center/70% no-repeat;
 }
 
 .assistant-container .assistant-dialog {
-    bottom: 22em;
-    left: 1em;
-    right: 1em;
-    opacity: 0;
-    z-index: -1;
-    font-size: .8em;
-    padding: .75em 1em;
-    border-radius: 1em;
-    visibility: hidden;
-    position: absolute;
-    word-break: break-all;
-    transition: opacity .3s, visibility .3s;
+  bottom: 1rem;
+  left: 9rem;
+  width: auto;
+  white-space: nowrap;
+  opacity: 0;
+  z-index: -1;
+  font-size: .8rem;
+  padding: .75rem 1rem;
+  border-radius: 1rem;
+  visibility: hidden;
+  position: absolute;
+  word-break: break-all;
+  transition: opacity .3s, visibility .3s;
 }
 
 .assistant-container .assistant-dialog.active {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 #assistant {
-    vertical-align: middle;
-    transform: translateX(-20%);
+  vertical-align: middle;
+  transform: translateX(-20%);
 }
 
 @media screen and (max-width: 768px) {
-    #assistant {
-        width: 8em
-    }
+  #assistant {
+    width: 8rem
+  }
 
-    .assistant-container {
-        pointer-events: none
-    }
+  .assistant-container {
+    pointer-events: none
+  }
 
-    .assistant-container.hidden, .assistant-action, .assistant-dialog {
-        display: none
-    }
+  .assistant-container.hidden, .assistant-action, .assistant-dialog {
+    display: none
+  }
 }

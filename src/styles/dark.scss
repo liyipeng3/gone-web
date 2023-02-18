@@ -1,12 +1,14 @@
 .dark {
   color-scheme: dark;
   background-color: #161b22;
+
   input {
     background: #1a202c;
     color: white;
   }
+
   .prose {
-    *:not(pre)>code:not([class]) {
+    *:not(pre) > code:not([class]) {
       @apply bg-gray-400;
     }
   }

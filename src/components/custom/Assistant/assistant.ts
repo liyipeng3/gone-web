@@ -137,7 +137,7 @@ export const assistant = function (prop: {
 
   const hitokoto = async () => {
     await fetch('https://v1.hitokoto.cn/?c=d').then(async res => await res.json()).then((res: { hitokoto: string, from: string }) => {
-      const str = `${res.hitokoto}\n——《${res.from}》`
+      const str = `${res.hitokoto} ——《${res.from}》`
       modules.render(str, 9000)
     })
   }
