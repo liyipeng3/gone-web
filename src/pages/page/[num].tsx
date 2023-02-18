@@ -87,7 +87,7 @@ const Page: React.FC<PageProps> = ({
     (<Link key={index}
            className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
-  return <div className="relative md:px-48 px-4 md:py-6 py-4 flex">
+  return <div className="relative md:px-44 px-4 md:py-6 py-4 flex">
     <Head>
       <title>lyp123 - 做自己</title>
     </Head>

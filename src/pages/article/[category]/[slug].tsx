@@ -68,7 +68,7 @@ const Content: React.FC<ContentProps> = ({
   // } = router.query
 
   return (
-    <div className="flex justify-center items-start min-h-full flex-1 md:py-4 py-4 px-4 md:px-48">
+    <div className="flex justify-center items-start min-h-full flex-1 md:py-4 py-4 px-4 md:px-44">
       <Head>
         <title>{`${title} - lyp123`}</title>
       </Head>
