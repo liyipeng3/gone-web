@@ -64,7 +64,7 @@
     ]
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma",
+    "schema": "src/utils/prisma/schema.prisma",
     "generator": "prisma-client-js"
   }
 }

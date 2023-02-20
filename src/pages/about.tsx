@@ -5,7 +5,7 @@ const About: React.FC = () => {
   return (
     <div>
       <div>about</div>
-      <Link href="/src/pages">index</Link>
+      <Link href="/">index</Link>
     </div>
   )
 }

@@ -39,7 +39,7 @@ const App: React.FC<AppProps & CustomAppProps> = ({
 // @ts-expect-error
 App.getInitialProps = async (context: AppContext) => {
   const ctx = await NextApp.getInitialProps(context)
-  const data = await prisma.options.findFirst({
+  const data = await prisma.options?.findFirst({
     where: {
       name: 'visitTimes'
     },

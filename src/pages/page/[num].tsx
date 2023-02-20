@@ -85,7 +85,7 @@ const Page: React.FC<PageProps> = ({
   const pageArr = [...(new Array(pageNum)).fill(null)]
   const pagination = pageArr.map((_, index) =>
     (<Link key={index}
-           className={cn('px-1 hover:border-b hover:text-black hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
+           className={cn('px-1 hover:border-b hover:text-black dark:hover:text-white hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
   return <div className="relative md:px-44 px-4 md:py-6 py-4 flex">
     <Head>

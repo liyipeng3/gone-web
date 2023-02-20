@@ -45,7 +45,7 @@ export const Layout: React.FC<LayoutProps> = ({
   }]
 
   return (
-    <div className={cn('document w-full dark:bg-dark dark:text-white')}>
+    <div className={cn('document w-full dark:text-white dark:bg-dark antialiased')}>
       <Header logo="lyp123" menus={menus}/>
       {children}
       <Footer visitTimes={visitTimes}/>
