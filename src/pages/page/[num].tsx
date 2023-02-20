@@ -8,6 +8,7 @@ import Head from 'next/head'
 import { type HotList } from '@/types'
 import { getHotList } from '@/services/contents'
 import Main from '@/components/layout/main'
+import { marked } from 'marked'
 
 export interface PageProps {
   list: any[]
@@ -66,6 +67,9 @@ export async function getServerSideProps (context: { params: { num: number } }) 
     ...item.contents,
     category: item.metas.slug,
     name: item.metas.name
+  })).map(item => ({
+    ...item,
+    description: marked.parse((item.text?.split('<!--more-->')[0].slice(15, 150).split('`')[0]) ?? '').toString().replaceAll(/<.*?>/g, '')
   }))
 
   const hotList = await getHotList()
@@ -106,7 +110,7 @@ const Page: React.FC<PageProps> = ({
           <span>{item.name}</span>
         </div>
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl"
-             dangerouslySetInnerHTML={{ __html: item.text?.split('<!--more-->')[0].slice(15, 150) }}/>
+        >{item.description !== '' ? item.description : '暂无描述'}</div>
         <div className="text-center text-sm text-gray-500 my-5 dark:text-gray-500">- 阅读全文 -</div>
       </Link>)
     }
