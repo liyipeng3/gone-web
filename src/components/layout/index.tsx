@@ -6,6 +6,7 @@ import { Footer } from '@/components/common/footer'
 interface LayoutProps {
   children: ReactNode
   visitTimes?: number
+  hotList?: any[]
 }
 
 export const Layout: React.FC<LayoutProps> = ({

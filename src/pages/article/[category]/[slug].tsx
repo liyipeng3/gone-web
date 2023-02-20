@@ -1,18 +1,20 @@
-// import { useRouter } from 'next/router'
 import React from 'react'
-import Sidebar from '@/components/common/sidebar'
 import marked from '@/utils/marked'
 import Prose from '@/components/common/prose'
 import prisma from '@/utils/prisma'
 import Head from 'next/head'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { getHotList } from '@/services/contents'
+import { type HotList } from '@/types'
+import Main from '@/components/layout/main'
 
 interface ContentProps {
   title: string
   content: string
   created: number
   name: string
+  hotList: HotList
 }
 
 export async function getServerSideProps (context: { params: { slug: any } }) {
@@ -45,12 +47,16 @@ export async function getServerSideProps (context: { params: { slug: any } }) {
   const article = data[0]
 
   const content = marked.parse(article.contents.text ?? '')
+
+  const hotList = await getHotList()
+
   return {
     props: {
       title: article.contents.title,
       content,
       created: article.contents.created,
-      name: article.metas.name
+      name: article.metas.name,
+      hotList
     } // will be passed to the page component as props
   }
 }
@@ -59,20 +65,15 @@ const Content: React.FC<ContentProps> = ({
   title,
   content,
   created,
-  name
+  name,
+  hotList
 }) => {
-  // const router = useRouter()
-  // const {
-  //   category,
-  //   id
-  // } = router.query
-
   return (
-    <div className="flex justify-center items-start min-h-full flex-1 md:py-4 py-4 px-4 md:px-44">
+    <Main hotList={hotList}>
       <Head>
         <title>{`${title} - lyp123`}</title>
       </Head>
-      <article className="max-w-full text-left flex-1 prose">
+      <article className="max-w-3xl text-left flex-1 prose">
         <div className="text-sm text-gray-500 dark:text-gray-400 -mb-8">
           <Link href="/" className="no-underline text-gray-500 font-normal dark:text-gray-400">首页</Link>
           <span> » </span>
@@ -88,8 +89,7 @@ const Content: React.FC<ContentProps> = ({
         </div>
         <Prose content={content}/>
       </article>
-      <Sidebar/>
-    </div>
+    </Main>
   )
 }
 

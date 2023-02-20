@@ -1,15 +1,18 @@
 import React from 'react'
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import Sidebar from '@/components/common/sidebar'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 import prisma from '@/utils/prisma'
 import Head from 'next/head'
+import { type HotList } from '@/types'
+import { getHotList } from '@/services/contents'
+import Main from '@/components/layout/main'
 
 export interface PageProps {
   list: any[]
   total: number
+  hotList: HotList
 }
 
 const pageSize = 7
@@ -52,7 +55,6 @@ export async function getServerSideProps (context: { params: { num: number } }) 
     skip: (pageNum - 1) * pageSize,
     take: pageSize
   })
-  // console.log(data)
   const total = await prisma.contents.count({
     where: {
       status: 'publish',
@@ -66,17 +68,21 @@ export async function getServerSideProps (context: { params: { num: number } }) 
     name: item.metas.name
   }))
 
+  const hotList = await getHotList()
+
   return {
     props: {
       list,
-      total
+      total,
+      hotList
     }
   }
 }
 
 const Page: React.FC<PageProps> = ({
   list,
-  total
+  total,
+  hotList
 }) => {
   const router = useRouter()
   const { num = '1' } = router.query
@@ -87,11 +93,11 @@ const Page: React.FC<PageProps> = ({
     (<Link key={index}
            className={cn('px-1 hover:border-b hover:text-black dark:hover:text-white hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
            href={`/page/${index + 1}`}>{index + 1}</Link>))
-  return <div className="relative md:px-44 px-4 md:py-6 py-4 flex">
+  return <Main hotList={hotList}>
     <Head>
       <title>lyp123 - 做自己</title>
     </Head>
-    <div className=" md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 w-full mx-auto">{
+    <div className="md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">{
       (list)?.map(item => <Link className="text-left w-full" key={item.slug as string}
                                 href={`/article/${item?.category as string}/${item?.slug as string}`}>
         <div className="text-base font-bold dark:text-white">{item.title}</div>
@@ -99,7 +105,7 @@ const Page: React.FC<PageProps> = ({
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
           <span>{item.name}</span>
         </div>
-        <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 w-full"
+        <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl"
              dangerouslySetInnerHTML={{ __html: item.text?.split('<!--more-->')[0].slice(15, 150) }}/>
         <div className="text-center text-sm text-gray-500 my-5 dark:text-gray-500">- 阅读全文 -</div>
       </Link>)
@@ -117,8 +123,7 @@ const Page: React.FC<PageProps> = ({
           <Link href={`/page/${currentPage + 1}`} className="border-inherit hover:border-b">下一页</Link>}
       </div>
     </div>
-    <Sidebar/>
-  </div>
+  </Main>
 }
 
 export default Page

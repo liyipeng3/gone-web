@@ -6,10 +6,11 @@ export { getServerSideProps }
 
 const Index: React.FC<PageProps> = ({
   list,
-  total
+  total,
+  hotList
 }) => {
   return (
-    <Page list={list} total={total}/>
+    <Page list={list} total={total} hotList={hotList}/>
   )
 }
 

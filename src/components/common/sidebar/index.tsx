@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react'
+import { type FC, useEffect, useState } from 'react'
 import cn from 'classnames'
+import Link from 'next/link'
+import { type HotList } from '@/types'
 
-const Sidebar = () => {
+interface SidebarProps {
+  hotList?: HotList
+}
+
+const Sidebar: FC<SidebarProps> = ({ hotList = [] }) => {
   const [sticky, setSticky] = useState(false)
   useEffect(() => {
     const sidebar = document.getElementById('sidebar') ?? { clientHeight: 0 }
@@ -13,55 +19,18 @@ const Sidebar = () => {
   }, [])
   return (
     <div id="sidebar"
-         className={cn('w-72 sticky h-fit py-4 md:block hidden', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
-      <div className="">
-        <div className="">Sidebar</div>
-      </div>
-      <div className="">
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 1</div>
-        <div className="">Item 2</div>
-        <div className="">Item 3</div>
-        <div className="">Item 4</div>
-        <div className="">Item 1</div>
+         className={cn('sticky h-fit py-4 md:block hidden', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
+      <div className="text-left max-w-[18rem]">
+        <div className="text-lg font-bold">热门文章</div>
+        <div className="text-sm space-y-2 mt-3 text-gray-600 dark:text-gray-300">
+          {hotList.map(item => (
+            <div key={item.slug} className="hover:text-black hover:transition-all dark:hover:text-white">
+              <Link href={`/article/${item.category}/${item.slug}`} >
+                {item.title}
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

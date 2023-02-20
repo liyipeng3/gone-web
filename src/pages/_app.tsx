@@ -7,15 +7,18 @@ import { Layout } from '@/components/layout'
 // import { Provider } from 'react-redux'
 // import { store } from '@/stores'
 import prisma from '@/utils/prisma'
+import { type HotList } from '@/types'
 
 interface CustomAppProps {
   visitTimes: number
+  hotList: HotList
 }
 
 const App: React.FC<AppProps & CustomAppProps> = ({
   Component,
   pageProps,
-  visitTimes
+  visitTimes,
+  hotList
 }) => {
   useEffect(() => {
     const v = sessionStorage.getItem('_v')
@@ -39,7 +42,7 @@ const App: React.FC<AppProps & CustomAppProps> = ({
 // @ts-expect-error
 App.getInitialProps = async (context: AppContext) => {
   const ctx = await NextApp.getInitialProps(context)
-  const data = await prisma.options?.findFirst({
+  const visitTimesData = await prisma.options?.findFirst({
     where: {
       name: 'visitTimes'
     },
@@ -47,9 +50,10 @@ App.getInitialProps = async (context: AppContext) => {
       value: true
     }
   })
+
   return {
     ...ctx,
-    visitTimes: data?.value ?? 0
+    visitTimes: visitTimesData?.value ?? 0
   }
 }
 
