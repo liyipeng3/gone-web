@@ -73,7 +73,7 @@ const Content: React.FC<ContentProps> = ({
       <Head>
         <title>{`${title} - lyp123`}</title>
       </Head>
-      <article className="max-w-3xl text-left flex-1 prose">
+      <article className="md:max-w-3xl max-w-full text-left flex-1 prose">
         <div className="text-sm text-gray-500 dark:text-gray-400 -mb-8">
           <Link href="/" className="no-underline text-gray-500 font-normal dark:text-gray-400">首页</Link>
           <span> » </span>
