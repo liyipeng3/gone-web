@@ -102,17 +102,22 @@ const Page: React.FC<PageProps> = ({
       <title>lyp123 - 做自己</title>
     </Head>
     <div className="md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">{
-      (list)?.map(item => <Link className="text-left w-full" key={item.slug as string}
-                                href={`/article/${item?.category as string}/${item?.slug as string}`}>
-        <div className="text-base font-bold dark:text-white">{item.title}</div>
+      (list)?.map(item => <div className="text-left w-full" key={item.slug as string}>
+        <Link href={`/article/${item?.category as string}/${item?.slug as string}`}>
+          <div className="text-base font-bold dark:text-white">{item.title}</div>
+        </Link>
         <div className="text-xs text-gray-500 space-x-3 mt-2 dark:text-gray-400">
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
           <span>{item.name}</span>
         </div>
-        <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl"
-        >{item.description !== '' ? item.description : '暂无描述'}</div>
-        <div className="text-center text-sm text-gray-500 my-5 dark:text-gray-500">- 阅读全文 -</div>
-      </Link>)
+        <Link href={`/article/${item?.category as string}/${item?.slug as string}`}>
+          <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl"
+          >{item.description !== '' ? item.description : '暂无描述'}</div>
+        </Link>
+        <Link href={`/article/${item?.category as string}/${item?.slug as string}`}>
+          <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-500">- 阅读全文 -</div>
+        </Link>
+      </div>)
     }
       <div
         className="text-center md:space-x-10 space-x-5 w-full py-2  border-black text-sm md:pt-10 md:pb-5 flex-row flex justify-center">
