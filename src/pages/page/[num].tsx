@@ -69,7 +69,7 @@ export async function getServerSideProps (context: { params: { num: number } }) 
     name: item.metas.name
   })).map(item => ({
     ...item,
-    description: marked.parse((item.text?.split('<!--more-->')[0].slice(15, 150).split('`')[0]) ?? '').toString().replaceAll(/<.*?>/g, '')
+    description: marked.parse((item.text?.split('<!--more-->')[0].slice(15, 150).split('`')[0]) ?? '')?.toString()?.replaceAll(/<.*?>/g, '')
   }))
 
   const hotList = await getHotList()
