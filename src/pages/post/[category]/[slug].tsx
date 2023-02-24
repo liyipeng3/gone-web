@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       name: post.relationships[0].metas.name,
       viewsNum: post.viewsNum,
       hotList
-    } // will be passed to the page component as props
+    }
   }
 }
 
