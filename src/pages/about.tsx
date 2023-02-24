@@ -4,7 +4,7 @@ import React from 'react'
 const About: React.FC = () => {
   return (
     <div>
-      <div>about</div>
+      <div>lyp123</div>
       <Link href="/">index</Link>
     </div>
   )
