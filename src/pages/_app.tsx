@@ -4,8 +4,6 @@ import 'highlight.js/scss/github-dark-dimmed.scss'
 import NextApp, { type AppContext, type AppProps } from 'next/app'
 import React, { useEffect } from 'react'
 import { Layout } from '@/components/layout'
-// import { Provider } from 'react-redux'
-// import { store } from '@/stores'
 import prisma from '@/utils/prisma'
 import { type HotList } from '@/types'
 
