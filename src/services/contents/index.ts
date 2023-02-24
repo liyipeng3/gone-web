@@ -26,7 +26,7 @@ export const getHotList = async () => {
     },
     orderBy: {
       contents: {
-        views: 'desc'
+        viewsNum: 'desc'
       }
     },
     take: 10

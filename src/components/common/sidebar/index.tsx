@@ -25,7 +25,7 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [] }) => {
         <div className="text-sm space-y-2 mt-3 text-gray-600 dark:text-gray-300">
           {hotList.map(item => (
             <div key={item.slug} className="hover:text-black hover:transition-all dark:hover:text-white">
-              <Link href={`/article/${item.category}/${item.slug}`} >
+              <Link href={`/post/${item.category}/${item.slug}`} >
                 {item.title}
               </Link>
             </div>

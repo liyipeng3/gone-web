@@ -29,7 +29,9 @@ export async function getServerSideProps (context: { params: { num: number } }) 
           slug: true,
           created: true,
           modified: true,
-          text: true
+          text: true,
+          viewsNum: true,
+          likesNum: true
         }
       },
       metas: {
@@ -69,10 +71,30 @@ export async function getServerSideProps (context: { params: { num: number } }) 
     name: item.metas.name
   })).map(item => ({
     ...item,
-    description: marked.parse((item.text?.split('<!--more-->')[0].slice(15, 150).split('`')[0]) ?? '')?.toString()?.replaceAll(/<.*?>/g, '')
+    description: marked.parse((item.text?.split('<!--more-->')[0]
+      .replaceAll(/```(\n|\r|.)*?```/g, '')
+      .slice(0, 150)) ?? '')?.replaceAll(/<.*?>/g, '')
   }))
 
   const hotList = await getHotList()
+
+  // const all = await prisma.contents.findMany({
+  //   select: {
+  //     cid: true,
+  //     text: true
+  //   }
+  // })
+
+  // for (let i = 0; i < all.length; i++) {
+  //   await prisma.contents.update({
+  //     where: {
+  //       cid: all[i].cid
+  //     },
+  //     data: {
+  //       text: all[i].text?.replaceAll('!!!', ' ')
+  //     }
+  //   })
+  // }
 
   return {
     props: {
@@ -104,18 +126,23 @@ const Page: React.FC<PageProps> = ({
     <div className="md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">
       {(list)?.map(item => <div className="text-left w-full" key={item.slug as string}>
         <div className="text-base font-bold dark:text-white">
-          <Link href={`/article/${item?.category as string}/${item?.slug as string}`}>{item.title}</Link>
+          <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>{item.title}</Link>
         </div>
-        <div className="text-xs text-gray-500 space-x-3 mt-2 dark:text-gray-400">
+        <div className="text-xs text-gray-500 space-x-2 mt-2 dark:text-gray-400">
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
+          <span className="text-gray-400">•</span>
           <span>{item.name}</span>
+          <span className="text-gray-400">•</span>
+          <span>{item.viewsNum}人阅读</span>
         </div>
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl">
           <Link
-            href={`/article/${item?.category as string}/${item?.slug as string}`}>{item.description !== '' ? item.description : '暂无描述'}</Link>
+            href={`/post/${item?.category as string}/${item?.slug as string}`}>
+            {item.description !== '' ? item.description.length < 150 ? item.description : item.description as string + '...' : '暂无描述'}
+          </Link>
         </div>
         <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-500">
-          <Link href={`/article/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
+          <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
       <div

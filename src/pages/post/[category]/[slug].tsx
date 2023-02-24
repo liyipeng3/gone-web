@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { getHotList } from '@/services/contents'
 import { type HotList } from '@/types'
 import Main from '@/components/layout/main'
+import { type GetServerSideProps } from 'next'
 
 interface ContentProps {
   title: string
@@ -15,47 +16,65 @@ interface ContentProps {
   created: number
   name: string
   hotList: HotList
+  viewsNum: number
 }
 
-export async function getServerSideProps (context: { params: { slug: any } }) {
-  const data = await prisma.relationships.findMany({
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const slug: string = context.params?.slug as string ?? ''
+  const post = await prisma.contents.findUnique({
     include: {
-      metas: {
-        select: {
-          name: true
-        }
-      },
-      contents: {
-        select: {
-          title: true,
-          text: true,
-          created: true
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              name: true
+            }
+          }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
         }
       }
     },
     where: {
-      contents: {
-        slug: context.params.slug
-      }
+      slug
     }
   })
-  if (data === null || data.length === 0) {
+  if (post === null) {
     return {
       notFound: true
     }
   }
-  const article = data[0]
-
-  const content = marked.parse(article.contents.text ?? '')
-
+  const content = marked.parse(post.text ?? '')
   const hotList = await getHotList()
+  const cookies = context.req.cookies
+  const views = new Set((cookies.postView != null) ? cookies.postView.split(',') : [])
+  const cid = String(post.cid)
+  if (!views.has(cid)) {
+    await prisma.contents.update({
+      where: {
+        cid: post.cid
+      },
+      data: {
+        viewsNum: {
+          increment: 1
+        }
+      }
+    })
+    views.add(String(post.cid))
+    context.res.setHeader('set-cookie', `postView=${Array.from(views).join(',')}`)
+  }
+  console.log(JSON.stringify(post, null, 2))
 
   return {
     props: {
-      title: article.contents.title,
+      title: post.title,
       content,
-      created: article.contents.created,
-      name: article.metas.name,
+      created: post.created,
+      name: post.relationships[0].metas.name,
+      viewsNum: post.viewsNum,
       hotList
     } // will be passed to the page component as props
   }
@@ -66,6 +85,7 @@ const Content: React.FC<ContentProps> = ({
   content,
   created,
   name,
+  viewsNum,
   hotList
 }) => {
   return (
@@ -86,6 +106,8 @@ const Content: React.FC<ContentProps> = ({
           <span>{dayjs(new Date(created * 1000)).format('YYYY-MM-DD')}</span>
           <span>•</span>
           <span>{name}</span>
+          <span>•</span>
+          <span>{viewsNum}人阅读</span>
         </div>
         <Prose content={content}/>
       </article>

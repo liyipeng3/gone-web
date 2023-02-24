@@ -46,7 +46,6 @@ model contents {
   allowPing     String?         @default("0") @db.Char(1)
   allowFeed     String?         @default("0") @db.Char(1)
   parent        Int?            @default(0) @db.UnsignedInt
-  views         Int?            @default(0)
   viewsNum      Int?            @default(0)
   likesNum      Int?            @default(0)
   relationships relationships[]
