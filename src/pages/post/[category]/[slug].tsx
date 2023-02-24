@@ -66,7 +66,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     views.add(String(post.cid))
     context.res.setHeader('set-cookie', `postView=${Array.from(views).join(',')}`)
   }
-  console.log(JSON.stringify(post, null, 2))
 
   return {
     props: {
