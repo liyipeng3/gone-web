@@ -2,12 +2,12 @@ import React from 'react'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
-import cn from 'classnames'
 import Head from 'next/head'
 import { type HotList } from '@/types'
 import Main from '@/components/layout/main'
 import { type GetServerSideProps } from 'next'
 import { getHotList, getPostList } from '@/models/content'
+import Pagination from '@/components/common/pagination'
 
 export interface PageProps {
   list: any[]
@@ -20,7 +20,10 @@ const pageSize = 7
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const pageNum: number = (context.params?.num as unknown as number) ?? 1
 
-  const { list, total } = await getPostList(pageNum, pageSize)
+  const {
+    list,
+    total
+  } = await getPostList(pageNum, pageSize)
   const hotList = await getHotList()
 
   return {
@@ -41,11 +44,7 @@ const Page: React.FC<PageProps> = ({
   const { num = '1' } = router.query
   const currentPage = parseInt(num as string)
   const pageNum = Math.ceil((total ?? 0) / pageSize)
-  const pageArr = [...(new Array(pageNum)).fill(null)]
-  const pagination = pageArr.map((_, index) =>
-    (<Link key={index}
-           className={cn('px-1 hover:border-b hover:text-black dark:hover:text-white hover:transition-all border-inherit dark:border-gray-500', (index + 1) === currentPage ? 'border-b ' : 'text-gray-300')}
-           href={`/page/${index + 1}`}>{index + 1}</Link>))
+
   return <Main hotList={hotList}>
     <Head>
       <title>lyp123 - 做自己</title>
@@ -72,18 +71,7 @@ const Page: React.FC<PageProps> = ({
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
-      <div
-        className="text-center md:space-x-10 space-x-5 w-full py-2  border-black text-sm md:pt-10 md:pb-5 flex-row flex justify-center">
-        {currentPage !== 1 &&
-          <Link href={`/page/${currentPage - 1}`} className="border-inherit hover:border-b">上一页</Link>}
-        <div className="md:space-x-3 space-x-1 border-inherit">
-          {
-            pagination
-          }
-        </div>
-        {currentPage !== pageNum &&
-          <Link href={`/page/${currentPage + 1}`} className="border-inherit hover:border-b">下一页</Link>}
-      </div>
+      <Pagination pageNum={pageNum} currentPage={currentPage}/>
     </div>
   </Main>
 }
