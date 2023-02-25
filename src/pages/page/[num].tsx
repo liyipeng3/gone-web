@@ -3,12 +3,11 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
-import prisma from '@/utils/prisma'
 import Head from 'next/head'
 import { type HotList } from '@/types'
-import { getHotList } from '@/services/contents'
 import Main from '@/components/layout/main'
-import { marked } from 'marked'
+import { type GetServerSideProps } from 'next'
+import { getHotList, getPostList } from '@/models/content'
 
 export interface PageProps {
   list: any[]
@@ -18,83 +17,11 @@ export interface PageProps {
 
 const pageSize = 7
 
-export async function getServerSideProps (context: { params: { num: number } }) {
-  const pageNum = context.params?.num ?? 1
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const pageNum: number = (context.params?.num as unknown as number) ?? 1
 
-  const data = await prisma.relationships.findMany({
-    include: {
-      contents: {
-        select: {
-          title: true,
-          slug: true,
-          created: true,
-          modified: true,
-          text: true,
-          viewsNum: true,
-          likesNum: true
-        }
-      },
-      metas: {
-        select: {
-          name: true,
-          slug: true
-        }
-      }
-    },
-    where: {
-      metas: {
-        type: 'category'
-      },
-      contents: {
-        status: 'publish',
-        type: 'post'
-      }
-    },
-    orderBy: {
-      contents: {
-        created: 'desc'
-      }
-    },
-    skip: (pageNum - 1) * pageSize,
-    take: pageSize
-  })
-  const total = await prisma.contents.count({
-    where: {
-      status: 'publish',
-      type: 'post'
-    }
-  })
-
-  const list = data.map(item => ({
-    ...item.contents,
-    category: item.metas.slug,
-    name: item.metas.name
-  })).map(item => ({
-    ...item,
-    description: marked.parse((item.text?.split('<!--more-->')[0]
-      .replaceAll(/```(\n|\r|.)*?```/g, '')
-      .slice(0, 150)) ?? '')?.replaceAll(/<.*?>/g, '')
-  }))
-
+  const { list, total } = await getPostList(pageNum, pageSize)
   const hotList = await getHotList()
-
-  // const all = await prisma.contents.findMany({
-  //   select: {
-  //     cid: true,
-  //     text: true
-  //   }
-  // })
-
-  // for (let i = 0; i < all.length; i++) {
-  //   await prisma.contents.update({
-  //     where: {
-  //       cid: all[i].cid
-  //     },
-  //     data: {
-  //       text: all[i].text?.replaceAll('!!!', ' ')
-  //     }
-  //   })
-  // }
 
   return {
     props: {

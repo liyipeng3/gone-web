@@ -1,14 +1,13 @@
 import React from 'react'
 import marked from '@/utils/marked'
 import Prose from '@/components/common/prose'
-import prisma from '@/utils/prisma'
 import Head from 'next/head'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { getHotList } from '@/services/contents'
 import { type HotList } from '@/types'
 import Main from '@/components/layout/main'
 import { type GetServerSideProps } from 'next'
+import { getHotList, getPost, incrementViews } from '@/models/content'
 
 interface ContentProps {
   title: string
@@ -21,27 +20,7 @@ interface ContentProps {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const slug: string = context.params?.slug as string ?? ''
-  const post = await prisma.contents.findUnique({
-    include: {
-      relationships: {
-        include: {
-          metas: {
-            select: {
-              name: true
-            }
-          }
-        },
-        where: {
-          metas: {
-            type: 'category'
-          }
-        }
-      }
-    },
-    where: {
-      slug
-    }
-  })
+  const post = await getPost(slug)
   if (post === null) {
     return {
       notFound: true
@@ -53,16 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const views = new Set((cookies.postView != null) ? cookies.postView.split(',') : [])
   const cid = String(post.cid)
   if (!views.has(cid)) {
-    await prisma.contents.update({
-      where: {
-        cid: post.cid
-      },
-      data: {
-        viewsNum: {
-          increment: 1
-        }
-      }
-    })
+    await incrementViews(post.cid)
     views.add(String(post.cid))
     context.res.setHeader('set-cookie', `postView=${Array.from(views).join(',')}`)
   }
