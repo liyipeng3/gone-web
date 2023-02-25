@@ -13,6 +13,6 @@ jobs:
           src: 'github/liyipeng123'
           dst: 'gitee/liyipeng3'
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-          dst_token:  ${{ secrets.GITEE_TOKEN }}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
           force_update: true
-	  debug: true
+          debug: true
