@@ -3,11 +3,11 @@ import marked from '@/utils/marked'
 import Prose from '@/components/common/prose'
 import Head from 'next/head'
 import dayjs from 'dayjs'
-import Link from 'next/link'
 import { type HotList } from '@/types'
 import Main from '@/components/layout/main'
 import { type GetServerSideProps } from 'next'
 import { getHotList, getPost, incrementViews } from '@/models/content'
+import Breadcrumb from '@/components/common/breadcrumb'
 
 interface ContentProps {
   title: string
@@ -63,13 +63,10 @@ const Content: React.FC<ContentProps> = ({
         <title>{`${title} - lyp123`}</title>
       </Head>
       <article className="md:max-w-3xl max-w-full text-left flex-1 prose">
-        <div className="text-sm text-gray-500 dark:text-gray-400 -mb-8">
-          <Link href="/" className="no-underline text-gray-500 font-normal dark:text-gray-400">首页</Link>
-          <span> » </span>
-          <Link href="/" className="no-underline text-gray-500 font-normal dark:text-gray-400">{name}</Link>
-          <span> » </span>
-          <span>正文</span>
-        </div>
+        <Breadcrumb items={[{
+          name,
+          href: '/'
+        }, { name: '正文' }]}/>
         <h2 className="md:mb-2 dark:text-white">{title}</h2>
         <div className="text-xs mb-5 -mt-3 md:mt-3 my-3 text-gray-500 space-x-1 dark:text-gray-400">
           <span>{dayjs(new Date(created * 1000)).format('YYYY-MM-DD')}</span>
