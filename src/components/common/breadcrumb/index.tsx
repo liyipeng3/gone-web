@@ -15,7 +15,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     href: '/'
   })
   return (
-    <div className="text-sm text-gray-500 dark:text-gray-400 -mb-8">
+    <div className="text-sm text-gray-500 dark:text-gray-400">
       {items.map((item, index) => {
         const {
           name,

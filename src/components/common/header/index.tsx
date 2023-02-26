@@ -4,6 +4,7 @@ import { Menu, Transition } from '@headlessui/react'
 import cn from 'classnames'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
+import { useRouter } from 'next/router'
 
 interface HeaderProps {
   logo?: string | ReactNode
@@ -30,6 +31,8 @@ export const Header: React.FC<HeaderProps> = ({
   logo = '',
   menus = []
 }) => {
+  const router = useRouter()
+  const { q: searchStr } = router.query
   const clickTheme = (): void => {
     if (localStorage.theme === 'light') {
       setTheme('dark')
@@ -82,9 +85,22 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }, [])
 
-  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>('search')
+  const startSearch = () => {
+    if (search !== '') {
+      void router.push({
+        pathname: '/search',
+        query: {
+          q: search
+        }
+      })
+      setSearch('')
+      setMenuType('search')
+    }
+  }
 
-  const [search, setSearch] = useState<string>('')
+  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>(searchStr !== undefined ? 'close' : 'search')
+
+  const [search, setSearch] = useState<string>(searchStr as string ?? '')
 
   return (
     <header
@@ -141,10 +157,17 @@ export const Header: React.FC<HeaderProps> = ({
           className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0 md:-top-4')}>
           <input
             className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                startSearch()
+              }
+            }}
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {
               setSearch(e.target.value)
             }}/>
-          <button className="search-icon absolute right-0"></button>
+          <button className="search-icon absolute right-0" onClick={() => {
+            startSearch()
+          }}></button>
         </div>
 
       </div>

@@ -8,22 +8,30 @@ import Main from '@/components/layout/main'
 import { type GetServerSideProps } from 'next'
 import { getHotList, getPostList } from '@/models/content'
 import Pagination from '@/components/common/pagination'
+import Breadcrumb from '@/components/common/breadcrumb'
+import cn from 'classnames'
+import { pageSize } from '@/utils/constants'
 
 export interface PageProps {
   list: any[]
   total: number
   hotList: HotList
+  description?: string
+  baseLink?: string
 }
-
-const pageSize = 7
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const pageNum: number = (context.params?.num as unknown as number) ?? 1
+  const search = context.query.q as string ?? ''
 
   const {
     list,
     total
-  } = await getPostList(pageNum, pageSize)
+  } = await getPostList({
+    pageNum,
+    pageSize,
+    search
+  })
   const hotList = await getHotList()
 
   return {
@@ -38,19 +46,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Page: React.FC<PageProps> = ({
   list,
   total,
-  hotList
+  hotList,
+  description,
+  baseLink = '/page/'
 }) => {
   const router = useRouter()
-  const { num = '1' } = router.query
-  const currentPage = parseInt(num as string)
+  const num = router.query.num ?? router.query.page
+  const search = router.query.q as string ?? ''
+  const currentPage = parseInt((num ?? '1') as string)
   const pageNum = Math.ceil((total ?? 0) / pageSize)
+  if (search !== '') {
+    baseLink = `/search?q=${search}&page=`
+    description = `包含关键字 ${search} 的文章`
+  }
 
   return <Main hotList={hotList}>
     <Head>
       <title>lyp123 - 做自己</title>
     </Head>
-    <div className="md:py-6 py-4 md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">
-      {(list)?.map(item => <div className="text-left w-full" key={item.slug as string}>
+    <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">
+      {(description != null) && <Breadcrumb items={[{ name: description }]}/>}
+      {list.length === 0 &&
+        <div className="text-center text-gray-500 dark:text-gray-400 w-[48rem] pt-48">暂无内容</div>}
+      {(list)?.map((item, index) => <div className={cn('text-left w-full', index === 0 && 'md:pt-4 mt-5')}
+                                         key={item.slug as string}>
         <div className="text-base font-bold dark:text-white">
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>{item.title}</Link>
         </div>
@@ -71,7 +90,7 @@ const Page: React.FC<PageProps> = ({
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
-      <Pagination pageNum={pageNum} currentPage={currentPage}/>
+      <Pagination pageNum={pageNum} currentPage={currentPage} baseLink={baseLink}/>
     </div>
   </Main>
 }

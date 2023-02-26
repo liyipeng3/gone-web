@@ -45,7 +45,8 @@ export const getPost = async (slug: string) => {
         include: {
           metas: {
             select: {
-              name: true
+              name: true,
+              slug: true
             }
           }
         },
@@ -75,7 +76,19 @@ export const incrementViews = async (cid: number) => {
   })
 }
 
-export const getPostList = async (pageNum: number, pageSize: number = 7, category?: string) => {
+interface getPostListParams {
+  pageNum: number
+  pageSize?: number
+  mid?: number
+  search?: string
+}
+
+export const getPostList: (postListParams: getPostListParams) => Promise<any> = async ({
+  pageNum,
+  pageSize = 7,
+  mid,
+  search = ''
+}) => {
   const data = await prisma.relationships.findMany({
     include: {
       contents: {
@@ -99,11 +112,21 @@ export const getPostList = async (pageNum: number, pageSize: number = 7, categor
     where: {
       metas: {
         type: 'category',
-        slug: category
+        mid
       },
       contents: {
         status: 'publish',
-        type: 'post'
+        type: 'post',
+        OR: [{
+          title: {
+            contains: search
+          }
+        },
+        {
+          text: {
+            contains: search
+          }
+        }]
       }
     },
     orderBy: {
@@ -114,10 +137,28 @@ export const getPostList = async (pageNum: number, pageSize: number = 7, categor
     skip: (pageNum - 1) * pageSize,
     take: pageSize
   })
+
   const total = await prisma.contents.count({
     where: {
       status: 'publish',
-      type: 'post'
+      type: 'post',
+      OR: [{
+        title: {
+          contains: search
+        }
+      },
+      {
+        text: {
+          contains: search
+        }
+      }],
+      relationships: {
+        some: {
+          metas: {
+            mid
+          }
+        }
+      }
     }
   })
 
