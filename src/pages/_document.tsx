@@ -8,6 +8,7 @@ export default function Document () {
     <Html className="dark">
       <Head>
         <meta name="theme-color" content="#ffffff"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
