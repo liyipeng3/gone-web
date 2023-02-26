@@ -64,10 +64,10 @@ const Page: React.FC<PageProps> = ({
     <Head>
       <title>lyp123 - 做自己</title>
     </Head>
-    <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl">
+    <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl md:w-auto w-screen">
       {(description != null) && <Breadcrumb items={[{ name: description }]}/>}
       {list.length === 0 &&
-        <div className="text-center text-gray-500 dark:text-gray-400 w-[48rem] pt-48">暂无内容</div>}
+        <div className="text-center text-gray-500 dark:text-gray-400 m-auto md:w-[48rem] pt-48">暂无内容</div>}
       {(list)?.map((item, index) => <div className={cn('text-left w-full', index === 0 && 'md:pt-4 mt-5')}
                                          key={item.slug as string}>
         <div className="text-base font-bold dark:text-white">
