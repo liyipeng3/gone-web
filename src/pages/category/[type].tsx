@@ -5,7 +5,7 @@ import Page from '@/pages/page/[num]'
 import prisma from '@/utils/prisma'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const pageNum: number = (context.query?.page as unknown as number) ?? 1
+  const pageNum: number = (context.query?.p as unknown as number) ?? 1
   const category: string = (context.params?.type as unknown as string)
   if (category === '') {
     return {
@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       total,
       hotList,
       description,
-      baseLink: `/category/${category}/?page=`
+      baseLink: `/category/${category}/?p=`
     }
   }
 }

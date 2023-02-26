@@ -32,7 +32,6 @@ export const Header: React.FC<HeaderProps> = ({
   menus = []
 }) => {
   const router = useRouter()
-  const { q: searchStr } = router.query
   const clickTheme = (): void => {
     if (localStorage.theme === 'light') {
       setTheme('dark')
@@ -98,9 +97,9 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }
 
-  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>(searchStr !== undefined ? 'close' : 'search')
+  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>('search')
 
-  const [search, setSearch] = useState<string>(searchStr as string ?? '')
+  const [search, setSearch] = useState<string>('')
 
   return (
     <header

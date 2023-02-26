@@ -21,7 +21,7 @@ export interface PageProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const pageNum: number = (context.params?.num as unknown as number) ?? 1
+  const pageNum: number = ((context.params?.num ?? context.query.p) as unknown as number) ?? 1
   const search = context.query.q as string ?? ''
 
   const {
@@ -51,12 +51,12 @@ const Page: React.FC<PageProps> = ({
   baseLink = '/page/'
 }) => {
   const router = useRouter()
-  const num = router.query.num ?? router.query.page
+  const num = router.query.num ?? router.query.p
   const search = router.query.q as string ?? ''
   const currentPage = parseInt((num ?? '1') as string)
   const pageNum = Math.ceil((total ?? 0) / pageSize)
   if (search !== '') {
-    baseLink = `/search?q=${search}&page=`
+    baseLink = `/search?q=${search}&p=`
     description = `包含关键字 ${search} 的文章`
   }
 
