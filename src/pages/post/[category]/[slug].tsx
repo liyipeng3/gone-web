@@ -70,7 +70,7 @@ const Content: React.FC<ContentProps> = ({
           name,
           href: `/category/${category as string}`
         }, { name: '正文' }]}/>
-        <h2 className="md:mb-2 md:mt-4 dark:text-white">{title}</h2>
+        <h2 className="md:mb-2 mt-4 dark:text-white">{title}</h2>
         <div className="text-xs mb-5 -mt-3 md:mt-3 my-3 text-gray-500 space-x-1 dark:text-gray-400">
           <span>{dayjs(new Date(created * 1000)).format('YYYY-MM-DD')}</span>
           <span>•</span>
