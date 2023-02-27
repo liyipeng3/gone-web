@@ -80,7 +80,7 @@ const Page: React.FC<PageProps> = ({
           <span className="text-gray-400">•</span>
           <span>{item.viewsNum}人阅读</span>
         </div>
-        <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl">
+        <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl break-all text-justify">
           <Link
             href={`/post/${item?.category as string}/${item?.slug as string}`}>
             {item.description !== '' ? item.description.length < 150 ? item.description : item.description as string + '...' : '暂无描述'}

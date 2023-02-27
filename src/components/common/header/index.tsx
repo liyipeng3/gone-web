@@ -153,9 +153,9 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
         <div
-          className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'close' ? 'md:top-4 opacity-100 ' : '-mt-10 opacity-0 md:-top-4')}>
+          className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'close' ? 'md:translate-y-1 opacity-100 ' : '-translate-y-4 opacity-0 md:-translate-y-3')}>
           <input
-            className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent"
+            className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent appearance-none outline-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 startSearch()
