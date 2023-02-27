@@ -73,7 +73,7 @@ const Page: React.FC<PageProps> = ({
         <div className="text-base font-bold dark:text-white">
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>{item.title}</Link>
         </div>
-        <div className="text-xs text-gray-500 space-x-2 mt-2 dark:text-gray-400">
+        <div className="text-xs text-gray-500 space-x-1.5 mt-2 dark:text-gray-400">
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
           <span className="text-gray-400">•</span>
           <span>{item.name}</span>
