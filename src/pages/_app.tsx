@@ -5,6 +5,7 @@ import NextApp, { type AppContext, type AppProps } from 'next/app'
 import React, { useEffect } from 'react'
 import { Layout } from '@/components/layout'
 import prisma from '@/utils/prisma'
+import Head from 'next/head'
 
 interface CustomAppProps {
   visitTimes: number
@@ -28,6 +29,9 @@ const App: React.FC<AppProps & CustomAppProps> & { getInitialProps: any } = ({
 
   return (
     <Layout visitTimes={visitTimes}>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+      </Head>
       <Component {...pageProps}/>
     </Layout>
   )
