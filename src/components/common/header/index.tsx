@@ -1,4 +1,4 @@
-import React, { Fragment, type ReactNode, useState } from 'react'
+import React, { Fragment, type ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Menu, Transition } from '@headlessui/react'
 import cn from 'classnames'
@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 
 interface HeaderProps {
   logo?: string | ReactNode
-  menus?: Array<{ name: string, path: string, children?: Array<{ name: string, path: string }> }>
+  menus?: Array<{ name: string, id?: string, path?: string, children?: Array<{ name: string, path: string }> }>
 }
 
 function updateTheme () {
@@ -28,9 +28,54 @@ function updateTheme () {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  logo = '',
-  menus = []
+  logo = ''
 }) => {
+  const defaultMenus = [{
+    name: '首页',
+    id: 'home',
+    path: '/'
+  }, {
+    name: '分类',
+    id: 'category',
+    children: []
+  }, {
+    name: '归档',
+    id: 'archive'
+  },
+  {
+    name: '留言',
+    id: 'message'
+  },
+  {
+    name: '友链',
+    id: 'link'
+  }, {
+    name: '关于',
+    id: 'about'
+  }]
+
+  const [menus, setMenus] = useState<Array<{ name: string, id?: string, path?: string, children?: Array<{ name: string, path: string }> }>>(defaultMenus)
+
+  useEffect(() => {
+    void fetch('/api/category')
+      .then(async res => await res.json())
+      .then(res => {
+        setMenus(menus => menus.map(item => {
+          if (item.id === 'category') {
+            return {
+              ...item,
+              children: res.map((item: { name: string, slug: string }) => {
+                return {
+                  name: item.name,
+                  path: `/category/${item.slug}`
+                }
+              })
+            }
+          }
+          return item
+        }))
+      })
+  }, [])
   const router = useRouter()
   const clickTheme = (): void => {
     if (localStorage.theme === 'light') {
@@ -149,7 +194,8 @@ export const Header: React.FC<HeaderProps> = ({
                   </Transition>
                 </Menu>
                 )
-              : <Link key={menu.name} className="hover:underline text" href={menu.path}>{menu.name}</Link>
+              : <Link key={menu.name} className="hover:underline text"
+                      href={menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
           })}
         </div>
         <div

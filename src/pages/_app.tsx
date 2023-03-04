@@ -1,17 +1,16 @@
 import '@/styles/globals.scss'
 import 'highlight.js/scss/github-dark-dimmed.scss'
 
-import NextApp, { type AppContext, type AppProps } from 'next/app'
+import { type AppProps } from 'next/app'
 import React, { useEffect } from 'react'
 import { Layout } from '@/components/layout'
-import prisma from '@/utils/prisma'
 import Head from 'next/head'
 
 interface CustomAppProps {
   visitTimes: number
 }
 
-const App: React.FC<AppProps & CustomAppProps> & { getInitialProps: any } = ({
+const App: React.FC<AppProps & CustomAppProps> = ({
   Component,
   pageProps,
   visitTimes
@@ -20,7 +19,7 @@ const App: React.FC<AppProps & CustomAppProps> & { getInitialProps: any } = ({
     const v = sessionStorage.getItem('_v')
     if (v == null) {
       sessionStorage.setItem('_v', '1')
-      void fetch('/api/v', {
+      void fetch('/api/_v', {
         method: 'GET'
       }).then(_ => undefined)
     }
@@ -28,30 +27,14 @@ const App: React.FC<AppProps & CustomAppProps> & { getInitialProps: any } = ({
   }, [])
 
   return (
-    <Layout visitTimes={visitTimes}>
+    <Layout>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+        <title></title>
       </Head>
       <Component {...pageProps}/>
     </Layout>
   )
-}
-
-App.getInitialProps = async (context: AppContext) => {
-  const ctx = await NextApp.getInitialProps(context)
-  const visitTimesData = await prisma.options?.findFirst({
-    where: {
-      name: 'visitTimes'
-    },
-    select: {
-      value: true
-    }
-  })
-
-  return {
-    ...ctx,
-    visitTimes: visitTimesData?.value ?? 0
-  }
 }
 
 export default App

@@ -5,51 +5,17 @@ import { Footer } from '@/components/common/footer'
 
 interface LayoutProps {
   children: ReactNode
-  visitTimes?: number
   hotList?: any[]
 }
 
 export const Layout: React.FC<LayoutProps> = ({
-  children,
-  visitTimes
+  children
 }) => {
-  const menus = [{
-    name: '首页',
-    path: '/'
-  }, {
-    name: '分类',
-    path: '/category',
-    children: [{
-      name: '生活',
-      path: '/category/life'
-    }, {
-      name: '技术',
-      path: '/category/tech'
-    }, {
-      name: '分享',
-      path: '/category/share'
-    }]
-  }, {
-    name: '归档',
-    path: '/archive'
-  },
-  {
-    name: '留言',
-    path: '/message'
-  },
-  {
-    name: '友链',
-    path: '/link'
-  }, {
-    name: '关于',
-    path: '/about'
-  }]
-
   return (
     <div className={cn('document w-full dark:text-white dark:bg-dark antialiased')}>
-      <Header logo="lyp123" menus={menus}/>
+      <Header logo="lyp123"/>
       {children}
-      <Footer visitTimes={visitTimes}/>
+      <Footer/>
     </div>
   )
 }

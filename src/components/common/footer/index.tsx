@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useEffect } from 'react'
 import duration from 'dayjs/plugin/duration'
 import { AiOutlineGithub } from 'react-icons/ai'
 import { getDurationTime } from '@/utils'
@@ -9,13 +9,18 @@ dayjs.extend(duration)
 
 interface FooterProps {
   logo?: string
-  visitTimes?: number
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  logo = '',
-  visitTimes = 0
+  logo = ''
 }) => {
+  const [visitTimes, setVisitTimes] = React.useState(0)
+
+  useEffect(() => {
+    void fetch('/api/v').then(async res => await res.json()).then(res => {
+      setVisitTimes(res.visitTimes)
+    })
+  }, [])
   const establishTime = dayjs('2019-03-27 00:00:00')
   const now = dayjs()
 

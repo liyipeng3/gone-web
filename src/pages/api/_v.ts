@@ -6,14 +6,14 @@ export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const visitTimesData = await prisma.options?.findFirst({
+  await prisma.options.update({
     where: {
       name: 'visitTimes'
     },
-    select: {
-      value: true
+    data: {
+      value: {
+        increment: 1
+      }
     }
   })
-  const visitTimes = visitTimesData?.value ?? 0
-  res.status(200).json({ visitTimes })
 }
