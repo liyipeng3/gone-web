@@ -14,7 +14,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   logo = ''
 }) => {
-  const [visitTimes, setVisitTimes] = React.useState(0)
+  const [visitTimes, setVisitTimes] = React.useState(null)
 
   useEffect(() => {
     void fetch('/api/v').then(async res => await res.json()).then(res => {
@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
         <div className="mt-1 flex flex-col space-y-1 md:flex-row md:space-x-1 md:items-baseline">
           <span className="flex space-x-1">
-            <span>本站总访问量 {visitTimes} 次</span>
+            <span>本站总访问量 {visitTimes ?? '-'} 次</span>
             <span>|</span>
             <span> 运行时间: {getDurationTime(establishTime)} </span>
           </span>
