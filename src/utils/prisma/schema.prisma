@@ -30,21 +30,18 @@ model comments {
 
 model contents {
   cid           Int             @id @default(autoincrement()) @db.UnsignedInt
+  aid           Int?            @default(1)
   title         String?         @db.VarChar(200)
   slug          String?         @unique(map: "slug") @db.VarChar(200)
   created       Int?            @default(0) @db.UnsignedInt
   modified      Int?            @default(0) @db.UnsignedInt
   text          String?         @db.LongText
   order         Int?            @default(0) @db.UnsignedInt
-  authorId      Int?            @default(0) @db.UnsignedInt
-  template      String?         @db.VarChar(32)
   type          String?         @default("post") @db.VarChar(16)
   status        String?         @default("publish") @db.VarChar(16)
   password      String?         @db.VarChar(32)
   commentsNum   Int?            @default(0) @db.UnsignedInt
   allowComment  String?         @default("0") @db.Char(1)
-  allowPing     String?         @default("0") @db.Char(1)
-  allowFeed     String?         @default("0") @db.Char(1)
   parent        Int?            @default(0) @db.UnsignedInt
   viewsNum      Int?            @default(0)
   likesNum      Int?            @default(0)
