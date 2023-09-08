@@ -54,7 +54,13 @@ export const Header: React.FC<HeaderProps> = ({
     id: 'about'
   }]
 
-  const [menus, setMenus] = useState<Array<{ name: string, id?: string, path?: string, children?: Array<{ name: string, path: string }> }>>(defaultMenus)
+  const [menus, setMenus] = useState<Array<{
+    name: string
+    id?: string
+    path?: string
+    children?: Array<{ name: string, path: string }>
+  }>>(defaultMenus)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     void fetch('/api/category')
@@ -207,6 +213,8 @@ export const Header: React.FC<HeaderProps> = ({
                 startSearch()
               }
             }}
+            ref={inputRef}
+            autoFocus
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {
               setSearch(e.target.value)
             }}/>
@@ -218,6 +226,9 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
       <div className="flex justify-center items-center space-x-3 md:ml-8 md:translate-y-[3%]">
         <div className={cn(menuType, 'md:menu')} onClick={() => {
+          if (menuType === 'search') {
+            inputRef.current?.focus()
+          }
           setMenuType(menuType === 'close' ? 'search' : 'close')
         }}>
           <button className="nav-icon relative translate-y-[1%]">
