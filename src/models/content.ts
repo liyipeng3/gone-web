@@ -1,7 +1,8 @@
 import prisma from '@/utils/prisma'
 import { marked } from 'marked'
+import { type HotList } from '@/types'
 
-export const getHotList = async () => {
+export const getHotList = async (): Promise<HotList> => {
   const hotData = await prisma.relationships.findMany({
     include: {
       contents: {
@@ -35,7 +36,7 @@ export const getHotList = async () => {
   return hotData.map(item => ({
     ...item.contents,
     category: item.metas.slug
-  }))
+  })) as HotList
 }
 
 export const getPost = async (slug: string) => {

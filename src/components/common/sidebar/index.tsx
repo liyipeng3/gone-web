@@ -1,3 +1,4 @@
+'use client'
 import { type FC, useEffect, useState } from 'react'
 import cn from 'classnames'
 import Link from 'next/link'

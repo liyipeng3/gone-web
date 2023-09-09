@@ -1,10 +1,11 @@
+'use client'
 import React, { Fragment, type ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Menu, Transition } from '@headlessui/react'
 import cn from 'classnames'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 interface HeaderProps {
   logo?: string | ReactNode
@@ -137,12 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const startSearch = () => {
     if (search !== '') {
-      void router.push({
-        pathname: '/search',
-        query: {
-          q: search
-        }
-      })
+      router.push(`/search?q=${search}`)
       setSearch('')
       setMenuType('search')
     }

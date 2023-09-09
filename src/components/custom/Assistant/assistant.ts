@@ -132,7 +132,7 @@ export const assistant = function (prop: {
     action.touch()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    window.loadlive2d('assistant', prop.model)
+    window?.loadlive2d('assistant', prop.model)
   }
 
   const hitokoto = async () => {

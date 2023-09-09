@@ -1,3 +1,4 @@
+'use client'
 import dayjs from 'dayjs'
 import React, { useEffect } from 'react'
 import duration from 'dayjs/plugin/duration'
