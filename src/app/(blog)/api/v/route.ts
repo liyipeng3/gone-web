@@ -1,10 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '@/utils/prisma'
+import { NextResponse } from 'next/server'
 
-export default async function handler (
-  req: NextApiRequest,
-  res: NextApiResponse
+export async function GET (
+  request: Request
 ) {
   const visitTimesData = await prisma.options?.findFirst({
     where: {
@@ -15,5 +14,6 @@ export default async function handler (
     }
   })
   const visitTimes = visitTimesData?.value ?? 0
-  res.status(200).json({ visitTimes })
+
+  return NextResponse.json({ visitTimes })
 }
