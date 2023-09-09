@@ -3,3 +3,8 @@ export type HotList = Array<{
   category: string
   slug: string
 }>
+
+export interface NextPageProps {
+  searchParams?: Record<string, string | string[] | undefined>
+  params?: Record<string, string>
+}

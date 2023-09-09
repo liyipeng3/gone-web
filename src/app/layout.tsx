@@ -1,7 +1,7 @@
-'use client'
 import React from 'react'
 import '@/styles/globals.scss'
 import 'highlight.js/scss/github-dark-dimmed.scss'
+import Script from 'next/script'
 
 export default function RootLayout ({
   // Layouts must accept a children prop.
@@ -30,6 +30,7 @@ export default function RootLayout ({
               `
         }}
       />
+      <Script src="/lib/l2d.js" strategy="beforeInteractive" />
     </head>
     <body>
     {children}

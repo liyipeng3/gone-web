@@ -11,13 +11,13 @@ import { pageSize } from '@/utils/constants'
 import { getPagePostList } from '@/services/post'
 
 export interface PageProps {
-  list: any[]
-  total: number
-  hotList: HotList
+  list?: any[]
+  total?: number
+  hotList?: HotList
   description?: string
   baseLink?: string
   searchParams?: Record<string, string | string[] | undefined>
-  params?: Record<string, any>
+  params?: Record<string, string>
 }
 
 const Page: React.FC<PageProps> = async ({
