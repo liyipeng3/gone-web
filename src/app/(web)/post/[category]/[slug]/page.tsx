@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import Main from '@/components/layout/main'
 import Breadcrumb from '@/components/common/breadcrumb'
 import { getPagePostInfo } from '@/services/post'
-import PostView from '@/components/custom/Post'
+import PostView from '@/components/custom/View/post'
 
 const Content: React.FC<{ params: { slug: string } }> = async (
   { params }) => {

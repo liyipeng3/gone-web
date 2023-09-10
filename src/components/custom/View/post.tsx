@@ -2,13 +2,13 @@
 import type React from 'react'
 import { useEffect } from 'react'
 
-interface ClientProps {
+interface PostViewProps {
   cid: number
 }
-const PostView: React.FC<ClientProps> = ({ cid }) => {
+const PostView: React.FC<PostViewProps> = ({ cid }) => {
   useEffect(() => {
     void fetch('/api/post/v/' + cid).then(() => {})
-  }, [])
+  }, [cid])
 
   return null
 }
