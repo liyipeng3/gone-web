@@ -1,4 +1,3 @@
-'use client'
 import React, { type FC, useEffect } from 'react'
 import { assistant } from '@/components/custom/Assistant/assistant'
 
