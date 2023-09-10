@@ -1,4 +1,3 @@
-'use server'
 import { cache } from 'react'
 import { type HotList } from '@/types'
 import { getHotList, getPost, getPostList, incrementViews } from '@/models/content'
@@ -116,8 +115,6 @@ export const getPagePostInfo = async ({ slug }: { slug: string }): Promise<{
   viewsNum: number
   category?: string
 }> => {
-  'use server'
-  // const slug: string = context.params?.slug as string ?? ''
   const post = await getPost(slug)
   if (post === null) {
     throw new Error('not found')
