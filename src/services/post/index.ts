@@ -1,9 +1,8 @@
 import { cache } from 'react'
 import { type HotList } from '@/types'
-import { getHotList, getPost, getPostList, incrementViews } from '@/models/content'
+import { getHotList, getPost, getPostList } from '@/models/content'
 import marked from '@/utils/marked'
 import prisma from '@/utils/prisma'
-import { cookies } from 'next/headers'
 
 export const getPagePostList = cache(async ({
   pageNum = 1,
@@ -57,7 +56,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   }
 })
 
-export const getPageCategoryPostList = async ({
+export const getPageCategoryPostList = cache(async ({
   pageNum = 1,
   category = ''
 }): Promise<{
@@ -104,9 +103,9 @@ export const getPageCategoryPostList = async ({
     description,
     baseLink: `/category/${category}/?p=`
   }
-}
+})
 
-export const getPagePostInfo = async ({ slug }: { slug: string }): Promise<{
+export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise<{
   title: string
   content: string
   created: number
@@ -114,6 +113,7 @@ export const getPagePostInfo = async ({ slug }: { slug: string }): Promise<{
   hotList: HotList
   viewsNum: number
   category?: string
+  cid?: number
 }> => {
   const post = await getPost(slug)
   if (post === null) {
@@ -121,16 +121,6 @@ export const getPagePostInfo = async ({ slug }: { slug: string }): Promise<{
   }
   const content = marked.parse(post.text ?? '') as string
   const hotList = await getHotList()
-  const cookiesFn = cookies()
-  const postView = cookiesFn.get('postView')?.value
-  const views = new Set((postView != null) ? postView.split(',') : [])
-  const cid = String(post.cid)
-  if (!views.has(cid)) {
-    await incrementViews(post.cid)
-    views.add(String(post.cid))
-    // cookiesFn.set('postView', Array.from(views).join(','))
-    // cookies.res.setHeader('set-cookie', `postView=${Array.from(views).join(',')}`)
-  }
 
   return {
     title: post.title as string,
@@ -139,6 +129,7 @@ export const getPagePostInfo = async ({ slug }: { slug: string }): Promise<{
     name: post.relationships[0].metas.name as string,
     category: post.relationships[0].metas.slug as string,
     viewsNum: post.viewsNum as number,
-    hotList
+    hotList,
+    cid: post.cid
   }
-}
+})

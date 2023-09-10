@@ -1,4 +1,4 @@
-import Page from '@/app/(blog)/page/[num]/page'
+import Page from '@/app/(web)/page/[num]/page'
 import React from 'react'
 import { getPageCategoryPostList } from '@/services/post'
 

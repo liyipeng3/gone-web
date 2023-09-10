@@ -5,16 +5,7 @@ import dayjs from 'dayjs'
 import Main from '@/components/layout/main'
 import Breadcrumb from '@/components/common/breadcrumb'
 import { getPagePostInfo } from '@/services/post'
-//
-// interface ContentProps {
-//   title: string
-//   content: string
-//   created: number
-//   name: string
-//   hotList: HotList
-//   viewsNum: number
-//   category?: string
-// }
+import PostView from '@/components/custom/Post'
 
 const Content: React.FC<{ params: { slug: string } }> = async (
   { params }) => {
@@ -25,8 +16,10 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     name,
     category,
     viewsNum,
-    hotList
+    hotList,
+    cid
   } = await getPagePostInfo({ slug: params.slug })
+
   return (
     <Main hotList={hotList}>
       <Head>
@@ -47,6 +40,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
         </div>
         <Prose content={content}/>
       </article>
+      <PostView cid={cid as number} />
     </Main>
   )
 }
