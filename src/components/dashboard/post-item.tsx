@@ -1,8 +1,7 @@
 import Link from 'next/link'
-
-import { formatDate } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PostOperations } from '@/components/dashboard/post-operations'
+import dayjs from 'dayjs'
 
 interface PostItemProps {
   post: any
@@ -20,7 +19,7 @@ export function PostItem ({ post }: PostItemProps) {
         </Link>
         <div>
           <p className="text-sm text-muted-foreground">
-            {formatDate(post.created)}
+            {dayjs(post.created * 1000).format('YYYY年MM月DD日 HH:mm')}
           </p>
         </div>
       </div>
