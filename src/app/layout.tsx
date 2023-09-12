@@ -2,6 +2,20 @@ import React from 'react'
 import '@/styles/globals.scss'
 import 'highlight.js/scss/github-dark-dimmed.scss'
 import Script from 'next/script'
+import { cn } from '@/lib/utils'
+import { Inter as FontSans } from 'next/font/google'
+import localFont from 'next/font/local'
+
+const fontSans = FontSans({
+  subsets: ['latin'],
+  variable: '--font-sans'
+})
+
+// Font files can be colocated inside of `pages`
+const fontHeading = localFont({
+  src: '../assets/fonts/CalSans-SemiBold.woff2',
+  variable: '--font-heading'
+})
 
 export default function RootLayout ({
   // Layouts must accept a children prop.
@@ -30,9 +44,13 @@ export default function RootLayout ({
               `
         }}
       />
-      <Script src="/lib/l2d.js" strategy="beforeInteractive" />
+      <Script src="/lib/l2d.js" strategy="beforeInteractive"/>
     </head>
-    <body>
+    <body className={cn(
+      'min-h-screen bg-background font-sans antialiased',
+      fontSans.variable,
+      fontHeading.variable
+    )}>
     {children}
     </body>
     </html>

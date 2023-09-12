@@ -7,7 +7,7 @@ import Main from '@/components/layout/main'
 import Pagination from '@/components/common/pagination'
 import Breadcrumb from '@/components/common/breadcrumb'
 import cn from 'classnames'
-import { pageSize } from '@/utils/constants'
+import { pageSize } from '@/lib/constants'
 import { getPagePostList } from '@/services/post'
 
 export interface PageProps {
@@ -49,7 +49,7 @@ const Page: React.FC<PageProps> = async ({
     <Head>
       <title>lyp123 - 做自己</title>
     </Head>
-    <div className='hidden mt-4'/>
+    <div className="hidden mt-4"/>
     <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl md:w-auto w-screen">
       {(description != null) && <Breadcrumb items={[{ name: description }]}/>}
       {list.length === 0 &&

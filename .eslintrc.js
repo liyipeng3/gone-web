@@ -21,6 +21,8 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@next/next/no-before-interactive-script-outside-document': 'off'
+    '@next/next/no-before-interactive-script-outside-document': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
   }
 }

@@ -5,7 +5,7 @@ import { type NextPageProps } from '@/types'
 
 const Search: React.FC<NextPageProps> = (props) => {
   return (
-        <Page {...props} />
+    <Page {...props} />
   )
 }
 export default Search

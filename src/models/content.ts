@@ -1,4 +1,4 @@
-import prisma from '@/utils/prisma'
+import prisma from '@/lib/prisma'
 import { marked } from 'marked'
 import { type HotList } from '@/types'
 
