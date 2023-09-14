@@ -123,11 +123,11 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
             contains: search
           }
         },
-          {
-            text: {
-              contains: search
-            }
-          }]
+        {
+          text: {
+            contains: search
+          }
+        }]
       }
     },
     orderBy: {
@@ -148,11 +148,11 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
           contains: search
         }
       },
-        {
-          text: {
-            contains: search
-          }
-        }],
+      {
+        text: {
+          contains: search
+        }
+      }],
       relationships: {
         some: {
           metas: {

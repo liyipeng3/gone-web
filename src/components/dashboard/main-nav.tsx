@@ -46,7 +46,7 @@ export function MainNav ({ items, children }: MainNavProps) {
               </Link>
             ))}
           </nav>
-        )
+          )
         : null}
       <button
         className="flex items-center space-x-2 md:hidden"
