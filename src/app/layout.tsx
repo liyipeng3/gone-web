@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import type { Metadata } from 'next'
+import { Toaster } from '@/components/ui/toaster'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -60,6 +61,7 @@ export default function RootLayout ({
       fontHeading.variable
     )}>
     {children}
+    <Toaster />
     </body>
     </html>
   )

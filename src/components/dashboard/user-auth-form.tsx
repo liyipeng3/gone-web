@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -31,6 +31,7 @@ export function UserAuthForm ({
   } = useForm<FormData>({
     resolver: zodResolver(userAuthSchema)
   })
+  const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const searchParams = useSearchParams()
 
@@ -39,27 +40,24 @@ export function UserAuthForm ({
 
     const signInResult = await signIn('credentials', {
       redirect: false,
-      callbackUrl: searchParams?.get('from') ?? '/dashboard',
+      // callbackUrl: searchParams?.get('from') ?? '/dashboard',
       username: data.username,
       password: data.password
     })
 
-    console.log(signInResult)
-
     setIsLoading(false)
+
+    console.log(signInResult)
 
     if (signInResult?.error) {
       return toast({
-        title: 'Something went wrong.',
-        description: 'Your sign in request failed. Please try again.',
+        title: 'Check your account and password',
+        description: 'account or password is wrong.',
         variant: 'destructive'
       })
+    } else {
+      router.push(searchParams?.get('from') ?? '/dashboard')
     }
-
-    return toast({
-      title: 'Check your email',
-      description: 'We sent you a login link. Be sure to check your spam too.'
-    })
   }
 
   return (
