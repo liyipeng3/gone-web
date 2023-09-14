@@ -5,6 +5,7 @@ import Script from 'next/script'
 import { cn } from '@/lib/utils'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
+import type { Metadata } from 'next'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -16,6 +17,13 @@ const fontHeading = localFont({
   src: '../assets/fonts/CalSans-SemiBold.woff2',
   variable: '--font-heading'
 })
+
+export const metadata: Metadata = {
+  title: {
+    default: 'lyp123',
+    template: '%s - lyp123'
+  }
+}
 
 export default function RootLayout ({
   // Layouts must accept a children prop.

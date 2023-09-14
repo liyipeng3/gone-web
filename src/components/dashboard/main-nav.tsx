@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 
-import { type MainNavItem } from 'types'
+import { type MainNavItem } from '@/types'
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
@@ -46,7 +46,7 @@ export function MainNav ({ items, children }: MainNavProps) {
               </Link>
             ))}
           </nav>
-          )
+        )
         : null}
       <button
         className="flex items-center space-x-2 md:hidden"

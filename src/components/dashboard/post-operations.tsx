@@ -3,7 +3,6 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { type Post } from '@prisma/client'
 
 import {
   AlertDialog,
@@ -42,7 +41,7 @@ async function deletePost (postId: string) {
 }
 
 interface PostOperationsProps {
-  post: Pick<Post, 'id' | 'title'>
+  post: any
 }
 
 export function PostOperations ({ post }: PostOperationsProps) {

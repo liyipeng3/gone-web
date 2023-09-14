@@ -13,8 +13,8 @@ const SelectGroup = SelectPrimitive.Group
 const SelectValue = SelectPrimitive.Value
 
 const SelectTrigger = React.forwardRef<
-React.ElementRef<typeof SelectPrimitive.Trigger>,
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({
   className,
   children,
@@ -37,8 +37,8 @@ React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectContent = React.forwardRef<
-React.ElementRef<typeof SelectPrimitive.Content>,
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+  React.ElementRef<typeof SelectPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({
   className,
   children,
@@ -71,8 +71,8 @@ React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectLabel = React.forwardRef<
-React.ElementRef<typeof SelectPrimitive.Label>,
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
+  React.ElementRef<typeof SelectPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({
   className,
   ...props
@@ -86,8 +86,8 @@ React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
 const SelectItem = React.forwardRef<
-React.ElementRef<typeof SelectPrimitive.Item>,
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+  React.ElementRef<typeof SelectPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({
   className,
   children,
@@ -113,8 +113,8 @@ React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
 const SelectSeparator = React.forwardRef<
-React.ElementRef<typeof SelectPrimitive.Separator>,
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+  React.ElementRef<typeof SelectPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({
   className,
   ...props

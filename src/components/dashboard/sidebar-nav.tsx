@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { type SidebarNavItem } from 'types'
+import { type SidebarNavItem } from '@/types'
 import { cn } from '@/lib/utils'
 
 export interface DocsSidebarNavProps {
@@ -24,12 +24,12 @@ export function DocsSidebarNav ({ items }: DocsSidebarNavProps) {
             {item.items
               ? (
                 <DocsSidebarNavItems items={item.items} pathname={pathname}/>
-                )
+              )
               : null}
           </div>
         ))}
       </div>
-      )
+    )
     : null
 }
 
@@ -62,14 +62,14 @@ export function DocsSidebarNavItems ({
               >
                 {item.title}
               </Link>
-              )
+            )
             : (
               <span key={index} className="flex w-full cursor-not-allowed items-center rounded-md p-2 opacity-60">
             {item.title}
           </span>
-              )
+            )
         )}
       </div>
-      )
+    )
     : null
 }

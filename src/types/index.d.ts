@@ -14,17 +14,15 @@ export interface NavItem {
 
 export type MainNavItem = NavItem
 
-export type SidebarNavItem = {
+export interface SidebarNavItem {
   title: string
-  disabled?: boolean
   external?: boolean
   icon?: keyof typeof Icons
-} & (
-  | {
-    href: string
-    items?: never
-  }
-)
+  href?: string
+  disabled?: boolean
+  items?: Array<{ title: string, href: string, disabled?: boolean }>
+
+}
 
 export interface SiteConfig {
   name: string
@@ -48,10 +46,4 @@ export interface MarketingConfig {
 export interface DashboardConfig {
   mainNav: MainNavItem[]
   sidebarNav: SidebarNavItem[]
-}
-
-export interface SubscriptionPlan {
-  name: string
-  description: string
-  stripePriceId: string
 }

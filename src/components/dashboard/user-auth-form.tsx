@@ -38,7 +38,7 @@ export function UserAuthForm ({
     setIsLoading(true)
 
     const signInResult = await signIn('credentials', {
-      redirect: true,
+      redirect: false,
       callbackUrl: searchParams?.get('from') ?? '/dashboard',
       username: data.username,
       password: data.password
@@ -48,7 +48,7 @@ export function UserAuthForm ({
 
     setIsLoading(false)
 
-    if (!signInResult?.ok) {
+    if (signInResult?.error) {
       return toast({
         title: 'Something went wrong.',
         description: 'Your sign in request failed. Please try again.',

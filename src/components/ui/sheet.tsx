@@ -25,7 +25,7 @@ const portalVariants = cva('fixed inset-0 z-50 flex', {
 
 interface SheetPortalProps
   extends SheetPrimitive.DialogPortalProps,
-  VariantProps<typeof portalVariants> {
+    VariantProps<typeof portalVariants> {
 }
 
 const SheetPortal = ({
@@ -41,8 +41,8 @@ const SheetPortal = ({
 SheetPortal.displayName = SheetPrimitive.Portal.displayName
 
 const SheetOverlay = React.forwardRef<
-React.ElementRef<typeof SheetPrimitive.Overlay>,
-React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+  React.ElementRef<typeof SheetPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
 >(({
   className,
   children,
@@ -149,12 +149,12 @@ const sheetVariants = cva(
 
 export interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-  VariantProps<typeof sheetVariants> {
+    VariantProps<typeof sheetVariants> {
 }
 
 const SheetContent = React.forwardRef<
-React.ElementRef<typeof SheetPrimitive.Content>,
-DialogContentProps
+  React.ElementRef<typeof SheetPrimitive.Content>,
+  DialogContentProps
 >(({
   position,
   size,
@@ -212,8 +212,8 @@ const SheetFooter = ({
 SheetFooter.displayName = 'SheetFooter'
 
 const SheetTitle = React.forwardRef<
-React.ElementRef<typeof SheetPrimitive.Title>,
-React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
+  React.ElementRef<typeof SheetPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 >(({
   className,
   ...props
@@ -227,8 +227,8 @@ React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 SheetTitle.displayName = SheetPrimitive.Title.displayName
 
 const SheetDescription = React.forwardRef<
-React.ElementRef<typeof SheetPrimitive.Description>,
-React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
+  React.ElementRef<typeof SheetPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
 >(({
   className,
   ...props

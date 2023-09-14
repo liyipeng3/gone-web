@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { type SidebarNavItem } from 'types'
+import { type SidebarNavItem } from '@/types'
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
 
@@ -21,7 +21,7 @@ export function DashboardNav ({ items }: DashboardNavProps) {
   return (
     <nav className="grid items-start gap-2">
       {items.map((item, index) => {
-        const Icon = Icons[item.icon || 'arrowRight']
+        const Icon = Icons[item.icon ?? 'arrowRight']
         return (
           item.href && (
             <Link key={index} href={item.disabled ? '/' : item.href}>

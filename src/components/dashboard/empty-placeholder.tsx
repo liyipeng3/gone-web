@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
+import { type LucideProps } from 'lucide-react'
 
 interface EmptyPlaceholderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
@@ -35,7 +36,7 @@ EmptyPlaceholder.Icon = function EmptyPlaceHolderIcon ({
   name,
   className,
   ...props
-}: EmptyPlaceholderIconProps) {
+}: EmptyPlaceholderIconProps & LucideProps) {
   const Icon = Icons[name]
 
   if (!Icon) {
@@ -62,14 +63,14 @@ EmptyPlaceholder.Title = function EmptyPlaceholderTitle ({
   )
 }
 
-interface EmptyPlacholderDescriptionProps
+interface EmptyPlaceholderDescriptionProps
   extends React.HTMLAttributes<HTMLParagraphElement> {
 }
 
 EmptyPlaceholder.Description = function EmptyPlaceholderDescription ({
   className,
   ...props
-}: EmptyPlacholderDescriptionProps) {
+}: EmptyPlaceholderDescriptionProps) {
   return (
     <p
       className={cn(

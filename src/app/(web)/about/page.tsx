@@ -4,6 +4,11 @@ import Head from 'next/head'
 import Breadcrumb from '@/components/common/breadcrumb'
 import Prose from '@/components/common/prose'
 import { getPagePost } from '@/services/post'
+import { type Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '关于'
+}
 
 const Page: React.FC = async () => {
   const {

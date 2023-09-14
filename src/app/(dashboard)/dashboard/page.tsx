@@ -45,7 +45,7 @@ export default async function DashboardPage () {
                 <PostItem key={post.cid} post={post}/>
               ))}
             </div>
-            )
+          )
           : (
             <EmptyPlaceholder>
               <EmptyPlaceholder.Icon name="post"/>
@@ -55,7 +55,7 @@ export default async function DashboardPage () {
               </EmptyPlaceholder.Description>
               <PostCreateButton variant="outline"/>
             </EmptyPlaceholder>
-            )}
+          )}
       </div>
     </DashboardShell>
   )

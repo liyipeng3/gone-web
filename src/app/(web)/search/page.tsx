@@ -1,9 +1,8 @@
 // export { getServerSideProps } from '../page/[num]'
 import Page from '@/app/(web)/page/[num]/page'
 import React from 'react'
-import { type NextPageProps } from '@/types'
 
-const Search: React.FC<NextPageProps> = (props) => {
+const Search: React.FC<any> = (props) => {
   return (
     <Page {...props} />
   )

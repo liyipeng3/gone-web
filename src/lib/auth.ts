@@ -37,8 +37,6 @@ export const authOptions: NextAuthOptions = {
             password: bcryptjs.hashSync(credentials?.password as string, process.env.SALT as string)
           }
         })
-        console.log('===', user)
-
         // If no error and we have user data, return it
         if (user !== null) {
           return {
@@ -55,7 +53,6 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session ({ token, session }) {
-      console.log('===', token)
       if (token !== null) {
         session.user.id = token.id
         session.user.name = token.name

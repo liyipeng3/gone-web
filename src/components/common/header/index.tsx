@@ -43,17 +43,17 @@ export const Header: React.FC<HeaderProps> = ({
     name: '归档',
     id: 'archive'
   },
-  {
-    name: '留言',
-    id: 'message'
-  },
-  {
-    name: '友链',
-    id: 'link'
-  }, {
-    name: '关于',
-    id: 'about'
-  }]
+    {
+      name: '留言',
+      id: 'message'
+    },
+    {
+      name: '友链',
+      id: 'link'
+    }, {
+      name: '关于',
+      id: 'about'
+    }]
 
   const [menus, setMenus] = useState<Array<{
     name: string
@@ -195,7 +195,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </Menu.Items>
                   </Transition>
                 </Menu>
-                )
+              )
               : <Link key={menu.name} className="hover:underline text"
                       href={menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
           })}
@@ -212,8 +212,8 @@ export const Header: React.FC<HeaderProps> = ({
             ref={inputRef}
             autoFocus
             placeholder="请输入关键词搜索" value={search} onChange={(e) => {
-              setSearch(e.target.value)
-            }}/>
+            setSearch(e.target.value)
+          }}/>
           <button className="search-icon absolute right-0" onClick={() => {
             startSearch()
           }}></button>
