@@ -23,7 +23,7 @@ export function PostItem ({ post }: PostItemProps) {
           </p>
         </div>
       </div>
-      <PostOperations post={{ id: post.id, title: post.title }}/>
+      <PostOperations post={post}/>
     </div>
   )
 }
