@@ -3,7 +3,11 @@ import React, { useState } from 'react'
 import marked from '@/lib/marked'
 import Prose from '@/components/common/prose'
 
-const Editor = () => {
+interface EditorProps {
+  params: Record<string, string>
+}
+
+const Editor: React.FC<EditorProps> = ({ params }) => {
   const [content, setContent] = useState('')
 
   return (

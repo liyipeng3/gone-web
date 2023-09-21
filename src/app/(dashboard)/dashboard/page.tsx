@@ -20,7 +20,8 @@ export default async function DashboardPage () {
 
   const posts = await prisma.contents.findMany({
     where: {
-      uid: parseInt(user.id)
+      uid: parseInt(user.id),
+      type: 'post'
     },
     select: {
       cid: true,
