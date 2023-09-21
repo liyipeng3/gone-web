@@ -1,8 +1,5 @@
 import { redirect } from 'next/navigation'
-
-import { dashboardConfig } from '@/config/dashboard'
 import { getCurrentUser } from '@/lib/session'
-import { DashboardNav } from '@/components/dashboard/nav'
 import React from 'react'
 import { authOptions } from '@/lib/auth'
 
@@ -21,10 +18,7 @@ export default async function DashboardLayout ({
 
   return (
 
-    <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-      <aside className="hidden w-[200px] flex-col md:flex">
-        <DashboardNav items={dashboardConfig.sidebarNav}/>
-      </aside>
+    <div className="container flex-1 gap-12 ">
       <main className="flex w-full flex-1 flex-col overflow-hidden">
         {children}
       </main>
