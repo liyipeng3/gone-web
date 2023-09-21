@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
           <span>Save</span>
         </button>
       </div>
-      <div className="p-4 gap-3 flex flex-col">
+      <div className="py-4 gap-3 flex flex-col">
         <Input
           id="title"
           placeholder="标题"
@@ -49,9 +49,9 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
         <Input placeholder="slug"/>
       </div>
 
-      <div className="flex w-full flex-1  p-4">
+      <div className="flex w-full flex-1  py-4">
         <div className="w-1/2">
-          <Textarea className="w-full h-full resize-none py-8 px-4 focus:outline-0"
+          <Textarea className="w-full h-full resize-none p-2 focus:outline-0"
                     value={content}
                     onChange={(e) => {
                       setContent(e.target.value)
