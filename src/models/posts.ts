@@ -40,7 +40,7 @@ export const getHotList = async (): Promise<HotList> => {
 }
 
 export const getPostBySlug = async (slug: string) => {
-  return prisma.posts.findUnique({
+  return await prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
@@ -78,7 +78,7 @@ export const incrementViews = async (cid: number) => {
 }
 
 export const getPostByCid = async (cid: number) => {
-  return prisma.posts.findUnique({
+  return await prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
