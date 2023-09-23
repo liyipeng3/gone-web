@@ -18,7 +18,7 @@ export default async function DashboardPage () {
     return notFound()
   }
 
-  const posts = await prisma.contents.findMany({
+  const posts = await prisma.posts.findMany({
     where: {
       uid: parseInt(user.id),
       type: 'post'

@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { type HotList } from '@/types'
-import { getHotList, getPost, getPostList } from '@/models/content'
+import { getHotList, getPostBySlug, getPostList } from '@/models/posts'
 import marked from '@/lib/marked'
 import prisma from '@/lib/prisma'
 
@@ -41,7 +41,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   created: number
   hotList: HotList
 }> => {
-  const post = await getPost(slug)
+  const post = await getPostBySlug(slug)
   if (post === null) {
     throw new Error('not found')
   }
@@ -115,7 +115,7 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   category?: string
   cid?: number
 }> => {
-  const post = await getPost(slug)
+  const post = await getPostBySlug(slug)
   if (post === null) {
     throw new Error('not found')
   }

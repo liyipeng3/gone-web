@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import marked from '@/lib/marked'
 import Prose from '@/components/common/prose'
 import { Input } from '@/components/ui/input'
@@ -15,10 +15,19 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = ({ params }) => {
   const [content, setContent] = useState('')
+  const [post, setPost] = useState<any>()
+
+  console.log(params.cid)
+
+  useEffect(() => {
+    void fetch(`/api/post/${params.cid}`).then(async res => await res.json()).then(res => {
+      console.log(res)
+      setPost(res)
+    })
+  }, [])
 
   return (
     <div className="px-10 h-full">
-
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center space-x-10">
           <Link
@@ -45,19 +54,22 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
         <Input
           id="title"
           placeholder="标题"
+          value={post?.title}
         />
-        <Input placeholder="slug"/>
+        <Input placeholder="Slug" value={post?.slug}/>
       </div>
-
-      <div className="flex w-full flex-1  py-4">
+      <div className="flex w-full flex-1 py-4 gap-4">
         <div className="w-1/2">
-          <Textarea className="w-full h-full resize-none p-2 focus:outline-0"
+          <Textarea className="w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]"
                     value={content}
                     onChange={(e) => {
                       setContent(e.target.value)
                     }}/>
         </div>
-        <Prose content={marked.parse(content) as string} className="w-1/2 text-left px-4"/>
+        <div
+          className="w-1/2 text-left p-2 outline-none ring-2 ring-ring ring-offset-2 rounded-md border border-input">
+          <Prose content={marked.parse(content) as string}/>
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
-import { ModeToggle } from '@/components/dashboard/mode-toggle'
 
 export function SiteFooter ({ className }: React.HTMLAttributes<HTMLElement>) {
   return (
@@ -10,7 +9,7 @@ export function SiteFooter ({ className }: React.HTMLAttributes<HTMLElement>) {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <Icons.logo/>
         </div>
-        <ModeToggle/>
+        {/* <ModeToggle/> */}
       </div>
     </footer>
   )

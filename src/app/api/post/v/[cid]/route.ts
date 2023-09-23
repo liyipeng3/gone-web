@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { type NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { incrementViews } from '@/models/content'
+import { incrementViews } from '@/models/posts'
 
 export async function GET (
   request: NextRequest,

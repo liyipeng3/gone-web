@@ -5,7 +5,7 @@ import { type HotList } from '@/types'
 export const getHotList = async (): Promise<HotList> => {
   const hotData = await prisma.relationships.findMany({
     include: {
-      contents: {
+      posts: {
         select: {
           title: true,
           slug: true
@@ -21,26 +21,26 @@ export const getHotList = async (): Promise<HotList> => {
       metas: {
         type: 'category'
       },
-      contents: {
+      posts: {
         status: 'publish',
         type: 'post'
       }
     },
     orderBy: {
-      contents: {
+      posts: {
         viewsNum: 'desc'
       }
     },
     take: 10
   })
   return hotData.map(item => ({
-    ...item.contents,
+    ...item.posts,
     category: item.metas.slug
   })) as HotList
 }
 
-export const getPost = async (slug: string) => {
-  return await prisma.contents.findUnique({
+export const getPostBySlug = async (slug: string) => {
+  return prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
@@ -65,7 +65,7 @@ export const getPost = async (slug: string) => {
 }
 
 export const incrementViews = async (cid: number) => {
-  await prisma.contents.update({
+  await prisma.posts.update({
     where: {
       cid
     },
@@ -73,6 +73,31 @@ export const incrementViews = async (cid: number) => {
       viewsNum: {
         increment: 1
       }
+    }
+  })
+}
+
+export const getPostByCid = async (cid: number) => {
+  return prisma.posts.findUnique({
+    include: {
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              name: true,
+              slug: true
+            }
+          }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
+        }
+      }
+    },
+    where: {
+      cid
     }
   })
 }
@@ -92,7 +117,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
 }) => {
   const data = await prisma.relationships.findMany({
     include: {
-      contents: {
+      posts: {
         select: {
           title: true,
           slug: true,
@@ -115,7 +140,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
         type: 'category',
         mid
       },
-      contents: {
+      posts: {
         status: 'publish',
         type: 'post',
         OR: [{
@@ -131,7 +156,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
       }
     },
     orderBy: {
-      contents: {
+      posts: {
         created: 'desc'
       }
     },
@@ -139,7 +164,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     take: pageSize
   })
 
-  const total = await prisma.contents.count({
+  const total = await prisma.posts.count({
     where: {
       status: 'publish',
       type: 'post',
@@ -164,7 +189,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
   })
 
   const list = data.map(item => ({
-    ...item.contents,
+    ...item.posts,
     category: item.metas.slug,
     name: item.metas.name
   })).map(item => ({

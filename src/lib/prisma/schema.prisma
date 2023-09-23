@@ -28,28 +28,6 @@ model comments {
   @@index([created], map: "created")
 }
 
-model contents {
-  cid           Int             @id @default(autoincrement()) @db.UnsignedInt
-  uid           Int?            @default(1)
-  title         String?         @db.VarChar(200)
-  slug          String?         @unique(map: "slug") @db.VarChar(200)
-  created       Int?            @default(0) @db.UnsignedInt
-  modified      Int?            @default(0) @db.UnsignedInt
-  text          String?         @db.LongText
-  order         Int?            @default(0) @db.UnsignedInt
-  type          String?         @default("post") @db.VarChar(16)
-  status        String?         @default("publish") @db.VarChar(16)
-  password      String?         @db.VarChar(32)
-  commentsNum   Int?            @default(0) @db.UnsignedInt
-  allowComment  String?         @default("0") @db.Char(1)
-  parent        Int?            @default(0) @db.UnsignedInt
-  viewsNum      Int?            @default(0)
-  likesNum      Int?            @default(0)
-  relationships relationships[]
-
-  @@index([created], map: "created")
-}
-
 model fields {
   cid         Int     @db.UnsignedInt
   name        String  @db.VarChar(200)
@@ -63,6 +41,7 @@ model fields {
   @@index([int_value], map: "int_value")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model gallery {
   gid         Int     @id @default(autoincrement()) @db.UnsignedInt
   thumb       String? @db.VarChar(200)
@@ -73,6 +52,7 @@ model gallery {
   order       Int?    @default(0) @db.UnsignedInt
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model links {
   lid         Int     @id @default(autoincrement()) @db.UnsignedInt
   name        String? @db.VarChar(200)
@@ -103,11 +83,33 @@ model options {
   value Int
 }
 
+model posts {
+  cid           Int             @id @default(autoincrement()) @db.UnsignedInt
+  uid           Int?            @default(1)
+  title         String?         @db.VarChar(200)
+  slug          String?         @unique(map: "slug") @db.VarChar(200)
+  created       Int?            @default(0) @db.UnsignedInt
+  modified      Int?            @default(0) @db.UnsignedInt
+  text          String?         @db.LongText
+  order         Int?            @default(0) @db.UnsignedInt
+  type          String?         @default("post") @db.VarChar(16)
+  status        String?         @default("publish") @db.VarChar(16)
+  password      String?         @db.VarChar(32)
+  commentsNum   Int?            @default(0) @db.UnsignedInt
+  allowComment  String?         @default("0") @db.Char(1)
+  parent        Int?            @default(0) @db.UnsignedInt
+  viewsNum      Int?            @default(0)
+  likesNum      Int?            @default(0)
+  relationships relationships[]
+
+  @@index([created], map: "created")
+}
+
 model relationships {
-  cid      Int      @db.UnsignedInt
-  mid      Int      @db.UnsignedInt
-  contents contents @relation(fields: [cid], references: [cid], onDelete: Cascade, map: "cid")
-  metas    metas    @relation(fields: [mid], references: [mid], onDelete: Cascade, map: "mid")
+  cid   Int   @db.UnsignedInt
+  mid   Int   @db.UnsignedInt
+  posts posts @relation(fields: [cid], references: [cid], onDelete: Cascade, map: "cid")
+  metas metas @relation(fields: [mid], references: [mid], onDelete: Cascade, map: "mid")
 
   @@id([cid, mid])
   @@index([cid], map: "cid")

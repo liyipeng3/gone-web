@@ -5,7 +5,7 @@ export default async function handler (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const contents = await prisma.contents.findMany({
+  // const posts = await prisma.posts.findMany({
   //   select: {
   //     cid: true,
   //     created: true,
@@ -13,8 +13,8 @@ export default async function handler (
   //   }
   // })
   //
-  // for (const item of contents) {
-  //   await prisma.contents.update({
+  // for (const item of posts) {
+  //   await prisma.posts.update({
   //     where: {
   //       cid: item.cid
   //     },
