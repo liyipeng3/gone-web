@@ -25,7 +25,7 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
   useEffect(() => {
     void fetch(`/api/post/${params.cid}`).then(async res => await res.json()).then(res => {
       if (res.draft) {
-        setPost({ draft: true, ...res.draft })
+        setPost({ draft: true, ...res.draft, slug: res.slug })
       } else {
         setPost(res)
       }
