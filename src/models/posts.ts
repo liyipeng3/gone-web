@@ -40,7 +40,7 @@ export const getHotList = async (): Promise<HotList> => {
 }
 
 export const getPostBySlug = async (slug: string) => {
-  return prisma.posts.findUnique({
+  return await prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
@@ -109,8 +109,8 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
   return { ...post, draft: draftPost }
 }
 
-export const getDraftPostByCid = (cid: number) => {
-  return prisma.posts.findFirst({
+export const getDraftPostByCid = async (cid: number) => {
+  return await prisma.posts.findFirst({
     where: {
       parent: cid
     }
@@ -118,7 +118,7 @@ export const getDraftPostByCid = (cid: number) => {
 }
 
 export const updatePostByCid = async (cid: number, data: any) => {
-  return prisma.posts.update({
+  return await prisma.posts.update({
     where: {
       cid
     },
@@ -128,7 +128,7 @@ export const updatePostByCid = async (cid: number, data: any) => {
 
 export const createPost = async (data: any) => {
   console.log(data)
-  return prisma.posts.create({
+  return await prisma.posts.create({
     data: {
       ...data,
       relationships: {
