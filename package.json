@@ -16,7 +16,7 @@
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.1",
-    "@prisma/client": "^5.2.0",
+    "@prisma/client": "^5.3.1",
     "@radix-ui/react-accessible-icon": "^1.0.2",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.3",
@@ -97,7 +97,7 @@
     "husky": "^8.0.3",
     "pm2": "^5.3.0",
     "postcss": "^8.4.29",
-    "prisma": "^5.2.0",
+    "prisma": "^5.3.1",
     "tailwindcss": "^3.3.3",
     "typescript": "*"
   },
