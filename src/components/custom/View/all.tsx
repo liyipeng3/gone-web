@@ -4,10 +4,10 @@ import { useEffect } from 'react'
 
 const AllView: React.FC = () => {
   useEffect(() => {
-    const v = sessionStorage.getItem('_v')
+    const v = sessionStorage.getItem('iv')
     if (v == null) {
       sessionStorage.setItem('_v', '1')
-      void fetch('/api/_v', {
+      void fetch('/api/iv', {
         method: 'GET'
       }).then(_ => {
       })

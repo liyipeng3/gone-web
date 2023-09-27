@@ -2,11 +2,12 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getPostByCid } from '@/models/posts'
 
-export async function GET (
+export async function POST (
   request: NextRequest,
   context: { params: { cid: string } }
 ) {
   const cid = parseInt(context.params.cid)
-  const post = await getPostByCid(cid, true)
+  const post = await getPostByCid(cid)
+
   return NextResponse.json(post)
 }

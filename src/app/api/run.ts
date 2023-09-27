@@ -14,7 +14,7 @@ export default async function handler (
   // })
   //
   // for (const item of posts) {
-  //   await prisma.posts.update({
+  //   await prisma.posts.draft({
   //     where: {
   //       cid: item.cid
   //     },

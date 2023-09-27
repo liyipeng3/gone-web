@@ -33,14 +33,14 @@ export const getHotList = async (): Promise<HotList> => {
     },
     take: 10
   })
-  return hotData.map(item => ({
+  return hotData.map((item: { posts: any, metas: { slug: any } }) => ({
     ...item.posts,
     category: item.metas.slug
   })) as HotList
 }
 
 export const getPostBySlug = async (slug: string) => {
-  return await prisma.posts.findUnique({
+  return prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
@@ -77,8 +77,9 @@ export const incrementViews = async (cid: number) => {
   })
 }
 
-export const getPostByCid = async (cid: number) => {
-  return await prisma.posts.findUnique({
+export const getPostByCid = async (cid: number, draft?: boolean) => {
+  let draftPost = null
+  const post = await prisma.posts.findUnique({
     include: {
       relationships: {
         include: {
@@ -98,6 +99,41 @@ export const getPostByCid = async (cid: number) => {
     },
     where: {
       cid
+    }
+  })
+
+  if (draft && post) {
+    draftPost = await getDraftPostByCid(post.cid)
+  }
+
+  return { ...post, draft: draftPost }
+}
+
+export const getDraftPostByCid = (cid: number) => {
+  return prisma.posts.findFirst({
+    where: {
+      parent: cid
+    }
+  })
+}
+
+export const updatePostByCid = async (cid: number, data: any) => {
+  return prisma.posts.update({
+    where: {
+      cid
+    },
+    data
+  })
+}
+
+export const createPost = async (data: any) => {
+  console.log(data)
+  return prisma.posts.create({
+    data: {
+      ...data,
+      relationships: {
+        create: null
+      }
     }
   })
 }
@@ -188,11 +224,11 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     }
   })
 
-  const list = data.map(item => ({
+  const list = data.map((item: { posts: any, metas: { slug: any, name: any } }) => ({
     ...item.posts,
     category: item.metas.slug,
     name: item.metas.name
-  })).map(item => ({
+  })).map((item: { text: string }) => ({
     ...item,
     description: marked.parse((item.text?.split('<!--more-->')[0]
       .replaceAll(/```(\n|\r|.)*?```/g, '')

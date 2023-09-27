@@ -15,6 +15,28 @@ export function cn (...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// export function debounce<T extends ((args: any) => any) | ((args: any) => Promise<any>)> (fn: T, delay: number = 500): T {
+//   let timer: any
+//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//   // @ts-expect-error
+//   if (fn[Symbol(Symbol.toStringTag)] === 'AsyncFunction') {
+//     return async function (this: any, ...args: any) {
+//       return await new Promise<any>(resolve => {
+//         clearTimeout(timer)
+//         timer = setTimeout(() => {
+//           resolve(fn.apply(this, args))
+//         }, delay)
+//       })
+//     }
+//   }
+//   return function (this: any, ...args: any) {
+//     clearTimeout(timer)
+//     timer = setTimeout(() => {
+//       fn.apply(this, args)
+//     }, delay)
+//   }
+// }
+
 export function formatDate (input: string | number): string {
   const date = new Date(input)
   return date.toLocaleDateString('en-US', {
