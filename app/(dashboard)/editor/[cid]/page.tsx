@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
 import { Textarea } from '@/components/ui/textarea'
 import { debounce } from 'lodash-es'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface EditorProps {
   params: { cid: string }
@@ -21,6 +22,7 @@ const saveDraft = debounce(async ({ cid, post }: { cid: string, post: any }) => 
 const Editor: React.FC<EditorProps> = ({ params }) => {
   const [post, setPost] = useState<any>({})
   const [saveLoading, setSaveLoading] = useState(false)
+  const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
 
   useEffect(() => {
     void fetch(`/api/post/${params.cid}`).then(async res => await res.json()).then(res => {
@@ -29,6 +31,10 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
       } else {
         setPost(res)
       }
+    })
+
+    void fetch('/api/category').then(async res => await res.json()).then(res => {
+      setCategories(res)
     })
   }, [])
 
@@ -74,6 +80,21 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
           <p className="text-sm text-muted-foreground">
             {saveLoading ? 'Saving' : 'Saved'}
           </p>
+          <div className='py-1'>
+            <Select>
+              <SelectTrigger >
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {categories.map(category => {
+                    return <SelectItem className='cursor-pointer' key={category.slug} value={category.slug}>{category.name}</SelectItem>
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
         </div>
         <div className="flex gap-5">
           <button type="submit" className={cn(buttonVariants({ variant: 'secondary' }))}>
@@ -86,7 +107,7 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
             {false && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
             )}
-            <span>发布</span>
+            <span>Publish</span>
           </button>
         </div>
       </div>
@@ -97,7 +118,6 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
           value={post?.title}
           onChange={(e) => {
             const title = e.target.value
-
             setPost({
               ...post,
               title
@@ -111,6 +131,17 @@ const Editor: React.FC<EditorProps> = ({ params }) => {
             slug: e.target.value
           })
         }}/>
+        {/* <RadioGroup onValueChange={key => { */}
+        {/*   console.log(key) */}
+        {/* }}> */}
+        {/*   {categories.map(category => { */}
+        {/*     return <><RadioGroupItem value={category.slug}/> */}
+        {/*       <span>{category.name}</span></> */}
+        {/*   })} */}
+        {/* </RadioGroup> */}
+        {/* <Select> */}
+        {/*   <SelectItem value='12' /> */}
+        {/* </Select> */}
       </div>
       <div className="flex w-full flex-1 py-4 gap-4">
         <div className="w-1/2">

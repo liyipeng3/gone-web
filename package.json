@@ -54,7 +54,7 @@
     "dayjs": "^1.11.9",
     "highlight.js": "^11.7.0",
     "lodash-es": "^4.17.21",
-    "lucide-react": "^0.276.0",
+    "lucide-react": "^0.279.0",
     "marked": "^8.0.0",
     "marked-highlight": "^2.0.5",
     "next": "^13.2.4",
@@ -68,6 +68,7 @@
     "react-icons": "^4.10.1",
     "sass": "^1.66.1",
     "tailwind-merge": "^1.14.0",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.2",
     "zustand": "^4.4.1"
   },
