@@ -1,3 +1,4 @@
+'use client'
 import { type FC, useEffect, useRef, useState } from 'react'
 import _ from 'lodash-es'
 import EasyMDE from 'easymde'
