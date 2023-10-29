@@ -88,6 +88,14 @@
   }
 }
 
+.cm-comment {
+  background: transparent!important;
+}
+
+.prose-preview-container {
+  @apply prose break-all text-left max-w-none dark:prose-invert bg-white px-5
+}
+
 
 
 

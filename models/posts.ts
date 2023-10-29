@@ -86,15 +86,16 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
           metas: {
             select: {
               name: true,
-              slug: true
+              slug: true,
+              type: true
             }
           }
-        },
-        where: {
-          metas: {
-            type: 'category'
-          }
         }
+        // where: {
+        //   metas: {
+        //     type: 'category'
+        //   }
+        // }
       }
     },
     where: {
@@ -102,11 +103,24 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
     }
   })
 
+  console.log(post?.relationships)
+
   if (draft && post) {
     draftPost = await getDraftPostByCid(post.cid)
   }
 
-  return { ...post, draft: draftPost }
+  return { ...post, draft: draftPost, category: post?.relationships?.find((item: { metas: { type: string } }) => item.metas.type === 'category')?.metas?.slug, tags: post?.relationships?.filter((item: { metas: { type: string } }) => item.metas.type === 'tag')?.map((item) => item.metas.slug) }
+}
+
+export const getPostMids = async (cid: number) => {
+  const relationships = await prisma.relationships.findMany({
+    where: {
+      posts: {
+        cid
+      }
+    }
+  })
+  return relationships.map((item: { mid: any }) => item.mid)
 }
 
 export const getDraftPostByCid = async (cid: number) => {
@@ -130,10 +144,7 @@ export const createPost = async (data: any) => {
   console.log(data)
   return await prisma.posts.create({
     data: {
-      ...data,
-      relationships: {
-        create: null
-      }
+      ...data
     }
   })
 }
