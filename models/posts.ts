@@ -64,6 +64,94 @@ export const getPostBySlug = async (slug: string) => {
   })
 }
 
+export const updateMetas = async (cid: number, category: string, tags: string[]) => {
+  await prisma.relationships.deleteMany({
+    where: {
+      posts: {
+        cid
+      }
+    }
+  })
+  const categoryMid = (await prisma.metas.findFirst({
+    where: {
+      slug: category,
+      type: 'category'
+    }
+  }))?.mid
+
+  for (let i = 0; i < tags.length; i++) {
+    const tagMid = (await prisma.metas.findFirst({
+      where: {
+        slug: tags[i],
+        type: 'tag'
+      }
+    }))?.mid
+    if (tagMid === undefined) {
+      await prisma.metas.create({
+        data: {
+          name: tags[i],
+          slug: tags[i],
+          type: 'tag',
+          count: 0
+        }
+      })
+    } else {
+      const count = (await prisma.relationships.count({
+        where: {
+          metas: {
+            mid: tagMid
+          }
+        }
+      }))
+      await prisma.metas.update({
+        where: {
+          mid: tagMid
+        },
+        data: {
+          count
+        }
+      })
+    }
+    await prisma.relationships.create({
+      data: {
+        metas: {
+          connect: {
+            mid: tagMid
+          }
+        },
+        posts: {
+          connect: {
+            cid
+          }
+        }
+      }
+    })
+  }
+  return await prisma.relationships.create({
+    data: {
+      metas: {
+        connect: {
+          mid: categoryMid
+        }
+      },
+      posts: {
+        connect: {
+          cid
+        }
+      }
+    }
+  })
+}
+
+export const updatePost = async (cid: number, data: any) => {
+  return await prisma.posts.update({
+    where: {
+      cid
+    },
+    data
+  })
+}
+
 export const incrementViews = async (cid: number) => {
   await prisma.posts.update({
     where: {
@@ -109,7 +197,16 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
     draftPost = await getDraftPostByCid(post.cid)
   }
 
-  return { ...post, draft: draftPost, category: post?.relationships?.find((item: { metas: { type: string } }) => item.metas.type === 'category')?.metas?.slug, tags: post?.relationships?.filter((item: { metas: { type: string } }) => item.metas.type === 'tag')?.map((item) => item.metas.slug) }
+  return {
+    ...post,
+    draft: draftPost,
+    category: post?.relationships?.find((item: {
+      metas: { type: string }
+    }) => item.metas.type === 'category')?.metas?.slug,
+    tags: post?.relationships?.filter((item: {
+      metas: { type: string }
+    }) => item.metas.type === 'tag')?.map((item) => item.metas.slug)
+  }
 }
 
 export const getPostMids = async (cid: number) => {

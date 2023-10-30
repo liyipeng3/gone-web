@@ -89,7 +89,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </>
           </Link>
           <p className="text-sm text-muted-foreground">
-            {post.draft ? '草稿' : '已发布'}
+            {post.draft || post.status !== 'publish' ? '草稿' : '已发布'}
           </p>
           <p className="text-sm text-muted-foreground">
             {saveLoading ? '保存中' : `保存于 ${dayjs(post.modified * 1000).format('YY.MM.DD HH:MM')}`}

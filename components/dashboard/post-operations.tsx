@@ -25,7 +25,7 @@ import { toast } from '@/components/ui/use-toast'
 import { Icons } from '@/components/common/icons'
 
 async function deletePost (postId: string) {
-  const response = await fetch(`/api/posts/${postId}`, {
+  const response = await fetch(`/api/post/${postId}`, {
     method: 'DELETE'
   })
 
@@ -91,7 +91,7 @@ export function PostOperations ({ post }: PostOperationsProps) {
                 event.preventDefault()
                 setIsDeleteLoading(true)
 
-                const deleted = await deletePost(post.id)
+                const deleted = await deletePost(post.cid)
 
                 if (deleted) {
                   setIsDeleteLoading(false)

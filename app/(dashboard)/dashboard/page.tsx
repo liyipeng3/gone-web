@@ -21,7 +21,10 @@ export default async function DashboardPage () {
   const posts = await prisma.posts.findMany({
     where: {
       uid: parseInt(user.id),
-      type: 'post'
+      type: 'post',
+      status: {
+        not: 'deleted'
+      }
     },
     select: {
       cid: true,

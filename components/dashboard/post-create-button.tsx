@@ -22,14 +22,11 @@ export function PostCreateButton ({
   async function onClick () {
     setIsLoading(true)
 
-    const response = await fetch('/api/posts', {
+    const response = await fetch('/api/post/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        title: 'Untitled Post'
-      })
+      }
     })
 
     setIsLoading(false)
