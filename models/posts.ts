@@ -191,8 +191,6 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
     }
   })
 
-  console.log(post?.relationships)
-
   if (draft && post) {
     draftPost = await getDraftPostByCid(post.cid)
   }
@@ -238,7 +236,6 @@ export const updatePostByCid = async (cid: number, data: any) => {
 }
 
 export const createPost = async (data: any) => {
-  console.log(data)
   return await prisma.posts.create({
     data: {
       ...data

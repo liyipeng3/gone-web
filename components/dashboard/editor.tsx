@@ -30,7 +30,6 @@ export const Editor: FC<EditorProps> = ({
         previewClass: 'prose-preview-container'
       })
       editorRef.current?.codemirror?.on('change', () => {
-        console.log(11)
         onChange?.(editorRef.current?.value())
       })
     }
