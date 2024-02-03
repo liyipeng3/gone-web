@@ -167,7 +167,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           })
         }}/>
       </div>
-      <div className="flex w-full flex-1 py-4 gap-4">
+      <div className="flex min-w-full w-full flex-1 py-4 gap-4">
         {/* <div className="w-1/2"> */}
         {/* <Textarea className="w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" */}
         {/*           value={post.text} */}
@@ -175,7 +175,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         {/*             setPost({ ...post, text: e.target.value }) */}
         {/*           }}/> */}
 
-        <Editor className="w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" value={post.text}
+        <Editor className="w-full min-w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" value={post.text}
                 onChange={(value) => {
                   setPost({
                     ...post,
