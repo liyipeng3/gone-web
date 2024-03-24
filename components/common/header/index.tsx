@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="min-h-48 border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle flex items-start ">
+      className="border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle flex items-start ">
       <Link href="/" className="md:mr-auto">
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>

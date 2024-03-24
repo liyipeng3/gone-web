@@ -33,7 +33,7 @@ export const Editor: FC<EditorProps> = ({
         onChange?.(editorRef.current?.value())
       })
     }
-  }, [value])
+  }, [value, id])
 
   return (<textarea className={className} id={id}></textarea>)
 }

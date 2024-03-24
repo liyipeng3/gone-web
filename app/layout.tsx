@@ -1,5 +1,5 @@
 import React from 'react'
-import '@/styles/globals.scss'
+import '@/styles/global.scss'
 import 'highlight.js/scss/github-dark-dimmed.scss'
 import Script from 'next/script'
 import { cn } from '@/lib/utils'
@@ -21,7 +21,7 @@ const fontHeading = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'lyp123',
+    default: 'lyp123 - 做自己',
     template: '%s - lyp123'
   }
 }

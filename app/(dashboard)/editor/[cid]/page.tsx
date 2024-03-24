@@ -47,7 +47,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     void fetch('/api/category').then(async res => await res.json()).then(res => {
       setCategories(res)
     })
-  }, [])
+  }, [params.cid])
 
   useEffect(() => {
     void (async () => {
@@ -61,7 +61,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       })
       setSaveLoading(false)
     })()
-  }, [post])
+  }, [post, params.cid])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const translateTitle = useCallback(debounce(({ title }) => {

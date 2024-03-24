@@ -335,9 +335,9 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     name: item.metas.name
   })).map((item: { text: string }) => ({
     ...item,
-    description: marked.parse((item.text?.split('<!--more-->')[0]
+    description: (marked.parse((item.text?.split('<!--more-->')[0]
       .replaceAll(/```(\n|\r|.)*?```/g, '')
-      .slice(0, 150)) ?? '')?.replaceAll(/<.*?>/g, '')
+      .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
   }))
   return {
     list,

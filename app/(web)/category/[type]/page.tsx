@@ -1,6 +1,6 @@
-import Page from '@/app/(web)/page/[num]/page'
 import React from 'react'
 import { getPageCategoryPostList } from '@/services/post'
+import List from '@/components/custom/List'
 
 const Category: React.FC<{
   searchParams: Record<string, string | string[] | undefined>
@@ -15,7 +15,7 @@ const Category: React.FC<{
     pageNum,
     category
   })
-  return <Page {...pageProps} />
+  return <List {...pageProps} />
 }
 
 export default Category

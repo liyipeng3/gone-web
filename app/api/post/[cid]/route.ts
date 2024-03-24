@@ -16,5 +16,5 @@ export async function DELETE (
   context: { params: { cid: string } }
 ) {
   const cid = parseInt(context.params.cid)
-  return await updatePostByCid(cid, { status: 'deleted' })
+  return NextResponse.json(await updatePostByCid(cid, { status: 'deleted' }))
 }

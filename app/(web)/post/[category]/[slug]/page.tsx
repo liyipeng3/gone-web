@@ -1,11 +1,23 @@
 import React from 'react'
 import Prose from '@/components/common/prose'
-import Head from 'next/head'
 import dayjs from 'dayjs'
 import Main from '@/components/layout/main'
 import Breadcrumb from '@/components/common/breadcrumb'
 import { getPagePostInfo } from '@/services/post'
 import PostView from '@/components/custom/View/post'
+import { type Metadata } from 'next/types'
+
+export async function generateMetadata (
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
+  const {
+    title
+  } = await getPagePostInfo({ slug: params.slug })
+
+  return {
+    title
+  }
+}
 
 const Content: React.FC<{ params: { slug: string } }> = async (
   { params }) => {
@@ -22,9 +34,6 @@ const Content: React.FC<{ params: { slug: string } }> = async (
 
   return (
     <Main hotList={hotList}>
-      <Head>
-        <title>{`${title} - lyp123`}</title>
-      </Head>
       <article className="md:max-w-3xl max-w-full text-left flex-1 prose">
         <Breadcrumb items={[{
           name,
