@@ -9,7 +9,7 @@ import { debounce } from 'lodash-es'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Editor } from '@/components/dashboard/editor'
 import dayjs from 'dayjs'
-import { InputTag } from '@/components/ui/tag-input'
+import { InputTag } from '@/components/ui/input-tag'
 
 interface EditorProps {
   params: { cid: string }
@@ -151,7 +151,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             slug: e.target.value
           })
         }}/>
-        <InputTag placeholder="请输入标签" value={post.tags}/>
+        <InputTag placeholder="请输入标签" value={post.tags} onChange={() => {}}/>
         {/* <Input placeholder="请输入标签" value={post.tags?.join(',')} onChange={(e) => { */}
         {/*   setPost({ */}
         {/*     ...post, */}
