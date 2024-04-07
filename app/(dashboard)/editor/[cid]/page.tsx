@@ -91,9 +91,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           <p className="text-sm text-muted-foreground">
             {post.draft || post.status !== 'publish' ? '草稿' : '已发布'}
           </p>
-          <p className="text-sm text-muted-foreground">
-            {saveLoading ? '保存中' : `保存于 ${dayjs(post.modified * 1000).format('YY.MM.DD HH:MM')}`}
-          </p>
+
           <div className="py-1">
             <Select value={post.category}>
               <SelectTrigger>
@@ -109,6 +107,9 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
               </SelectContent>
             </Select>
           </div>
+          <p className="text-sm text-muted-foreground">
+            {saveLoading ? '保存中' : `保存于 ${dayjs(post.modified * 1000).format('YY.MM.DD HH:MM')}`}
+          </p>
 
         </div>
         <div className="flex gap-5">

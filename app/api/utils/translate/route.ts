@@ -13,8 +13,6 @@ export async function GET (
   const q = searchParams.get('q')
 
   const sign = createHash('md5').update(`${id}${q}${salt}${secret}`).digest('hex')
-  console.log(`${id}${q}${salt}${secret}`)
-  console.log(sign)
   const query = qs.stringify({
     q,
     from: 'zh',
@@ -23,8 +21,6 @@ export async function GET (
     salt,
     appid: id
   })
-  console.log(query)
-
   const res = await fetch(`https://fanyi-api.baidu.com/api/trans/vip/translate?${query}`).then(async res => await res.json())
   // console.log(res)
 

@@ -16,7 +16,8 @@ const Error: FC<ErrorProps> = ({
       <h2>Something went wrong!</h2>
       <button onClick={() => {
         reset()
-      }}>Try again
+      }}>
+        Try again
       </button>
     </>
   )
