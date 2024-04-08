@@ -26,24 +26,22 @@ const saveDraft = debounce(async ({
 })
 
 const EditorPage: React.FC<EditorProps> = ({ params }) => {
+  const isInitialRef = React.useRef(false)
   const [post, setPost] = useState<any>({})
+  const [draft, setDraft] = useState<any>({})
   const [saveLoading, setSaveLoading] = useState(false)
   const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
 
   useEffect(() => {
-    void fetch(`/api/post/${params.cid}`).then(async res => await res.json()).then(res => {
+    void (async () => {
+      const res: any = await fetch(`/api/post/${params.cid}`).then(async res => await res.json())
+      setPost(res)
       if (res.draft) {
-        setPost({
-          draft: true,
-          ...res.draft,
-          slug: res.slug,
-          tags: res.tags,
-          category: res.category
-        })
+        setDraft(res.draft)
       } else {
-        setPost(res)
+        setDraft(res)
       }
-    })
+    })()
 
     void fetch('/api/category').then(async res => await res.json()).then(res => {
       setCategories(res)
@@ -51,18 +49,23 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   }, [params.cid])
 
   useEffect(() => {
+    if (!draft.slug) {
+      return
+    }
+    if (!isInitialRef.current) {
+      isInitialRef.current = true
+      return
+    }
+    console.log(draft.title, draft.slug, draft.category, params.cid)
     void (async () => {
-      if (!post.slug) {
-        return
-      }
       setSaveLoading(true)
       await saveDraft({
         cid: params.cid,
-        post
+        post: draft
       })
       setSaveLoading(false)
     })()
-  }, [post, params.cid])
+  }, [draft.text, draft.title, draft.slug, params.cid])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const translateTitle = useCallback(debounce(({ title }) => {
@@ -94,13 +97,13 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           </p>
 
           <p className="text-sm text-muted-foreground">
-            {saveLoading ? '保存中' : `保存于 ${dayjs(post.modified * 1000).format('YY.MM.DD HH:MM')}`}
+            {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.MM.DD HH:mm')}`}
           </p>
 
         </div>
         <div className="flex gap-5">
           <div>
-            <Select value={post.category}>
+            <Select value={draft.category}>
               <SelectTrigger>
                 <SelectValue placeholder="Category"/>
               </SelectTrigger>
@@ -132,26 +135,30 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         <Input
           id="title"
           placeholder="标题"
-          value={post?.title}
+          value={draft?.title}
           onChange={(e) => {
             const title = e.target.value
-            setPost({
-              ...post,
+            setDraft({
+              ...draft,
               title
             })
             translateTitle({
-              title,
-              post
+              title
             })
           }}
         />
-        <Input placeholder="Slug" value={post?.slug} onChange={(e) => {
-          setPost({
-            ...post,
+        <Input placeholder="Slug" value={draft?.slug?.replace('@', '')} onChange={(e) => {
+          setDraft({
+            ...draft,
             slug: e.target.value
           })
         }}/>
-        <InputTag placeholder="请输入标签" value={post.tags} onChange={() => {}}/>
+        <InputTag placeholder="请输入标签" value={post?.tags} onChange={(value) => {
+          setDraft({
+            ...draft,
+            tags: value
+          })
+        }}/>
         {/* <Input placeholder="请输入标签" value={post.tags?.join(',')} onChange={(e) => { */}
         {/*   setPost({ */}
         {/*     ...post, */}
@@ -167,10 +174,10 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         {/*             setPost({ ...post, text: e.target.value }) */}
         {/*           }}/> */}
 
-        <Editor className="w-full min-w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" value={post.text}
+        <Editor className="w-full min-w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" value={draft.text}
                 onChange={(value) => {
-                  setPost({
-                    ...post,
+                  setDraft({
+                    ...draft,
                     text: value
                   })
                 }}/>

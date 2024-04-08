@@ -14,10 +14,11 @@ export async function POST (
   let res = null
 
   if (draftPost) {
-    res = await updatePostByCid(draftPost.cid, { ...newDraft, slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`, draft: undefined, relationships: undefined, cid: undefined, tags: undefined, category: undefined })
+    res = await updatePostByCid(draftPost.cid, { ...newDraft, slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`, draft: undefined, modified: Math.floor(Date.now() / 1000), relationships: undefined, cid: undefined, tags: undefined, category: undefined })
   } else {
     const mids = await getPostMids(cid)
-    res = await createPost({ ...newDraft, cid: undefined, slug: `@${newDraft.slug}`, parent: cid, type: 'post_draft', draft: undefined, relationships: { create: { metas: { connect: { mid: mids[0], AND: mids.slice(1).map(m => ({ mid: m })) } } } } })
+    console.log(mids)
+    res = await createPost({ ...newDraft, cid: undefined, slug: `@${newDraft.slug}`, parent: cid, type: 'post_draft', modified: Math.floor(Date.now() / 1000), draft: undefined, category: undefined, tags: undefined, relationships: { createMany: { data: mids.map(mid => ({ mid })) } } })
   }
 
   return NextResponse.json(res)

@@ -1,4 +1,4 @@
-import React, { type FC } from 'react'
+import React, { type FC, useEffect } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 
 export interface InputTagProps {
@@ -15,6 +15,9 @@ const InputTag: FC<InputTagProps> = ({
   placeholder,
   ...props
 }) => {
+  useEffect(() => {
+    setTags(value)
+  }, [value])
   const [tags, setTags] = React.useState<string[]>(value || [])
   const inputRef = React.useRef<HTMLDivElement>(null)
   const [textValue, setTextValue] = React.useState('' as string)
@@ -80,13 +83,13 @@ const InputTag: FC<InputTagProps> = ({
 
       {tags?.length === 0 && !textValue
         ? (
-        <span
-          style={{
-            position: 'absolute',
-            color: '#aaa',
-            pointerEvents: 'none'
-          }}
-        >
+          <span
+            style={{
+              position: 'absolute',
+              color: '#aaa',
+              pointerEvents: 'none'
+            }}
+          >
           {placeholder}
         </span>
           )
