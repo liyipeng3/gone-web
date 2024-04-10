@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/common/icons'
 import { debounce } from 'lodash-es'
+
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Editor } from '@/components/dashboard/editor'
 import dayjs from 'dayjs'
@@ -15,33 +16,35 @@ interface EditorProps {
   params: { cid: string }
 }
 
-const saveDraft = debounce(async ({
-  cid,
-  post
-}: { cid: string, post: any }) => {
-  return await fetch(`/api/post/${cid}/draft`, {
-    method: 'post',
-    body: JSON.stringify(post)
-  }).then(async res => await res.json())
-})
-
 const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const isInitialRef = React.useRef(false)
   const [post, setPost] = useState<any>({})
   const [draft, setDraft] = useState<any>({})
   const [saveLoading, setSaveLoading] = useState(false)
   const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
+  const getData = useCallback(async () => {
+    const res: any = await fetch(`/api/post/${params.cid}`).then(async res => await res.json())
+    setPost(res)
+    if (res.draft) {
+      setDraft(res.draft)
+    } else {
+      setDraft(res)
+    }
+  }, [params.cid])
+  const saveDraft = useCallback(debounce(async ({
+    cid,
+    post
+  }: { cid: string, post: any }) => {
+    await fetch(`/api/post/${cid}/draft`, {
+      method: 'post',
+      body: JSON.stringify(post)
+    }).then(async res => await res.json())
+    await getData()
+    setSaveLoading(false)
+  }, 3 * 1000), [getData])
 
   useEffect(() => {
-    void (async () => {
-      const res: any = await fetch(`/api/post/${params.cid}`).then(async res => await res.json())
-      setPost(res)
-      if (res.draft) {
-        setDraft(res.draft)
-      } else {
-        setDraft(res)
-      }
-    })()
+    void getData()
 
     void fetch('/api/category').then(async res => await res.json()).then(res => {
       setCategories(res)
@@ -56,15 +59,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       isInitialRef.current = true
       return
     }
-    console.log(draft.title, draft.slug, draft.category, params.cid)
-    void (async () => {
-      setSaveLoading(true)
-      await saveDraft({
-        cid: params.cid,
-        post: draft
-      })
-      setSaveLoading(false)
-    })()
+    setSaveLoading(true)
+
+    void saveDraft({
+      cid: params.cid,
+      post: draft
+    })
   }, [draft.text, draft.title, draft.slug, params.cid])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +95,6 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           <p className="text-sm text-muted-foreground">
             {post.draft || post.status !== 'publish' ? '草稿' : '已发布'}
           </p>
-
           <p className="text-sm text-muted-foreground">
             {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.MM.DD HH:mm')}`}
           </p>
@@ -177,12 +176,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         {/*             setPost({ ...post, text: e.target.value }) */}
         {/*           }}/> */}
 
-        <Editor className="w-full min-w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" value={draft.text}
+        <Editor className="w-full min-w-full h-full focus:outline-0 min-h-[25rem]" value={draft.text}
                 onChange={(value) => {
-                  setDraft({
+                  setDraft((draft: any) => ({
                     ...draft,
                     text: value
-                  })
+                  }))
                 }}/>
         {/* </div> */}
         {/* <div */}

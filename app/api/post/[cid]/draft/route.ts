@@ -22,21 +22,24 @@ export async function POST (
       cid: undefined,
       tags: undefined,
       category: undefined,
-      type: 'post_draft'
+      draft: undefined,
+      type: 'post_draft',
+      parent: cid
+
     })
   } else {
     const mids = await getPostMids(cid)
-    console.log(mids)
     res = await createPost({
       ...newDraft,
       cid: undefined,
       slug: `@${newDraft.slug}`,
-      parent: cid,
-      type: 'post_draft',
       modified: Math.floor(Date.now() / 1000),
       category: undefined,
       tags: undefined,
-      relationships: { createMany: { data: mids.map(mid => ({ mid })) } }
+      draft: undefined,
+      relationships: { createMany: { data: mids.map(mid => ({ mid })) } },
+      parent: cid,
+      type: 'post_draft'
     })
   }
 
