@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { type NextRequest, NextResponse } from 'next/server'
-import { createPost, getDraftPostByCid, getPostMids, updatePostByCid } from '@/models/posts'
+import { createPost, deletePostByCid, getDraftPostByCid, getPostMids, updatePostByCid } from '@/models/posts'
 
 export async function POST (
   request: NextRequest,
@@ -44,4 +44,18 @@ export async function POST (
   }
 
   return NextResponse.json(res)
+}
+
+export async function DELETE (
+  request: NextRequest,
+  context: { params: { cid: string } }
+) {
+  const cid = parseInt(context.params.cid)
+  const draftPost = await getDraftPostByCid(cid)
+
+  if (draftPost) {
+    await deletePostByCid(draftPost.cid)
+  }
+
+  return NextResponse.json({})
 }

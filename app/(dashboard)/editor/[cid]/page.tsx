@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Editor } from '@/components/dashboard/editor'
 import dayjs from 'dayjs'
 import { InputTag } from '@/components/ui/input-tag'
+import { useRequest } from 'ahooks'
+import Modal from '@/components/common/modal'
 
 interface EditorProps {
   params: { cid: string }
@@ -20,6 +22,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const isInitialRef = React.useRef(false)
   const [post, setPost] = useState<any>({})
   const [draft, setDraft] = useState<any>({})
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
   const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
   const getData = useCallback(async () => {
@@ -42,6 +45,19 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     await getData()
     setSaveLoading(false)
   }, 3 * 1000), [getData])
+
+  const {
+    run: deleteDraft,
+    loading: deleteDraftLoading
+  } = useRequest(async () => {
+    if (post.cid !== draft.cid) {
+      await fetch(`/api/post/${post.cid}/draft`, {
+        method: 'delete'
+      }).then(async res => await res.json())
+      await getData()
+      isInitialRef.current = false
+    }
+  })
 
   useEffect(() => {
     void getData()
@@ -117,8 +133,10 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </Select>
           </div>
           {
-            post.cid !== draft.cid && <button type="submit" className={cn(buttonVariants({ variant: 'secondary' }))}>
-              {false && (
+            post.cid !== draft.cid && <button type="submit" onClick={() => {
+              setConfirmModalVisible(true)
+            }} className={cn(buttonVariants({ variant: 'secondary' }))}>
+              {deleteDraftLoading && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
               )}
               <span>删除草稿</span>
@@ -161,21 +179,8 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             tags: value
           })
         }}/>
-        {/* <Input placeholder="请输入标签" value={post.tags?.join(',')} onChange={(e) => { */}
-        {/*   setPost({ */}
-        {/*     ...post, */}
-        {/*     tags: e.target.value.split(',') */}
-        {/*   }) */}
-        {/* }}/> */}
       </div>
       <div className="flex min-w-full w-full flex-1 py-4 gap-4">
-        {/* <div className="w-1/2"> */}
-        {/* <Textarea className="w-full h-full resize-none p-2 focus:outline-0 min-h-[25rem]" */}
-        {/*           value={post.text} */}
-        {/*           onChange={(e) => { */}
-        {/*             setPost({ ...post, text: e.target.value }) */}
-        {/*           }}/> */}
-
         <Editor className="w-full min-w-full h-full focus:outline-0 min-h-[25rem]" value={draft.text}
                 onChange={(value) => {
                   setDraft((draft: any) => ({
@@ -183,12 +188,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
                     text: value
                   }))
                 }}/>
-        {/* </div> */}
-        {/* <div */}
-        {/*   className="w-1/2 text-left p-2 outline-none rounded-md border border-input"> */}
-        {/*   <Prose content={marked.parse(post.text || '') as string}/> */}
-        {/* </div> */}
       </div>
+      <Modal visible={confirmModalVisible} onVisibleChange={setConfirmModalVisible} onOk={() => {
+        deleteDraft()
+      }}>
+        确认删除草稿？
+      </Modal>
     </div>
   )
 }

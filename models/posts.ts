@@ -235,6 +235,14 @@ export const updatePostByCid = async (cid: number, data: any) => {
   })
 }
 
+export const deletePostByCid = async (cid: number) => {
+  return await prisma.posts.delete({
+    where: {
+      cid
+    }
+  })
+}
+
 export const createPost = async (data: any) => {
   return await prisma.posts.create({
     data: {
