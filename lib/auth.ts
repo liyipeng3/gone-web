@@ -51,7 +51,10 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async session ({ token, session }) {
+    async session ({
+      token,
+      session
+    }) {
       if (token !== null) {
         session.user.id = token.id
         session.user.name = token.name
@@ -61,7 +64,10 @@ export const authOptions: NextAuthOptions = {
 
       return session
     },
-    async jwt ({ token, user }) {
+    async jwt ({
+      token,
+      user
+    }) {
       const dbUser = await prisma.users.findFirst({
         where: {
           username: token.name

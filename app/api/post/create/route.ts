@@ -5,6 +5,9 @@ import { createPost } from '@/models/posts'
 export async function POST (
   request: NextRequest
 ) {
-  const res = await createPost({ type: 'post', status: 'hidden' })
+  const res = await createPost({
+    type: 'post',
+    status: 'hidden'
+  })
   return NextResponse.json(res)
 }

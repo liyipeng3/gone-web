@@ -60,7 +60,7 @@ export default function RootLayout ({
       fontHeading.variable
     )}>
     {children}
-    <Toaster />
+    <Toaster/>
     </body>
     </html>
   )

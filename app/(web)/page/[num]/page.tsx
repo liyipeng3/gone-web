@@ -8,8 +8,11 @@ export const metadata: Metadata = {
 const Page: React.FC<{
   searchParams?: Record<string, string | string[] | undefined>
   params?: Record<string, string>
-}> = ({ searchParams, params }) => {
-  return <List searchParams={searchParams} params={params} />
+}> = ({
+  searchParams,
+  params
+}) => {
+  return <List searchParams={searchParams} params={params}/>
 }
 
 export default Page

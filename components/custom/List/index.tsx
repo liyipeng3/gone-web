@@ -18,6 +18,7 @@ export interface ListProps {
   searchParams?: Record<string, string | string[] | undefined>
   params?: Record<string, string>
 }
+
 const List: React.FC<ListProps> = async ({
   description,
   baseLink = '/page/',

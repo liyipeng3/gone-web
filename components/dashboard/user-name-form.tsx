@@ -21,7 +21,11 @@ interface UserNameFormProps extends React.HTMLAttributes<HTMLFormElement> {
 
 type FormData = z.infer<typeof userNameSchema>
 
-export function UserNameForm ({ user, className, ...props }: UserNameFormProps) {
+export function UserNameForm ({
+  user,
+  className,
+  ...props
+}: UserNameFormProps) {
   const router = useRouter()
   const {
     handleSubmit,

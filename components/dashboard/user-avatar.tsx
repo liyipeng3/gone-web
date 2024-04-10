@@ -7,7 +7,10 @@ interface UserAvatarProps extends AvatarProps {
   user: any
 }
 
-export function UserAvatar ({ user, ...props }: UserAvatarProps) {
+export function UserAvatar ({
+  user,
+  ...props
+}: UserAvatarProps) {
   return (
     <Avatar {...props}>
       {user.image

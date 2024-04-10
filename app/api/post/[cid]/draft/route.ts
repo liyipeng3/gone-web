@@ -14,11 +14,30 @@ export async function POST (
   let res = null
 
   if (draftPost) {
-    res = await updatePostByCid(draftPost.cid, { ...newDraft, slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`, draft: undefined, modified: Math.floor(Date.now() / 1000), relationships: undefined, cid: undefined, tags: undefined, category: undefined })
+    res = await updatePostByCid(draftPost.cid, {
+      ...newDraft,
+      slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`,
+      modified: Math.floor(Date.now() / 1000),
+      relationships: undefined,
+      cid: undefined,
+      tags: undefined,
+      category: undefined,
+      type: 'post_draft'
+    })
   } else {
     const mids = await getPostMids(cid)
     console.log(mids)
-    res = await createPost({ ...newDraft, cid: undefined, slug: `@${newDraft.slug}`, parent: cid, type: 'post_draft', modified: Math.floor(Date.now() / 1000), draft: undefined, category: undefined, tags: undefined, relationships: { createMany: { data: mids.map(mid => ({ mid })) } } })
+    res = await createPost({
+      ...newDraft,
+      cid: undefined,
+      slug: `@${newDraft.slug}`,
+      parent: cid,
+      type: 'post_draft',
+      modified: Math.floor(Date.now() / 1000),
+      category: undefined,
+      tags: undefined,
+      relationships: { createMany: { data: mids.map(mid => ({ mid })) } }
+    })
   }
 
   return NextResponse.json(res)

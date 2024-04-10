@@ -25,7 +25,9 @@ export const Editor: FC<EditorProps> = ({
       editorRef.current = new EasyMDE({
         element,
         initialValue: value,
-        previewRender: (value, _) => { return (marked.parse(value) as string) },
+        previewRender: (value, _) => {
+          return (marked.parse(value) as string)
+        },
         spellChecker: false,
         previewClass: 'prose-preview-container'
       })

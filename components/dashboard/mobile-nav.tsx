@@ -12,7 +12,10 @@ interface MobileNavProps {
   children?: React.ReactNode
 }
 
-export function MobileNav ({ items, children }: MobileNavProps) {
+export function MobileNav ({
+  items,
+  children
+}: MobileNavProps) {
   useLockBody()
 
   return (

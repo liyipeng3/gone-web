@@ -117,12 +117,15 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
               </SelectContent>
             </Select>
           </div>
-          <button type="submit" className={cn(buttonVariants({ variant: 'secondary' }))}>
-            {false && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
-            )}
-            <span>删除草稿</span>
-          </button>
+          {
+            post.cid !== draft.cid && <button type="submit" className={cn(buttonVariants({ variant: 'secondary' }))}>
+              {false && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
+              )}
+              <span>删除草稿</span>
+            </button>
+          }
+
           <button type="submit" className={cn(buttonVariants())}>
             {false && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
