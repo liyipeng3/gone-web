@@ -9,7 +9,7 @@
     "pm2": "pm2 start pm2.config.js",
     "lint": "next lint --fix",
     "prepare": "husky install",
-    "prisma": "prisma db pull && prisma generate"
+    "prisma": "cp .env.development.local .env && prisma db pull && prisma generate && rm -rf .env"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.6.0",

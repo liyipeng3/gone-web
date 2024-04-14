@@ -179,11 +179,6 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
             }
           }
         }
-        // where: {
-        //   metas: {
-        //     type: 'category'
-        //   }
-        // }
       }
     },
     where: {
@@ -192,7 +187,16 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
   })
 
   if (draft && post) {
-    draftPost = await getDraftPostByCid(post.cid)
+    const draft = await getDraftPostByCid(post.cid)
+    draftPost = {
+      ...draft,
+      category: draft?.relationships?.find((item: {
+        metas: { type: string }
+      }) => item.metas.type === 'category')?.metas?.slug,
+      tags: draft?.relationships?.filter((item: {
+        metas: { type: string }
+      }) => item.metas.type === 'tag')?.map((item) => item.metas.slug)
+    }
   }
 
   return {
@@ -222,6 +226,19 @@ export const getDraftPostByCid = async (cid: number) => {
   return await prisma.posts.findFirst({
     where: {
       parent: cid
+    },
+    include: {
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              name: true,
+              slug: true,
+              type: true
+            }
+          }
+        }
+      }
     }
   })
 }
@@ -350,5 +367,86 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
   return {
     list,
     total
+  }
+}
+
+export const updatePostTags = async (cid: number, tags: string[]) => {
+  // 获取帖子当前的所有标签
+  const currentTags = await prisma.relationships.findMany({
+    where: {
+      posts: {
+        cid
+      },
+      metas: {
+        type: 'tag'
+      }
+    },
+    include: {
+      metas: true
+    }
+  })
+
+  // 删除所有与该帖子相关的标签关系，并减少相应标签的count
+  for (const tag of currentTags) {
+    await prisma.relationships.delete({
+      where: {
+        cid_mid: {
+          cid,
+          mid: tag.metas.mid
+        }
+      }
+    })
+    await prisma.metas.update({
+      where: {
+        mid: tag.metas.mid
+      },
+      data: {
+        count: {
+          decrement: 1
+        }
+      }
+    })
+  }
+
+  // 检查每个新标签是否已经存在，如果不存在则创建新的标签
+  for (const tag of tags) {
+    let existingTag = await prisma.metas.findUnique({
+      where: {
+        slug_type: {
+          slug: tag,
+          type: 'tag'
+        }
+      }
+    })
+
+    if (!existingTag) {
+      existingTag = await prisma.metas.create({
+        data: {
+          name: tag,
+          slug: tag,
+          type: 'tag',
+          count: 1
+        }
+      })
+    } else {
+      await prisma.metas.update({
+        where: {
+          mid: existingTag.mid
+        },
+        data: {
+          count: {
+            increment: 1
+          }
+        }
+      })
+    }
+
+    // 创建新的标签关系
+    await prisma.relationships.create({
+      data: {
+        cid,
+        mid: existingTag.mid
+      }
+    })
   }
 }

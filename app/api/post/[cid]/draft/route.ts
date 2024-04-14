@@ -1,6 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { type NextRequest, NextResponse } from 'next/server'
-import { createPost, deletePostByCid, getDraftPostByCid, getPostMids, updatePostByCid } from '@/models/posts'
+import {
+  createPost,
+  deletePostByCid,
+  getDraftPostByCid,
+  getPostMids,
+  updatePostByCid,
+  updatePostTags
+} from '@/models/posts'
 
 export async function POST (
   request: NextRequest,
@@ -41,6 +48,11 @@ export async function POST (
       parent: cid,
       type: 'post_draft'
     })
+  }
+
+  // 更新帖子的标签
+  if (newDraft.tags) {
+    await updatePostTags(res.cid, newDraft.tags)
   }
 
   return NextResponse.json(res)

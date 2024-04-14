@@ -24,8 +24,12 @@ const InputTag: FC<InputTagProps> = ({
 
   const addTags = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
+      console.log(tags, inputRef.current?.textContent)
+      if (!Array.isArray(tags)) {
+        return
+      }
       event.preventDefault() // prevent the addition of a new line in the contentEditable element
-      if (inputRef.current?.textContent && !tags.includes(inputRef.current.textContent)) {
+      if (inputRef.current?.textContent && !tags?.includes(inputRef.current.textContent)) {
         const newTags = [...tags, inputRef.current.textContent]
         setTags(newTags)
         onChange(newTags)

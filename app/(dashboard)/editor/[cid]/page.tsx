@@ -81,13 +81,13 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       cid: params.cid,
       post: draft
     })
-  }, [draft.text, draft.title, draft.slug, params.cid])
+  }, [draft.text, draft.title, draft.slug, JSON.stringify(draft.tags), params.cid])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const translateTitle = useCallback(debounce(({ title }) => {
     void fetch(`/api/utils/translate?q=${title}`).then(async res => await res.json()).then(res => {
       if (res) {
-        setPost((post: any) => ({
+        setDraft((post: any) => ({
           ...post,
           slug: res?.text.replaceAll(' ', '-').toLowerCase()
         }))
@@ -173,7 +173,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             slug: e.target.value
           })
         }}/>
-        <InputTag placeholder="请输入标签" value={post?.tags} onChange={(value) => {
+        <InputTag placeholder="请输入标签" value={draft?.tags} onChange={(value) => {
           setDraft({
             ...draft,
             tags: value
