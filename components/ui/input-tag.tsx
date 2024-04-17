@@ -57,7 +57,6 @@ const InputTag: FC<InputTagProps> = ({
 
   return (
     <div className={`flex items-center border rounded px-2.5 py-1.5 text-sm bg-white ${className} flex-wrap min-h-10 `}
-
          onFocus={(e) => {
            e.currentTarget.classList.add('ring-2')
            e.currentTarget.classList.add('ring-offset-2')

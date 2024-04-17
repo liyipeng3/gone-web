@@ -81,7 +81,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       cid: params.cid,
       post: draft
     })
-  }, [draft.text, draft.title, draft.slug, JSON.stringify(draft.tags), params.cid])
+  }, [draft.text, draft.title, draft.slug, draft.category, JSON.stringify(draft.tags), params.cid])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const translateTitle = useCallback(debounce(({ title }) => {
@@ -118,7 +118,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         </div>
         <div className="flex gap-5">
           <div>
-            <Select value={draft.category}>
+            <Select value={draft.category} onValueChange={(value) => {
+              setDraft((post: any) => ({
+                ...post,
+                category: value
+              }))
+            }}>
               <SelectTrigger>
                 <SelectValue placeholder="Category"/>
               </SelectTrigger>

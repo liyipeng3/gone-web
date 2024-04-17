@@ -6,6 +6,7 @@ import {
   getDraftPostByCid,
   getPostMids,
   updatePostByCid,
+  updatePostCategory,
   updatePostTags
 } from '@/models/posts'
 
@@ -32,7 +33,6 @@ export async function POST (
       draft: undefined,
       type: 'post_draft',
       parent: cid
-
     })
   } else {
     const mids = await getPostMids(cid)
@@ -53,6 +53,10 @@ export async function POST (
   // 更新帖子的标签
   if (newDraft.tags) {
     await updatePostTags(res.cid, newDraft.tags)
+  }
+
+  if (newDraft.category) {
+    await updatePostCategory(res.cid, newDraft.category)
   }
 
   return NextResponse.json(res)

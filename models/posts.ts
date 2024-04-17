@@ -450,3 +450,82 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
     })
   }
 }
+
+export const updatePostCategory = async (cid: number, category: string) => {
+  // 获取帖子当前的分类
+  const currentCategory = await prisma.relationships.findFirst({
+    where: {
+      posts: {
+        cid
+      },
+      metas: {
+        type: 'category'
+      }
+    },
+    include: {
+      metas: true
+    }
+  })
+
+  // 删除与该帖子相关的分类关系，并减少相应分类的count
+  if (currentCategory) {
+    await prisma.relationships.delete({
+      where: {
+        cid_mid: {
+          cid,
+          mid: currentCategory.metas.mid
+        }
+      }
+    })
+    await prisma.metas.update({
+      where: {
+        mid: currentCategory.metas.mid
+      },
+      data: {
+        count: {
+          decrement: 1
+        }
+      }
+    })
+  }
+
+  // 检查新分类是否已经存在，如果不存在则创建新的分类
+  let existingCategory = await prisma.metas.findUnique({
+    where: {
+      slug_type: {
+        slug: category,
+        type: 'category'
+      }
+    }
+  })
+
+  if (!existingCategory) {
+    existingCategory = await prisma.metas.create({
+      data: {
+        name: category,
+        slug: category,
+        type: 'category',
+        count: 1
+      }
+    })
+  } else {
+    await prisma.metas.update({
+      where: {
+        mid: existingCategory.mid
+      },
+      data: {
+        count: {
+          increment: 1
+        }
+      }
+    })
+  }
+
+  // 创建新的分类关系
+  await prisma.relationships.create({
+    data: {
+      cid,
+      mid: existingCategory.mid
+    }
+  })
+}
