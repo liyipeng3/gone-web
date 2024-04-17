@@ -28,7 +28,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const getData = useCallback(async () => {
     const res: any = await fetch(`/api/post/${params.cid}`).then(async res => await res.json())
     setPost(res)
-    if (res.draft) {
+    if (res.draft?.cid) {
       setDraft(res.draft)
     } else {
       setDraft(res)
@@ -57,6 +57,21 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       await getData()
       isInitialRef.current = false
     }
+  }, {
+    manual: true
+  })
+
+  const {
+    run: publish,
+    loading: publishLoading
+  } = useRequest(async () => {
+    await fetch(`/api/post/${post.cid}/publish`, {
+      method: 'post'
+    }).then(async res => await res.json())
+    await getData()
+    isInitialRef.current = false
+  }, {
+    manual: true
   })
 
   useEffect(() => {
@@ -83,7 +98,6 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     })
   }, [draft.text, draft.title, draft.slug, draft.category, JSON.stringify(draft.tags), params.cid])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const translateTitle = useCallback(debounce(({ title }) => {
     void fetch(`/api/utils/translate?q=${title}`).then(async res => await res.json()).then(res => {
       if (res) {
@@ -111,10 +125,13 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           <p className="text-sm text-muted-foreground">
             {post.draft || post.status !== 'publish' ? '草稿' : '已发布'}
           </p>
-          <p className="text-sm text-muted-foreground">
-            {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.MM.DD HH:mm')}`}
-          </p>
-
+          {
+            draft.modified
+              ? <p className="text-sm text-muted-foreground">
+                {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.MM.DD HH:mm')}`}
+              </p>
+              : null
+          }
         </div>
         <div className="flex gap-5">
           <div>
@@ -148,8 +165,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </button>
           }
 
-          <button type="submit" className={cn(buttonVariants())}>
-            {false && (
+          <button type="submit" className={cn(buttonVariants())}
+                  onClick={() => {
+                    publish()
+                  }}
+          >
+            {publishLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
             )}
             <span>发布</span>
@@ -178,7 +199,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             slug: e.target.value
           })
         }}/>
-        <InputTag placeholder="请输入标签" value={draft?.tags} onChange={(value) => {
+        <InputTag placeholder="请输入标签" value={draft?.tags || []} onChange={(value) => {
           setDraft({
             ...draft,
             tags: value

@@ -7,7 +7,9 @@ export async function POST (
 ) {
   const res = await createPost({
     type: 'post',
-    status: 'hidden'
+    status: 'hidden',
+    created: Math.floor(Date.now() / 1000),
+    modified: Math.floor(Date.now() / 1000)
   })
   return NextResponse.json(res)
 }

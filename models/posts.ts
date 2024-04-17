@@ -529,3 +529,37 @@ export const updatePostCategory = async (cid: number, category: string) => {
     }
   })
 }
+
+export const publishPost = async (cid: number) => {
+  const draft = await getDraftPostByCid(cid)
+
+  if (!draft) {
+    await prisma.posts.update({
+      where: {
+        cid
+      },
+      data: {
+        status: 'publish',
+        type: 'post'
+      }
+    })
+  } else {
+    await prisma.posts.delete({
+      where: {
+        cid
+      }
+    })
+    await prisma.posts.update({
+      where: {
+        cid: draft.cid
+      },
+      data: {
+        cid,
+        status: 'publish',
+        type: 'post',
+        parent: 0,
+        slug: String(draft?.slug).slice(1)
+      }
+    })
+  }
+}

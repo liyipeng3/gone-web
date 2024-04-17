@@ -40,6 +40,7 @@ export async function POST (
       ...newDraft,
       cid: undefined,
       slug: `@${newDraft.slug}`,
+      created: Math.floor(Date.now() / 1000),
       modified: Math.floor(Date.now() / 1000),
       category: undefined,
       tags: undefined,

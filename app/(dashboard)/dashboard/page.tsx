@@ -6,6 +6,8 @@ import { PostItem } from '@/components/dashboard/post-item'
 import { DashboardShell } from '@/components/dashboard/shell'
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
+import { getDraftPostByCid } from '@/models/posts'
+import { type Key } from 'react'
 
 export const metadata = {
   title: 'Dashboard'
@@ -18,7 +20,7 @@ export default async function DashboardPage () {
     return notFound()
   }
 
-  const posts = await prisma.posts.findMany({
+  const posts: any = await prisma.posts.findMany({
     where: {
       uid: parseInt(user.id),
       type: 'post',
@@ -36,6 +38,14 @@ export default async function DashboardPage () {
     }
   })
 
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i]
+    const draft = await getDraftPostByCid(post.cid)
+    if (draft) {
+      post.draft = draft
+    }
+  }
+
   return (
     <DashboardShell>
       <DashboardHeader heading="Posts" text="Create and manage posts.">
@@ -45,7 +55,7 @@ export default async function DashboardPage () {
         {((posts?.length) !== 0)
           ? (
             <div className="divide-y divide-border rounded-md border">
-              {posts.map((post) => (
+              {posts.map((post: { cid: Key | null | undefined }) => (
                 <PostItem key={post.cid} post={post}/>
               ))}
             </div>

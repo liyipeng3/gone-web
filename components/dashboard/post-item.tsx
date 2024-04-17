@@ -15,11 +15,11 @@ export function PostItem ({ post }: PostItemProps) {
           href={`/editor/${post.cid}`}
           className="font-semibold hover:underline"
         >
-          {post.title}
+          {post.title ? post.title : post?.draft?.title ? `${post?.draft?.title} (草稿)` : 'Untitled'}
         </Link>
         <div>
           <p className="text-sm text-muted-foreground">
-            {dayjs(post.created * 1000).format('YYYY年MM月DD日 HH:mm')}
+            {dayjs((post.created || post.draft.created) * 1000).format('YYYY年MM月DD日 HH:mm')}
           </p>
         </div>
       </div>
