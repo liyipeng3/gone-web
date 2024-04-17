@@ -97,7 +97,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
 
   return (
     <div className="px-10 h-full">
-      <div className="flex w-full items-center justify-between">
+      <div className="flex w-full items-center justify-between pt-1">
         <div className="flex items-center space-x-10">
           <Link
             href="/dashboard"

@@ -56,7 +56,16 @@ const InputTag: FC<InputTagProps> = ({
   }, [tags])
 
   return (
-    <div className={`flex items-center border rounded px-2.5 py-1.5 text-sm bg-white ${className} flex-wrap min-h-10`}>
+    <div className={`flex items-center border rounded px-2.5 py-1.5 text-sm bg-white ${className} flex-wrap min-h-10 `}
+
+         onFocus={(e) => {
+           e.currentTarget.classList.add('ring-2')
+           e.currentTarget.classList.add('ring-offset-2')
+         }}
+         onBlur={(e) => {
+           e.currentTarget.classList.remove('ring-2')
+           e.currentTarget.classList.remove('ring-offset-2')
+         }}>
       {tags?.map((tag, index) => (
         <div key={index} className="tag mr-2 my-0.5 bg-gray-200 rounded px-2 py-1 flex items-center whitespace-nowrap">
           <span className="text-sm">{tag}</span>
@@ -71,7 +80,7 @@ const InputTag: FC<InputTagProps> = ({
         </div>
       ))}
       <div
-        className="flex-grow focus:outline-none"
+        className="flex-grow focus:outline-none "
         contentEditable
         suppressContentEditableWarning
         onKeyDown={(event) => {
