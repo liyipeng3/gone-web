@@ -34,7 +34,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
 
   return (
     <Main hotList={hotList}>
-      <article className="md:max-w-3xl max-w-full text-left flex-1 prose">
+      <article className="md:max-w-3xl max-w-full md:min-w-[48rem] text-left flex-1 prose">
         <Breadcrumb items={[{
           name,
           href: `/category/${category as string}`
