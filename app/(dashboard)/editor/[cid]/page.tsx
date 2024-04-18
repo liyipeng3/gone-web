@@ -215,9 +215,11 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
                   }))
                 }}/>
       </div>
-      <Modal visible={confirmModalVisible} onVisibleChange={setConfirmModalVisible} onOk={() => {
-        deleteDraft()
-      }}>
+      <Modal okButtonProps={{ variant: 'destructive' }} visible={confirmModalVisible}
+             onVisibleChange={setConfirmModalVisible}
+             onOk={() => {
+               deleteDraft()
+             }}>
         确认删除草稿？
       </Modal>
     </div>

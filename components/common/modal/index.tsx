@@ -8,6 +8,7 @@ import {
   AlertDialogDescription,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import { Icons } from '../icons'
 
 interface ModalProps {
   visible: boolean
@@ -16,6 +17,8 @@ interface ModalProps {
   onOk?: () => void
   title?: string
   children: React.ReactNode
+  loading?: boolean
+  okButtonProps?: any
 
 }
 
@@ -25,7 +28,9 @@ const Modal: FC<ModalProps> = ({
   onOk,
   title = '提示',
   children,
-  onVisibleChange
+  loading = false,
+  onVisibleChange,
+  okButtonProps = {}
 }) => {
   return (
     <AlertDialog open={visible} onOpenChange={onVisibleChange}>
@@ -36,13 +41,16 @@ const Modal: FC<ModalProps> = ({
         </AlertDialogDescription>
         <div className="flex gap-2 justify-end">
           <AlertDialogCancel>
-            <Button variant="outline" color="gray" onClick={onCancel}>
-              Cancel
+            <Button variant="outline" onClick={onCancel}>
+              取消
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction>
-            <Button variant="destructive" color="red" onClick={onOk}>
-              Confirm
+            <Button onClick={onOk} {...okButtonProps}>
+              {loading
+                ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
+                : null}
+              确认
             </Button>
           </AlertDialogAction>
         </div>
