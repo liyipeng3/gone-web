@@ -31,7 +31,8 @@ export default async function DashboardPage () {
     select: {
       cid: true,
       title: true,
-      created: true
+      created: true,
+      status: true
     },
     orderBy: {
       modified: 'desc'

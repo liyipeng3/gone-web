@@ -123,12 +123,12 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </>
           </Link>
           <p className="text-sm text-muted-foreground">
-            {post.draft || post.status !== 'publish' ? '草稿' : '已发布'}
+            {(post?.draft?.cid || post.status !== 'publish') ? '草稿' : '已发布'}
           </p>
           {
             draft.modified
               ? <p className="text-sm text-muted-foreground">
-                {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.MM.DD HH:mm')}`}
+                {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.M.DD HH:mm')}`}
               </p>
               : null
           }
@@ -165,16 +165,21 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </button>
           }
 
-          <button type="submit" className={cn(buttonVariants())}
-                  onClick={() => {
-                    publish()
-                  }}
-          >
-            {publishLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
-            )}
-            <span>发布</span>
-          </button>
+          {
+            (post?.draft?.cid || post.status !== 'publish')
+              ? <button type="submit" className={cn(buttonVariants())}
+                        onClick={() => {
+                          publish()
+                        }}
+              >
+                {publishLoading && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
+                )}
+                <span>发布</span>
+              </button>
+              : null
+          }
+
         </div>
       </div>
       <div className="py-4 gap-3 flex flex-col">
