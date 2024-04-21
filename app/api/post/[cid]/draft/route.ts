@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { type NextRequest, NextResponse } from 'next/server'
 import {
+  checkDraftSlugUnique,
   createPost,
   deletePostByCid,
   getDraftPostByCid,
@@ -22,6 +23,10 @@ export async function POST (
   let res = null
 
   if (draftPost) {
+    if (!(await checkDraftSlugUnique(newDraft.slug.slice(1), cid))) {
+      console.log(newDraft.slug)
+      return new NextResponse('slug is already exist', { status: 500 })
+    }
     res = await updatePostByCid(draftPost.cid, {
       ...newDraft,
       slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`,

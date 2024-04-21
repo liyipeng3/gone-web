@@ -14,6 +14,7 @@ import { InputTag } from '@/components/ui/input-tag'
 import { useRequest } from 'ahooks'
 import Modal from '@/components/common/modal'
 import { toast } from '@/components/ui/use-toast'
+import http from '@/lib/http'
 
 interface EditorProps {
   params: { cid: string }
@@ -24,10 +25,10 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const [post, setPost] = useState<any>({})
   const [draft, setDraft] = useState<any>({})
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
-  const [saveLoading, setSaveLoading] = useState(false)
+  // const [saveLoading, setSaveLoading] = useState(false)
   const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
   const getData = useCallback(async () => {
-    const res: any = await fetch(`/api/post/${params.cid}`).then(async res => await res.json())
+    const res: any = await http.get(`/api/post/${params.cid}`)
     setPost(res)
     if (res.draft?.cid) {
       setDraft(res.draft)
@@ -35,17 +36,29 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       setDraft(res)
     }
   }, [params.cid])
-  const saveDraft = useCallback(debounce(async ({
+
+  const {
+    run: saveDraft,
+    loading: saveLoading
+  } = useRequest(async ({
     cid,
     post
   }: { cid: string, post: any }) => {
-    await fetch(`/api/post/${cid}/draft`, {
-      method: 'post',
-      body: JSON.stringify(post)
-    }).then(async res => await res.json())
-    await getData()
-    setSaveLoading(false)
-  }, 3 * 1000), [getData])
+    try {
+      const res = await http.post(`/api/post/${cid}/draft`, post)
+      console.log(res)
+      await getData()
+    } catch (e: any) {
+      toast({
+        title: '保存失败',
+        variant: 'destructive',
+        description: e.message
+      })
+    }
+  }, {
+    manual: true,
+    debounceWait: 3 * 1000
+  })
 
   const {
     run: deleteDraft,
@@ -75,9 +88,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       })
       return
     }
-    await fetch(`/api/post/${post.cid}/publish`, {
-      method: 'post'
-    }).then(async res => await res.json())
+    await http.post(`/api/post/${post.cid}/publish`)
     await getData()
     isInitialRef.current = false
     toast({
@@ -104,9 +115,8 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
       isInitialRef.current = true
       return
     }
-    setSaveLoading(true)
 
-    void saveDraft({
+    saveDraft({
       cid: params.cid,
       post: draft
     })

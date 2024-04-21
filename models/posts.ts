@@ -563,3 +563,19 @@ export const publishPost = async (cid: number) => {
     })
   }
 }
+
+export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
+  const post = await prisma.posts.findUnique({
+    where: {
+      slug,
+      NOT: {
+        cid: excludeCid
+      }
+
+    }
+  })
+
+  console.log(!post)
+
+  return !post
+}
