@@ -56,23 +56,25 @@ const InputTag: FC<InputTagProps> = ({
   }, [tags])
 
   return (
-    <div className={`flex items-center border rounded px-2.5 py-1.5 text-sm bg-white ${className} flex-wrap min-h-10 `}
-         onFocus={(e) => {
-           e.currentTarget.classList.add('ring-2')
-           e.currentTarget.classList.add('ring-offset-2')
-         }}
-         onBlur={(e) => {
-           e.currentTarget.classList.remove('ring-2')
-           e.currentTarget.classList.remove('ring-offset-2')
-         }}>
+    <div
+      className={`flex items-center border rounded px-2.5 py-1.5 text-sm bg-white ${className} flex-wrap min-h-10 input ring-offset-background ring-ring`}
+      onFocus={(e) => {
+        e.currentTarget.classList.add('ring-2')
+        e.currentTarget.classList.add('ring-offset-2')
+      }}
+      onBlur={(e) => {
+        e.currentTarget.classList.remove('ring-2')
+        e.currentTarget.classList.remove('ring-offset-2')
+      }}>
       {tags?.map((tag, index) => (
-        <div key={index} className="tag mr-2 my-0.5 bg-gray-200 rounded px-2 py-1 flex items-center whitespace-nowrap">
+        <div key={index}
+             className="tag mr-2 my-0.5 bg-gray-200 rounded px-2 py-1 flex items-center whitespace-nowrap dark:bg-secondary">
           <span className="text-sm">{tag}</span>
           <button
             onClick={() => {
               removeTag(index)
             }}
-            className="ml-1 hover:bg-gray-600 hover:text-white transition-colors duration-200 rounded-full p-0.5"
+            className="ml-1 hover:bg-gray-600 hover:text-white transition-colors duration-200 rounded-full p-0.5 "
           >
             <Cross2Icon className="w-3 h-3"/>
           </button>

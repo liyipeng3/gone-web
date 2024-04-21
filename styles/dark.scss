@@ -2,10 +2,11 @@
   color-scheme: dark;
   background-color: #161b22;
 
-  input {
+  input, .input {
     background: #1a202c;
     color: white;
   }
+  
 
   .prose {
     *:not(pre) > code:not([class]) {

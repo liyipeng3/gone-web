@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import { InputTag } from '@/components/ui/input-tag'
 import { useRequest } from 'ahooks'
 import Modal from '@/components/common/modal'
+import { toast } from '@/components/ui/use-toast'
 
 interface EditorProps {
   params: { cid: string }
@@ -65,11 +66,24 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     run: publish,
     loading: publishLoading
   } = useRequest(async () => {
+    console.log(draft.category)
+    if (!draft.category) {
+      toast({
+        title: '请选择分类',
+        variant: 'destructive'
+
+      })
+      return
+    }
     await fetch(`/api/post/${post.cid}/publish`, {
       method: 'post'
     }).then(async res => await res.json())
     await getData()
     isInitialRef.current = false
+    toast({
+      title: '发布成功',
+      variant: 'default'
+    })
   }, {
     manual: true
   })

@@ -45,7 +45,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   if (post === null) {
     throw new Error('not found')
   }
-  const content = marked.parse(post.text ?? '') as string
+  const content = marked.parse(post?.text ?? '') as string
   const hotList = await getHotList()
 
   return {
