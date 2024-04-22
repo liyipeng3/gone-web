@@ -575,7 +575,5 @@ export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
     }
   })
 
-  console.log(!post)
-
   return !post
 }

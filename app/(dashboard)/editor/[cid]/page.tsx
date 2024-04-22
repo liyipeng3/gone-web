@@ -25,7 +25,6 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const [post, setPost] = useState<any>({})
   const [draft, setDraft] = useState<any>({})
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
-  // const [saveLoading, setSaveLoading] = useState(false)
   const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
   const getData = useCallback(async () => {
     const res: any = await http.get(`/api/post/${params.cid}`)
@@ -44,20 +43,18 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     cid,
     post
   }: { cid: string, post: any }) => {
-    try {
-      const res = await http.post(`/api/post/${cid}/draft`, post)
-      console.log(res)
-      await getData()
-    } catch (e: any) {
+    await http.post(`/api/post/${cid}/draft`, post)
+    await getData()
+  }, {
+    manual: true,
+    debounceWait: 3 * 1000,
+    onError: (e) => {
       toast({
         title: '保存失败',
         variant: 'destructive',
         description: e.message
       })
     }
-  }, {
-    manual: true,
-    debounceWait: 3 * 1000
   })
 
   const {
@@ -79,7 +76,6 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     run: publish,
     loading: publishLoading
   } = useRequest(async () => {
-    console.log(draft.category)
     if (!draft.category) {
       toast({
         title: '请选择分类',
@@ -102,7 +98,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   useEffect(() => {
     void getData()
 
-    void fetch('/api/category').then(async res => await res.json()).then(res => {
+    void http.get('/api/category').then(res => {
       setCategories(res)
     })
   }, [params.cid])
@@ -222,7 +218,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             })
           }}
         />
-        <Input placeholder="Slug" value={draft?.slug?.replace('@', '')} onChange={(e) => {
+        <Input placeholder="Slug" value={post?.draft?.cid ? draft?.slug?.slice(1) : draft.slug} onChange={(e) => {
           setDraft({
             ...draft,
             slug: e.target.value

@@ -5,7 +5,13 @@ const nextConfig = {
   sassOptions: {
     includePaths: [__dirname]
   },
-  images: {},
+  images: {
+    domains: ['oss.lyp123.com'],
+  },
 }
 
-module.exports = nextConfig
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')()
+
+module.exports =
+  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfigANALYZE=true

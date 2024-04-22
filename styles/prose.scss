@@ -8,4 +8,8 @@
   pre > code:has([class]) {
     @apply text-xs md:text-sm;
   }
+
+  img {
+    cursor: pointer;
+  }
 }

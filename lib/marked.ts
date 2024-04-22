@@ -10,15 +10,7 @@ const highLightExtension = markedHighlight({
     return highlight.highlightAuto(code, [language]).value
   }
 })
-// const renderer = {
-//   image (href: any, title: any, text: any) {
-//     return `<a href="${href}" class="glightbox3" data-gallery="gallery">
-//                 <img src="${href}"  alt="${text}" title="${title}" />
-//             </a>`
-//   }
-// }
 
 marked.use(highLightExtension)
-// marked.use({ renderer })
 
 export default marked

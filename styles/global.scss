@@ -8,6 +8,7 @@
 @import "prose";
 @import "icon";
 @import "assistant";
+@import "image";
 
 @layer base {
   :root {
@@ -89,7 +90,7 @@
 }
 
 .cm-comment {
-  background: transparent!important;
+  background: transparent !important;
 }
 
 .prose-preview-container {

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "analyze": "ANALYZE=true next build",
     "start": "next build && next start",
     "pm2": "pm2 start pm2.config.js",
     "lint": "next lint --fix",
@@ -12,6 +13,7 @@
     "prisma": "cp .env.development.local .env && prisma db pull && prisma generate && rm -rf .env"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.6",
     "@auth/prisma-adapter": "^1.6.0",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.3",
@@ -58,6 +60,7 @@
     "dayjs": "^1.11.10",
     "easymde": "^2.18.0",
     "highlight.js": "^11.9.0",
+    "html-react-parser": "^5.1.10",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.367.0",
     "marked": "^12.0.1",
@@ -66,6 +69,7 @@
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
     "qs": "^6.12.0",
+    "rc-util": "^5.39.1",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
@@ -81,6 +85,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
+    "@next/bundle-analyzer": "^14.2.2",
     "@next/eslint-plugin-next": "^14.1.4",
     "@tailwindcss/typography": "^0.5.12",
     "@types/bcryptjs": "^2.4.6",

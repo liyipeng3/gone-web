@@ -24,7 +24,6 @@ export async function POST (
 
   if (draftPost) {
     if (!(await checkDraftSlugUnique(newDraft.slug.slice(1), cid))) {
-      console.log(newDraft.slug)
       return new NextResponse('slug is already exist', { status: 500 })
     }
     res = await updatePostByCid(draftPost.cid, {
