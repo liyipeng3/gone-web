@@ -6,7 +6,7 @@ const nextConfig = {
     includePaths: [__dirname]
   },
   images: {
-    domains: ['oss.lyp123.com'],
+    domains: [],
   },
 }
 
@@ -14,4 +14,4 @@ const nextConfig = {
 const withBundleAnalyzer = require('@next/bundle-analyzer')()
 
 module.exports =
-  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfigANALYZE=true
+  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfig
