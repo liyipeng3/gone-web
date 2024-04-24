@@ -9,7 +9,7 @@
     "start": "next build && next start",
     "pm2": "pm2 start pm2.config.js",
     "lint": "next lint --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prisma": "cp .env.development.local .env && prisma db pull && prisma generate && rm -rf .env"
   },
   "dependencies": {
@@ -50,7 +50,6 @@
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@rc-component/portal": "^1.1.2",
-    "@yaireo/tagify": "^4.24.0",
     "ahooks": "^3.7.11",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
