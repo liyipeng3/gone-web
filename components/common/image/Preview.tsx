@@ -90,12 +90,14 @@ const PreviewImage: React.FC<PreviewImageProps> = ({
   })
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={ref => {
         imgRef.current = ref
         if (!ref) return
         getImgRef(ref)
       }}
+      alt=""
       {...props}
       {...srcAndOnload}
     />

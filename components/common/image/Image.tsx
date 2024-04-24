@@ -119,7 +119,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
 
   const groupContext = useContext(PreviewGroupContext)
 
-  const canPreview = !!preview
+  const canPreview = Boolean(preview)
 
   const onPreviewClose = () => {
     setShowPreview(false)
@@ -172,6 +172,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
           ...wrapperStyle
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={cn(
             `${prefixCls}-img`,
@@ -188,6 +189,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
           width={width}
           height={height}
           onError={onError}
+          alt=""
         />
 
         {String(status) === 'loading' && (

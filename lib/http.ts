@@ -32,9 +32,11 @@ const get = async (url: string, params?: Record<string, any>) => {
   return await request(url, { method: 'get' })
 }
 
-export default {
+const http = {
   request,
   post,
   del,
   get
 }
+
+export default http

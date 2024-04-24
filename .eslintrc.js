@@ -24,5 +24,6 @@ module.exports = {
     '@next/next/no-before-interactive-script-outside-document': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
+    'react-hooks/exhaustive-deps': 'off',
   }
 }
