@@ -1,7 +1,6 @@
 import classnames from 'classnames'
 import type { DialogProps as IDialogPropTypes } from 'rc-dialog'
 import Dialog from 'rc-dialog'
-import KeyCode from 'rc-util/lib/KeyCode'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { PreviewGroupContext } from './context'
 import type { TransformAction, TransformType } from './hooks/useImageTransform'
@@ -242,9 +241,9 @@ const Preview: React.FC<PreviewProps> = props => {
   const onKeyDown = (event: KeyboardEvent) => {
     if (!visible || !showLeftOrRightSwitches) return
 
-    if (event.keyCode === KeyCode.LEFT) {
+    if (event.key === 'ArrowLeft') {
       onSwitchLeft()
-    } else if (event.keyCode === KeyCode.RIGHT) {
+    } else if (event.key === 'ArrowRight') {
       onSwitchRight()
     }
   }

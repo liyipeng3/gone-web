@@ -1,8 +1,8 @@
 import { getClientSize } from '@/lib/utils'
-import isEqual from 'rc-util/lib/isEqual'
 import raf from 'rc-util/lib/raf'
 import type React from 'react'
 import { useRef, useState } from 'react'
+import { isEqual } from 'lodash-es'
 
 export interface TransformType {
   x: number

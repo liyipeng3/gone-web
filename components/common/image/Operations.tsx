@@ -1,7 +1,6 @@
 import Portal from '@rc-component/portal'
 import classnames from 'classnames'
 import CSSMotion from 'rc-motion'
-import KeyCode from 'rc-util/lib/KeyCode'
 import * as React from 'react'
 import { useContext } from 'react'
 import { PreviewGroupContext } from './context'
@@ -88,7 +87,7 @@ const Operations: React.FC<OperationsProps> = props => {
 
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.keyCode === KeyCode.ESC) {
+      if (e.key === 'Escape') {
         onClose?.()
       }
     }
