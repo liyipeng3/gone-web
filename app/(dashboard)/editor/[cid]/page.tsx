@@ -89,7 +89,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     isInitialRef.current = false
     toast({
       title: '发布成功',
-      variant: 'default'
+      variant: 'success'
     })
   }, {
     manual: true
@@ -221,7 +221,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         <Input placeholder="Slug" value={post?.draft?.cid ? draft?.slug?.slice(1) : draft.slug} onChange={(e) => {
           setDraft({
             ...draft,
-            slug: e.target.value
+            slug: e.target.value.startsWith('@') ? e.target.value : `@${e.target.value}`
           })
         }}/>
         <InputTag placeholder="请输入标签" value={draft?.tags || []} onChange={(value) => {
