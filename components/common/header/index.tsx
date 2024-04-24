@@ -41,15 +41,19 @@ export const Header: React.FC<HeaderProps> = ({
     children: []
   }, {
     name: '归档',
-    id: 'archive'
+    id: 'archive',
+    disabled: true
   },
   {
     name: '留言',
-    id: 'message'
+    id: 'message',
+    disabled: true
   },
   {
     name: '友链',
-    id: 'link'
+    id: 'link',
+    disabled: true
+
   }, {
     name: '关于',
     id: 'about'
@@ -57,6 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [menus, setMenus] = useState<Array<{
     name: string
+    disabled?: boolean
     id?: string
     path?: string
     children?: Array<{ name: string, path: string }>
@@ -196,8 +201,9 @@ export const Header: React.FC<HeaderProps> = ({
                   </Transition>
                 </Menu>
                 )
-              : <Link key={menu.name} className="hover:underline text"
-                      href={menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
+              : <Link key={menu.name}
+                      className={cn('hover:underline text', menu.disabled && 'cursor-not-allowed opacity-80')}
+                      href={menu.disabled ? '#' : menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
           })}
         </div>
         <div

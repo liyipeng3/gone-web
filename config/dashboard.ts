@@ -4,7 +4,8 @@ export const dashboardConfig: DashboardConfig = {
   mainNav: [
     {
       title: 'Site',
-      href: '/'
+      href: '/',
+      external: true
     },
     {
       title: 'Support',

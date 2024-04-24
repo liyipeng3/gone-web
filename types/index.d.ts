@@ -9,6 +9,7 @@ export type HotList = Array<{
 export interface NavItem {
   title: string
   href: string
+  external?: boolean
   disabled?: boolean
 }
 
