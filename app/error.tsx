@@ -1,24 +1,34 @@
 'use client'
-import { type FC } from 'react'
+import { type FC, useEffect } from 'react'
 
 interface ErrorProps {
-  error: Error
+  error: Error & { digest?: string }
   reset: () => void
 }
 
-// eslint-disable-next-line n/handle-callback-err
 const Error: FC<ErrorProps> = ({
   error,
   reset
 }) => {
+  useEffect(() => {
+    // Log the error to an error reporting service
+    console.error(error)
+  }, [error])
+
   return (
     <>
-      <h2>Something went wrong!</h2>
-      <button onClick={() => {
-        reset()
-      }}>
-        Try again
-      </button>
+      <div className="flex flex-col bg-gray-50 items-center justify-center h-screen">
+        <h1 className="text-4xl font-bold mb-4">500 - Internal Server Error</h1>
+        <p className="text-gray-600">Sorry, an error occurred. Please try again later.</p>
+
+        <div className="mt-4 text-center">
+          <button className="text-blue-500 hover:underline" onClick={() => {
+            reset()
+          }}>
+            Try again
+          </button>
+        </div>
+      </div>
     </>
   )
 }
