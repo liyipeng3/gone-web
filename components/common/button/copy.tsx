@@ -15,7 +15,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const [copied, setCopied] = React.useState(false)
   return (
     <div
-      className={cn('cursor-pointer flex justify-center items-center gap-0.5 hover:bg-white/30 rounded py-0.5 px-1.5 hover:transition transition', className)}
+      className={cn('text-sm text-gray-300 cursor-pointer flex justify-center items-center gap-0.5 hover:bg-white/30 rounded py-0.5 px-1.5 hover:transition transition', className)}
       onClick={async () => {
         await navigator.clipboard.writeText(text)
         setCopied(true)

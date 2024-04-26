@@ -25,15 +25,15 @@ function getText (node: DOMNode): string {
 
 const options: HTMLReactParserOptions = {
   replace: (domNode) => {
-    if (domNode.type === 'tag' && domNode.tagName === 'code' && domNode.parentNode?.type === 'tag' && domNode.parentNode.tagName === 'pre') {
-      const originalCode = getText(domNode)
+    if (domNode.type === 'tag' && domNode.tagName === 'pre' && domNode.children[0]?.type === 'tag' && domNode.children[0].tagName === 'code') {
+      const originalCode = getText(domNode.children[0])
       return (
-
-        <code {...domNode.attribs}>
-          <CopyButton text={originalCode} className="float-right"/>
-          {domToReact(domNode.children as DOMNode[], options)}
-        </code>
-
+        <div className="relative">
+          <pre>
+            {domToReact(domNode.children as DOMNode[], options)}
+          </pre>
+          <CopyButton text={originalCode} className="absolute right-2 top-2"/>
+        </div>
       )
     }
   }
