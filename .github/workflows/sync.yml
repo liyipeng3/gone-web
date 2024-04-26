@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   repo-sync:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Mirror the Github repos to Gitee.
         uses: Yikun/hub-mirror-action@master
