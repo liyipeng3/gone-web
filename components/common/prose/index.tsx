@@ -25,7 +25,7 @@ function getText (node: DOMNode): string {
 
 const options: HTMLReactParserOptions = {
   replace: (domNode) => {
-    if (domNode.type === 'tag' && domNode.tagName === 'code') {
+    if (domNode.type === 'tag' && domNode.tagName === 'code' && domNode.parentNode?.type === 'tag' && domNode.parentNode.tagName === 'pre') {
       const originalCode = getText(domNode)
       return (
 
