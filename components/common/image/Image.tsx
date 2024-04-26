@@ -70,7 +70,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
     src: imgSrc,
     alt,
     onPreviewClose: onInitialPreviewClose,
-    prefixCls = 'rc-image',
+    prefixCls = 'image-x',
     previewPrefixCls = `${prefixCls}-preview`,
     placeholder,
     fallback,

@@ -42,7 +42,7 @@ export interface GroupConsumerProps {
 }
 
 const Group: React.FC<GroupConsumerProps> = ({
-  previewPrefixCls = 'rc-image-preview',
+  previewPrefixCls = 'image-x-preview',
   children,
   icons = {},
   items,
