@@ -18,10 +18,10 @@ const Error: FC<ErrorProps> = ({
   return (
     <>
       <div className="flex flex-col bg-gray-50 items-center justify-center h-screen">
-        <h1 className="text-4xl font-bold mb-4">500 - Internal Server Error</h1>
-        <p className="text-gray-600">Sorry, an error occurred. Please try again later.</p>
+        <h1 className="text-2xl font-bold mb-4 ">500 - Internal Server Error</h1>
+        <p className="text-base text-gray-600">Sorry, an error occurred. Please try again later.</p>
 
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center text-lg">
           <button className="text-blue-500 hover:underline" onClick={() => {
             reset()
           }}>
