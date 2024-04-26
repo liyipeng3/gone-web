@@ -7,6 +7,6 @@ export const siteConfig: SiteConfig = {
   url: 'https://lyp123.com',
   ogImage: 'https://tx.shadcn.com/og.jpg',
   links: {
-    github: 'https://github.com/liyipeng123/gone-web'
+    github: 'https://github.com/liyipeng3/gone-web'
   }
 }

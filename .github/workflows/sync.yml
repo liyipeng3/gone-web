@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Mirror the Github repos to Gitee.
-        uses: liyipeng123/hub-mirror-action@master
+        uses: liyipeng3/hub-mirror-action@master
         with:
-          src: 'github/liyipeng123'
+          src: 'github/liyipeng3'
           dst: 'gitee/liyipeng3'
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
