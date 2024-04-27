@@ -23,7 +23,7 @@ export async function POST (
   let res = null
 
   if (draftPost) {
-    if (!(await checkDraftSlugUnique(newDraft.slug.slice(1), cid))) {
+    if (!(await checkDraftSlugUnique(newDraft.slug, cid))) {
       return new NextResponse('slug is already exist', { status: 500 })
     }
     res = await updatePostByCid(draftPost.cid, {
@@ -44,7 +44,7 @@ export async function POST (
       ...newDraft,
       cid: undefined,
       slug: `@${newDraft.slug}`,
-      created: Math.floor(Date.now() / 1000),
+      created: newDraft.created || Math.floor(Date.now() / 1000),
       modified: Math.floor(Date.now() / 1000),
       category: undefined,
       tags: undefined,

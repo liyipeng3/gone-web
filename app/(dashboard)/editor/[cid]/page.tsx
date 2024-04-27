@@ -30,7 +30,10 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     const res: any = await http.get(`/api/post/${params.cid}`)
     setPost(res)
     if (res.draft?.cid) {
-      setDraft(res.draft)
+      setDraft({
+        ...res.draft,
+        slug: res.draft.slug.slice(1)
+      })
     } else {
       setDraft(res)
     }
@@ -218,10 +221,11 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             })
           }}
         />
-        <Input placeholder="Slug" value={post?.draft?.cid ? draft?.slug?.slice(1) : draft.slug} onChange={(e) => {
+        <Input placeholder="Slug" value={draft.slug} onChange={(e) => {
+          console.log(e.target.value)
           setDraft({
             ...draft,
-            slug: e.target.value.startsWith('@') ? e.target.value : `@${e.target.value}`
+            slug: e.target.value
           })
         }}/>
         <InputTag placeholder="请输入标签" value={draft?.tags || []} onChange={(value) => {
