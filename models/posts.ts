@@ -544,7 +544,7 @@ export const publishPost = async (cid: number) => {
       }
     })
   } else {
-    await prisma.posts.delete({
+    const post = await prisma.posts.delete({
       where: {
         cid
       }
@@ -558,7 +558,11 @@ export const publishPost = async (cid: number) => {
         status: 'publish',
         type: 'post',
         parent: 0,
-        slug: String(draft?.slug).slice(1)
+        slug: String(draft?.slug).slice(1),
+        created: post.created,
+        commentsNum: post.commentsNum,
+        viewsNum: post.viewsNum,
+        likesNum: post.likesNum
       }
     })
   }
