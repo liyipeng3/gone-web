@@ -7,6 +7,8 @@ void (async () => {
   cache = await fetch('https://sentences-bundle.hitokoto.cn/sentences/d.json').then(async res => await res.json())
 })()
 
+export const dynamic = 'force-dynamic' // defaults to auto
+
 export const GET = async () => {
   let data
   if (cache) {
