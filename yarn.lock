@@ -5984,9 +5984,9 @@ supports-preserve-symlinks-flag@^1.0.0:
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
 systeminformation@^5.7:
-  version "5.21.4"
-  resolved "https://registry.npmjs.org/systeminformation/-/systeminformation-5.21.4.tgz"
-  integrity sha512-fLW6j47UoAJDlZPEqykkWTKxubxb8IFuow6pMQlqf4irZ2lBgCrCReavMkH2t8VxxjOcg6wBlZ2EPQcluAT6xg==
+  version "5.22.8"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.22.8.tgz#403126772defa1d2a2e4cf039e9f6d57d3f1f3ba"
+  integrity sha512-F1iWQ+PSfOzvLMGh2UXASaWLDq5o+1h1db13Kddl6ojcQ47rsJhpMtRrmBXfTA5QJgutC4KV67YRmXLuroIxrA==
 
 tailwind-merge@^2.3.0:
   version "2.3.0"
