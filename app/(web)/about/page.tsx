@@ -6,7 +6,7 @@ import { getPagePost } from '@/services/post'
 import { type Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '关于 - lyp123'
+  title: '关于'
 }
 
 const Page: React.FC = async () => {
