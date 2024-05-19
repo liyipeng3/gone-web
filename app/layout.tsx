@@ -8,6 +8,13 @@ import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
 
+export const metadata: Metadata = {
+  title: {
+    default: 'lyp123 - 做自己',
+    template: '%s - lyp123'
+  }
+}
+
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
@@ -17,13 +24,6 @@ const fontHeading = localFont({
   src: '../assets/fonts/CalSans-SemiBold.woff2',
   variable: '--font-heading'
 })
-
-export const metadata: Metadata = {
-  title: {
-    default: 'lyp123 - 做自己',
-    template: '%s - lyp123'
-  }
-}
 
 export default function RootLayout ({
   // Layouts must accept a children prop.
@@ -36,7 +36,6 @@ export default function RootLayout ({
     <html lang="en">
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
-      <title></title>
       <meta name="theme-color" content="#ffffff"/>
       <script
         dangerouslySetInnerHTML={{
