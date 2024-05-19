@@ -1,8 +1,8 @@
 module.exports = {
   apps: [{
     name: 'gone-web',
-    script: 'node_modules/next/dist/bin/next',
-    args: 'start',
+    script: 'node',
+    args: '.next/standalone/server.js',
     watch: false,
     ignore_watch: ['node_modules', 'logs'],
     // out_file: 'logs/out.log',
