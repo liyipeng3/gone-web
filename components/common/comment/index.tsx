@@ -5,10 +5,12 @@ import CommentItem from './CommentItem'
 import CommentForm from './CommentForm'
 interface CommentListProps {
   cid: number
+  title?: string
 }
 
-const CommentList: React.FC<CommentListProps> = ({ cid }) => {
+const CommentList: React.FC<CommentListProps> = ({ cid, title = '评论' }) => {
   const [comments, setComments] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useAsyncEffect(async () => {
     const fetchComments = async () => {
@@ -25,22 +27,31 @@ const CommentList: React.FC<CommentListProps> = ({ cid }) => {
       setComments(commentsWithChildren)
     }
     await fetchComments()
+    setIsLoading(false)
   }, [cid])
 
   return (
     <>
+      {isLoading
+        ? <div className='flex justify-center items-center h-full'>
+          加载中...
+        </div>
+        : (
+        <>
       {comments.length > 0 && (
-        <div className="p-4  rounded-lg border border-solid border-gray-100 text-left">
-          <h3 className="text-xl font-bold mb-4">评论</h3>
+        <div className="py-4 rounded-lg text-left">
+          <h3 className="text-lg font-bold mb-4">{comments.length}条{title}</h3>
         {comments.map(comment => comment.parent === 0 && (
           <CommentItem key={comment.coid} comment={comment}/>
         ))}
         </div>
       )}
-      <div className="p-4 rounded-lg shadow-[0_4px_10px_0_rgba(0,0,0,0.1)] mt-4 text-left">
+      <div className="p-4 rounded-lg border border-solid border-gray-100 mt-4 text-left">
         <h3 className="text-xl font-bold mb-4">添加新评论</h3>
         <CommentForm cid={cid}/>
       </div>
+      </>
+          )}
     </>
   )
 }
