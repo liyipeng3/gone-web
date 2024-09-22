@@ -8,9 +8,6 @@ const nextConfig = {
   images: {
     domains: [],
   },
-  experimental: {
-    webpackMemoryOptimizations: true,
-  }
 }
 
 

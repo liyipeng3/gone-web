@@ -35,7 +35,7 @@ const Lightbox = () => {
   })
 
   useEffect(() => {
-    document.querySelectorAll('img:not(.emoji)')?.forEach((img, index) => {
+    document.querySelectorAll<HTMLImageElement>('img:not(.emoji)')?.forEach((img: HTMLImageElement, index: number) => {
       if (!img.src) return
       img.addEventListener('click', (e) => {
         setCurrent(index)
