@@ -53,7 +53,6 @@ export const Header: React.FC<HeaderProps> = ({
     name: '友链',
     id: 'link',
     disabled: true
-
   }, {
     name: '关于',
     id: 'about'

@@ -32,6 +32,7 @@ export default async function DashboardPage () {
       cid: true,
       title: true,
       created: true,
+      modified: true,
       status: true
     },
     orderBy: {
