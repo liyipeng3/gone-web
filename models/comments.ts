@@ -12,7 +12,7 @@ export const createComment = async (cid: number, parent: number = 0, data: any) 
       ...data,
       cid,
       parent,
-      status: 'pending',
+      status: 'waiting',
       created: Math.floor(Date.now() / 1000)
     }
   })

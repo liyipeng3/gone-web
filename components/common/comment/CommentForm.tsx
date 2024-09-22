@@ -3,32 +3,67 @@ import React, { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { emojiMap } from '@/lib/emoji'
+import { toast } from '@/components/ui/use-toast'
 interface CommentFormProps {
   cid: number
   parent?: number
 }
 
+const validateEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 const CommentForm: React.FC<CommentFormProps> = ({ cid, parent }) => {
-  const [comment, setComment] = useState('')
+  const [text, setText] = useState('')
   const [mail, setMail] = useState('')
-  const [name, setName] = useState('')
+  const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [showEmojis, setShowEmojis] = useState(false)
 
   const handleSubmit = async () => {
-    await fetch('/api/comment', {
+    // 添加邮箱和名称的验证，邮箱需要符合邮箱格式
+    if (!author || !mail || !text) {
+      toast({
+        title: '提交失败',
+        variant: 'destructive',
+        description: '请填写邮箱、名称和评论内容'
+      })
+      return
+    }
+    if (!validateEmail(mail)) {
+      toast({
+        title: '提交失败',
+        variant: 'destructive',
+        description: '请填写正确的邮箱格式'
+      })
+      return
+    }
+    await fetch(`/api/comment/${cid}`, {
       method: 'POST',
       body: JSON.stringify({
+        author,
+        mail,
+        url,
         cid,
-        parent,
-        comment
+        parent: parent ?? 0,
+        text
       })
     })
+    toast({
+      title: '提交成功',
+      variant: 'success',
+      description: '感谢您的评论，您的评论正等待审核！'
+    })
+    setText('')
+    setMail('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <Textarea placeholder="来都来了，说点啥吧" value={comment} onChange={(e) => { setComment(e.target.value) }}/>
+      <Textarea placeholder="来都来了，说点啥吧" value={text} onChange={(e) => { setText(e.target.value) }}/>
       <div className="flex flex-col gap-2">
         <button
           className="text-sm text-gray-600 cursor-pointer hover:text-gray-800 hover:bg-gray-200 rounded-md p-1 self-end"
@@ -44,7 +79,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent }) => {
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
-                  setComment(comment + ` :${key}: `)
+                  setText(text + ` :${key}: `)
                 }} key={key} src={emojiMap[key as keyof typeof emojiMap].src} alt={key} />
               })
             }
@@ -52,7 +87,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent }) => {
         )}
       </div>
       <div className="flex flex-row gap-2">
-        <Input placeholder="称呼 *" value={name} onChange={(e) => { setName(e.target.value) }}/>
+        <Input placeholder="称呼 *" value={author} onChange={(e) => { setAuthor(e.target.value) }}/>
         <Input placeholder="邮箱 *" value={mail} onChange={(e) => { setMail(e.target.value) }}/>
         <Input placeholder="网站" value={url} onChange={(e) => { setUrl(e.target.value) }}/>
       </div>
