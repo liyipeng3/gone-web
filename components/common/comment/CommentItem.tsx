@@ -99,10 +99,10 @@ const CommentItem: React.FC<{ comment: any, layer?: number }> = ({
         <p className="text-sm text-gray-600">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
       </div>
     </div>
-    <p className="text-sm text-gray-600">
+    <p className="text-sm text-gray-600 relative">
       <span>{parseEmoji(comment.text)}</span>
       <span
-        className="text-xs text-gray-400 cursor-pointer hover:text-gray-500 float-right items-end"
+        className="text-xs text-gray-400 cursor-pointer hover:text-gray-500 float-right items-end absolute right-0 bottom-0"
         onClick={() => { setShowReplyForm(!showReplyForm) }}
       >
         {showReplyForm ? '取消' : '回复'}
