@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 
 export const getCommentsByCid = async (cid: number) => {
   return await prisma.comments.findMany({
-    where: { cid }
+    where: { cid, status: 'approved' }
   })
 }
 
