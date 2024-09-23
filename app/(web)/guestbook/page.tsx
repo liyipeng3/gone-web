@@ -7,7 +7,7 @@ export const metadata = {
 }
 
 const Guestbook = () => {
-  return <div className='md:max-w-3xl max-w-full text-left flex-1 w-screen lg:w-[48rem] md:w-[36rem] mx-auto px-4'>
+  return <div className='md:max-w-3xl max-w-full text-left flex-1 w-screen lg:w-[48rem] md:w-[36rem] mx-auto px-4 pb-10'>
     <Breadcrumb items={[{
       name: '留言',
       href: '/guestbook'

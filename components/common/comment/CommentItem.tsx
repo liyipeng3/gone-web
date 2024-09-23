@@ -27,8 +27,8 @@ function getUserAgent (agentStr: string): string {
   const strPattern = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|iPhone)(\)|;\s*([^()]*?)\))/
   const arrMatches = agentStr.match(strPattern)
   let agent = arrMatches ? arrMatches[1] : ''
-  agent = agent.replace(/NT./, '')
-  agent = agent.replace(/_/, '.')
+  agent = agent.replaceAll(/NT./g, '')
+  agent = agent.replaceAll(/_/g, '.')
 
   return agent
 }
@@ -82,7 +82,8 @@ const CommentItem: React.FC<{ comment: any, layer?: number }> = ({
 }) => {
   const [showReplyForm, setShowReplyForm] = useState(false)
   return (
-  <div className={`mb-4 p-4 bg-${layer % 2 === 0 ? 'white' : '[#f2f7fc]'} rounded-md border border-solid border-gray-100 flex flex-col gap-2`}>
+  <div className={`mb-4 p-4  ${layer % 2 === 0 ? 'bg-white' : 'bg-[#f2f7fc]'} rounded-md border border-solid border-gray-100 flex flex-col gap-2`}>
+    {layer % 2}
     <div className="flex gap-2 flex-row align-start">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="w-10 h-10 rounded-full"
