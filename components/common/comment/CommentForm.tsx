@@ -91,7 +91,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent }) => {
         <Input placeholder="邮箱 *" value={mail} onChange={(e) => { setMail(e.target.value) }}/>
         <Input placeholder="网站" value={url} onChange={(e) => { setUrl(e.target.value) }}/>
       </div>
-      <Button onClick={handleSubmit}>提交评论</Button>
+      <Button className='dark:bg-gray-800 dark:text-white hover:bg-gray-700 hover:dark:bg-gray-700' onClick={handleSubmit}>提交评论</Button>
     </div>
   )
 }

@@ -46,7 +46,7 @@ const CommentList: React.FC<CommentListProps> = ({ cid, title = '评论' }) => {
         ))}
         </div>
       )}
-      <div className="p-4 rounded-lg border border-solid border-gray-100 mt-4 text-left">
+      <div className="p-4 rounded-lg border border-solid border-gray-100 mt-4 text-left dark:border-gray-800">
         <h3 className="text-xl font-bold mb-4">添加新评论</h3>
         <CommentForm cid={cid}/>
       </div>
