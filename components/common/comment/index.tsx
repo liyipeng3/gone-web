@@ -15,6 +15,8 @@ const CommentList: React.FC<CommentListProps> = async ({ cid, title = '评论' }
     if (comment.parent) {
       const parent = commentsData.find((c: any) => c.coid === comment.parent)
       if (parent) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         parent.children = [...(parent.children || []), comment]
       }
     }
