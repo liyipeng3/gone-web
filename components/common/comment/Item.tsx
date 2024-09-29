@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import cypto from 'crypto'
+import React from 'react'
 import dayjs from 'dayjs'
 import { emojiMap } from '@/lib/emoji'
-import CommentForm from './CommentForm'
-
-// 解析如 :smile: 的emoji 并转换为表情，输出为ReactNode，不能使用replace，用split分割空格也不对
+import { getAvatarUrl } from '@/lib/avatar'
+import Reply from './Reply'
+// 将 parseEmoji 函数移到服务器端组件中
 function parseEmoji (text: string): React.ReactNode {
   const emojiRegex = /(:[a-zA-Z0-9_-]+:)/g
   return text.split(emojiRegex).map((part, index) => {
@@ -76,51 +75,38 @@ function getUserBrowser (agentStr: string): string {
   return browser ?? 'unknown'
 }
 
-const CommentItem: React.FC<{ comment: any, layer?: number }> = ({
-  comment,
-  layer = 0
-}) => {
-  const [showReplyForm, setShowReplyForm] = useState(false)
+// 将 CommentItem 组件改为服务器端组件
+const CommentItem = async ({ comment, layer = 0 }: { comment: any, layer?: number }) => {
   return (
-  <div className={`mb-4 p-4  ${layer % 2 === 0 ? 'bg-white' : 'bg-[#f2f7fc]'} rounded-md border border-solid border-gray-100 flex flex-col gap-2`}>
-    <div className="flex gap-2 flex-row align-start">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="w-10 h-10 rounded-full"
-           src={`https://cravatar.com/avatar/${cypto.createHash('md5').update(comment.mail).digest('hex')}?d=identicon`}
-           alt={comment.author}/>
-      <div>
-        <div className="text-sm font-medium text-gray-700 gap-1 flex flex-row justify-start items-center flex-wrap">
-          <span>{comment.author}</span>
-          <span
-            className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightsteelblue]">{getUserBrowser(comment.agent)}</span>
-          <span
-            className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightslategrey]">{getUserAgent(comment.agent)}</span>
+    <div className={`mb-4 p-4  ${layer % 2 === 0 ? 'bg-white' : 'bg-[#f2f7fc]'} rounded-md border border-solid border-gray-100 flex flex-col gap-2`}>
+      <div className="flex gap-2 flex-row align-start">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="w-10 h-10 rounded-full"
+             src={getAvatarUrl(comment.mail)}
+             alt={comment.author}/>
+        <div>
+          <div className="text-sm font-medium text-gray-700 gap-1 flex flex-row justify-start items-center flex-wrap">
+            <span>{comment.author}</span>
+            <span
+              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightsteelblue]">{getUserBrowser(comment.agent)}</span>
+            <span
+              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightslategrey]">{getUserAgent(comment.agent)}</span>
+          </div>
+          <p className="text-sm text-gray-600">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
         </div>
-        <p className="text-sm text-gray-600">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
       </div>
+      <p className="text-sm text-gray-600 relative">
+        <span>{parseEmoji(comment.text)}</span>
+        <Reply comment={comment} />
+      </p>
+      {comment.children && comment.children.length > 0 && (
+        <div className="ml-8 mt-4">
+          {comment.children.map((childComment: any) => (
+            <CommentItem key={childComment.coid} comment={childComment} layer={layer + 1}/>
+          ))}
+        </div>
+      )}
     </div>
-    <p className="text-sm text-gray-600 relative">
-      <span>{parseEmoji(comment.text)}</span>
-      <span
-        className="text-xs text-gray-400 cursor-pointer hover:text-gray-500 float-right items-end absolute right-0 bottom-0"
-        onClick={() => { setShowReplyForm(!showReplyForm) }}
-      >
-        {showReplyForm ? '取消' : '回复'}
-      </span>
-    </p>
-    {showReplyForm && (
-      <div className="mt-4 bg-white p-4 rounded-md shadow-sm">
-        <CommentForm cid={comment.cid} parent={comment.coid} />
-      </div>
-    )}
-    {comment.children && comment.children.length > 0 && (
-      <div className="ml-8 mt-4">
-        {comment.children.map((childComment: any) => (
-          <CommentItem key={childComment.coid} comment={childComment} layer={layer + 1}/>
-        ))}
-      </div>
-    )}
-  </div>
   )
 }
 

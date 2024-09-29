@@ -21,7 +21,8 @@ import {
   SunMedium,
   Trash,
   User,
-  X
+  X,
+  MessageSquareText
 } from 'lucide-react'
 
 export const Icons = {
@@ -46,6 +47,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  comment: MessageSquareText,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
