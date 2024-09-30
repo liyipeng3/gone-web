@@ -44,7 +44,7 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
   const handleEdit = () => {
     setType('edit')
     setIsEditing(true)
-    setEditedText(comment.text)
+    setEditedText(comment.text ?? '')
   }
 
   const handleReply = () => {

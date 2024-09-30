@@ -76,6 +76,7 @@ model metas {
   parent        Int?            @default(0) @db.UnsignedInt
   relationships relationships[]
 
+  @@unique([slug, type], map: "metas_pk")
   @@index([slug], map: "slug")
 }
 
