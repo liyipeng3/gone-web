@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 
 interface CommentActionsProps {
   comment: {
-    coid: number
-    status: string
-    text: string
+    [key: string]: any
+    coid?: number
+    status?: string | null
+    text?: string | null
     // 其他必要的评论属性
   }
 }

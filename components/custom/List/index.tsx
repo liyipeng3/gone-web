@@ -8,6 +8,7 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import Pagination from '@/components/common/pagination'
 import type { HotList } from '@/types'
+import { parseEmoji } from '@/lib/emoji'
 
 export interface ListProps {
   list?: any[]
@@ -66,7 +67,7 @@ const List: React.FC<ListProps> = async ({
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl break-all text-justify">
           <Link
             href={`/post/${item?.category as string}/${item?.slug as string}`}>
-            {item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述'}
+            {parseEmoji(item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述')}
           </Link>
         </div>
         <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-500">

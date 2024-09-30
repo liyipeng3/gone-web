@@ -23,6 +23,7 @@ model comments {
   status    String? @default("approved") @db.VarChar(16)
   parent    Int?    @default(0) @db.UnsignedInt
   authorImg String? @db.VarChar(500)
+  posts     posts?  @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
 
   @@index([cid], map: "cid")
   @@index([created], map: "created")
@@ -85,7 +86,7 @@ model options {
 
 model posts {
   cid           Int             @id @default(autoincrement()) @db.UnsignedInt
-  uid           Int?            @default(1)
+  uid           Int?            @default(1) @db.UnsignedInt
   title         String?         @db.VarChar(200)
   slug          String?         @unique(map: "slug") @db.VarChar(200)
   created       Int?            @default(0) @db.UnsignedInt
@@ -100,9 +101,12 @@ model posts {
   parent        Int?            @default(0) @db.UnsignedInt
   viewsNum      Int?            @default(0)
   likesNum      Int?            @default(0)
+  comments      comments[]
+  users         users?          @relation(fields: [uid], references: [uid], onDelete: Restrict, onUpdate: Restrict, map: "posts_users_uid_fk")
   relationships relationships[]
 
   @@index([created], map: "created")
+  @@index([uid], map: "posts_users_uid_fk")
 }
 
 model relationships {
@@ -128,4 +132,5 @@ model users {
   logged     Int?    @default(0) @db.UnsignedInt
   group      String? @default("visitor") @db.VarChar(16)
   authCode   String? @db.VarChar(64)
+  posts      posts[]
 }

@@ -64,6 +64,8 @@ import youhengheng from '@/assets/emoji/weibo/youhengheng.png'
 import yun from '@/assets/emoji/weibo/yun.png'
 import zhuakuang from '@/assets/emoji/weibo/zhuakuang.png'
 import zuohengheng from '@/assets/emoji/weibo/zuohengheng.png'
+import React from 'react'
+import Image from 'next/image'
 
 export const emojiMap = {
   aini,
@@ -132,4 +134,17 @@ export const emojiMap = {
   yun,
   zhuakuang,
   zuohengheng
+}
+
+// 将 parseEmoji 函数移到服务器端组件中
+export function parseEmoji (text: string): React.ReactNode {
+  const emojiRegex = /(:[a-zA-Z0-9_-]+:)/g
+  return text.split(emojiRegex).map((part, index) => {
+    if (part.startsWith(':') && part.endsWith(':')) {
+      const emojiName = part.slice(1, -1) as keyof typeof emojiMap
+      const emoji = emojiMap[emojiName]
+      return emoji ? <Image key={index} src={emoji.src} alt={emojiName} className="inline w-4 h-4" width={16} height={16}/> : null
+    }
+    return part
+  })
 }

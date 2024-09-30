@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { emojiMap } from '@/lib/emoji'
 import { toast } from '@/components/ui/use-toast'
+import Image from 'next/image'
 interface CommentFormProps {
   cid: number
   parent?: number
@@ -73,10 +74,12 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent }) => {
           {showEmojis ? '隐藏表情' : '显示表情'}
         </button>
         {showEmojis && (
-          <div className="flex flex-row gap-2 flex-wrap">
+          <div className="flex flex-row gap-2 flex-wrap justify-between ">
             {
               Object.keys(emojiMap).map((key) => {
-                return <img className='w-4 h-4 inline-block cursor-pointer hover:scale-110 emoji'
+                return <Image className='w-4 h-4 inline-block cursor-pointer hover:scale-110 emoji last:mr-auto'
+                width={16}
+                height={16}
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()

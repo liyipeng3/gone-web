@@ -6,7 +6,7 @@ const nextConfig = {
     includePaths: [__dirname]
   },
   images: {
-    domains: [],
+    domains: ['cravatar.com'],
   },
 }
 

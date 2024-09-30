@@ -1,22 +1,8 @@
 import React from 'react'
 import dayjs from 'dayjs'
-import { emojiMap } from '@/lib/emoji'
 import { getAvatarUrl } from '@/lib/avatar'
 import Reply from './Reply'
-// 将 parseEmoji 函数移到服务器端组件中
-function parseEmoji (text: string): React.ReactNode {
-  const emojiRegex = /(:[a-zA-Z0-9_-]+:)/g
-  return text.split(emojiRegex).map((part, index) => {
-    if (part.startsWith(':') && part.endsWith(':')) {
-      const emojiName = part.slice(1, -1) as keyof typeof emojiMap
-      console.log(emojiName)
-      const emoji = emojiMap[emojiName]
-      // eslint-disable-next-line @next/next/no-img-element
-      return emoji ? <img key={index} src={emoji.src} alt={emojiName} className="inline w-4 h-4"/> : null
-    }
-    return part
-  })
-}
+import { parseEmoji } from '@/lib/emoji'
 
 /**
  * 获取用户设备名称
