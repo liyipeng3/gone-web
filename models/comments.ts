@@ -27,3 +27,10 @@ export const deleteComment = async (coid: number) => {
     where: { coid }
   })
 }
+
+export const updateComment = async (coid: number, data: any) => {
+  return await prisma.comments.update({
+    where: { coid },
+    data
+  })
+}

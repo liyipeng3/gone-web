@@ -8,22 +8,22 @@ datasource db {
 }
 
 model comments {
-  coid      Int     @id @default(autoincrement()) @db.UnsignedInt
-  cid       Int?    @default(0) @db.UnsignedInt
-  created   Int?    @default(0) @db.UnsignedInt
-  author    String? @db.VarChar(200)
-  authorId  Int?    @default(0) @db.UnsignedInt
-  ownerId   Int?    @default(0) @db.UnsignedInt
-  mail      String? @db.VarChar(200)
-  url       String? @db.VarChar(200)
-  ip        String? @db.VarChar(64)
-  agent     String? @db.VarChar(200)
-  text      String? @db.Text
-  type      String? @default("comment") @db.VarChar(16)
-  status    String? @default("approved") @db.VarChar(16)
-  parent    Int?    @default(0) @db.UnsignedInt
-  authorImg String? @db.VarChar(500)
-  posts     posts?  @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
+  coid     Int     @id @default(autoincrement()) @db.UnsignedInt
+  cid      Int?    @default(0) @db.UnsignedInt
+  created  Int?    @default(0) @db.UnsignedInt
+  author   String? @db.VarChar(200)
+  authorId Int?    @default(0) @db.UnsignedInt
+  ownerId  Int?    @default(0) @db.UnsignedInt
+  mail     String? @db.VarChar(200)
+  url      String? @db.VarChar(200)
+  ip       String? @db.VarChar(64)
+  agent    String? @db.VarChar(200)
+  text     String? @db.Text
+  type     String? @default("comment") @db.VarChar(16)
+  status   String? @default("approved") @db.VarChar(16)
+  parent   Int?    @default(0) @db.UnsignedInt
+  reply    Int?    @db.UnsignedInt
+  posts    posts?  @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
 
   @@index([cid], map: "cid")
   @@index([created], map: "created")

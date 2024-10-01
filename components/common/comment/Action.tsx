@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from '@/components/ui/use-toast'
 
 interface CommentActionsProps {
   comment: {
@@ -19,10 +20,10 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      const response = await fetch(`/api/comments/${comment.coid}`, {
+      const response = await fetch(`/api/comment/${comment.coid}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ coid: comment.coid, comment: { status: newStatus } })
       })
       if (response.ok) {
         setStatus(newStatus)
@@ -32,7 +33,11 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
       }
     } catch (error) {
       console.error('更新评论状态时出错:', error)
-      alert('更新评论状态失败，请重试')
+      toast({
+        title: '更新评论状态失败',
+        description: '请重试',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -80,54 +85,59 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
   }
 
   return (
-        <>
+    <>
 
-            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div
-                    className={`text-xs  ${status === 'approved' ? 'text-gray-400 cursor-default' : 'text-green-600 hover:underline cursor-pointer'}`}
-                    onClick={async () => await (status !== 'approved' && handleStatusChange('approved'))}
-                >
-                    通过
-                </div>
-                <div
-                    className={`text-xs  ${status === 'waiting' ? 'text-gray-400 cursor-default' : 'text-blue-600 hover:underline cursor-pointer'}`}
-                    onClick={async () => await (status !== 'waiting' && handleStatusChange('waiting'))}
-                >
-                    待审核
-                </div>
-                <div
-                    className={`text-xs  ${status === 'spam' ? 'text-gray-400 cursor-default' : 'text-red-600 hover:underline cursor-pointer'}`}
-                    onClick={async () => await (status !== 'spam' && handleStatusChange('spam'))}
-                >
-                    垃圾
-                </div>
-                <div
-                    className="text-xs text-blue-600 hover:underline cursor-pointer"
-                    onClick={handleEdit}
-                >
-                    编辑
-                </div>
-                <div
-                    className="text-xs text-gray-800  hover:underline cursor-pointer"
-                    onClick={handleReply}
-                >
-                    回复
-                </div>
-                <div
-                    className="text-xs text-red-600 hover:underline cursor-pointer"
-                    onClick={handleDelete}
-                >
-                    删除
-                </div>
+      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div
+          className={`text-xs  ${status === 'approved' ? 'text-gray-400 cursor-default' : 'text-green-600 hover:underline cursor-pointer'}`}
+          onClick={async () => await (status !== 'approved' && handleStatusChange('approved'))}
+        >
+          通过
+        </div>
+        <div
+          className={`text-xs  ${status === 'waiting' ? 'text-gray-400 cursor-default' : 'text-blue-600 hover:underline cursor-pointer'}`}
+          onClick={async () => await (status !== 'waiting' && handleStatusChange('waiting'))}
+        >
+          待审核
+        </div>
+        <div
+          className={`text-xs  ${status === 'spam' ? 'text-gray-400 cursor-default' : 'text-red-600 hover:underline cursor-pointer'}`}
+          onClick={async () => await (status !== 'spam' && handleStatusChange('spam'))}
+        >
+          垃圾
+        </div>
+        <div
+          className="text-xs text-blue-600 hover:underline cursor-pointer"
+          onClick={handleEdit}
+        >
+          编辑
+        </div>
+        <div
+          className="text-xs text-gray-800  hover:underline cursor-pointer"
+          onClick={handleReply}
+        >
+          回复
+        </div>
+        <div
+          className="text-xs text-red-600 hover:underline cursor-pointer"
+          onClick={handleDelete}
+        >
+          删除
+        </div>
 
-            </div>
-            {isEditing && (
-                <div>
-                    <textarea value={editedText} onChange={(e) => { setEditedText(e.target.value) }} />
-                    <button onClick={handleSave}>{type === 'edit' ? '保存' : '回复'}</button>
-                    <button onClick={() => { setIsEditing(false) }}>取消</button>
-                </div>
-            )}
-        </>
+      </div>
+      {isEditing && (
+        <div>
+          <textarea value={editedText} onChange={(e) => {
+            setEditedText(e.target.value)
+          }} />
+          <button onClick={handleSave}>{type === 'edit' ? '保存' : '回复'}</button>
+          <button onClick={() => {
+            setIsEditing(false)
+          }}>取消
+          </button>
+        </div>
+      )}
+    </>
   )
 }

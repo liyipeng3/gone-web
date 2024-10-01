@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createComment, deleteComment, getCommentsByCid } from '@/models/comments'
+import { createComment, deleteComment, getCommentsByCid, updateComment } from '@/models/comments'
 
 export async function POST (request: Request, context: { params: { cid: string } }) {
   const { author, text, parent, mail, url } = await request.json()
@@ -18,4 +18,10 @@ export async function DELETE (request: Request, context: { params: { cid: string
 export async function GET (request: Request, context: { params: { cid: string } }) {
   const comments = await getCommentsByCid(Number(context.params.cid))
   return NextResponse.json(comments)
+}
+
+export async function PATCH (request: Request, context: { params: any }) {
+  const { coid, comment } = await request.json()
+  await updateComment(Number(coid), comment)
+  return NextResponse.json({ success: true })
 }

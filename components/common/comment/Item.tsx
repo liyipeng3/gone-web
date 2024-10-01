@@ -61,37 +61,35 @@ function getUserBrowser (agentStr: string): string {
   return browser ?? 'unknown'
 }
 
-// 将 CommentItem 组件改为服务器端组件
-const CommentItem = async ({ comment, layer = 0 }: { comment: any, layer?: number }) => {
+const CommentItem = ({ comment, nameMap }: { comment: any, nameMap: Record<number, string> }) => {
   return (
-    <div className={`mb-4 p-4  ${layer % 2 === 0 ? 'bg-white' : 'bg-[#f2f7fc]'} rounded-md border border-solid border-gray-100 flex flex-col gap-2`}>
+    <div
+      className="mb-4 p-4 bg-white dark:bg-gray-800 rounded-md border border-solid border-gray-100 dark:border-gray-700 flex flex-col gap-2">
       <div className="flex gap-2 flex-row align-start">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="w-10 h-10 rounded-full"
              src={getAvatarUrl(comment.mail)}
-             alt={comment.author}/>
+             alt={comment.author} />
         <div>
-          <div className="text-sm font-medium text-gray-700 gap-1 flex flex-row justify-start items-center flex-wrap">
+          <div
+            className="text-sm text-gray-700 dark:text-gray-300 gap-1 flex flex-row justify-start items-center flex-wrap">
             <span>{comment.author}</span>
+            {comment?.authorId === 1 && <span
+                className="text-gray-700 dark:text-gray-300 whitespace-nowrap rounded-sm text-xs px-1.5 border border-solid border-gray-100 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">Author</span>}
             <span
-              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightsteelblue]">{getUserBrowser(comment.agent)}</span>
+              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightsteelblue] dark:bg-[#4682B4]">{getUserBrowser(comment.agent)}</span>
             <span
-              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightslategrey]">{getUserAgent(comment.agent)}</span>
+              className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightslategrey] dark:bg-[#708090]">{getUserAgent(comment.agent)}</span>
           </div>
-          <p className="text-sm text-gray-600">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
+          <p
+            className="text-sm text-gray-600 dark:text-gray-400">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
         </div>
       </div>
-      <p className="text-sm text-gray-600 relative">
+      <div className="text-sm text-gray-600 dark:text-gray-400 relative">
+        {comment.parent ? <span className="font-bold">回复 {nameMap[comment.parent]}: </span> : null}
         <span>{parseEmoji(comment.text)}</span>
-        <Reply comment={comment} />
-      </p>
-      {comment.children && comment.children.length > 0 && (
-        <div className="ml-8 mt-4">
-          {comment.children.map((childComment: any) => (
-            <CommentItem key={childComment.coid} comment={childComment} layer={layer + 1}/>
-          ))}
-        </div>
-      )}
+        <Reply comment={comment} nameMap={nameMap} />
+      </div>
     </div>
   )
 }
