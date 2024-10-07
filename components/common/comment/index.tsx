@@ -22,7 +22,7 @@ const CommentList: React.FC<CommentListProps> = async ({ cid, title = '评论', 
       {commentsData.length > 0 && (
         <div className="py-4 rounded-lg text-left">
           <h3 className="text-lg font-bold mb-4">{commentsData.length}条{title}</h3>
-          <List initialNum={initialComments} addNum={initialComments} commentsData={commentsData} nameMap={nameMap} />
+          <List commentsData={commentsData} nameMap={nameMap} />
         </div>
       )}
       <div className="p-4 rounded-lg border border-solid border-gray-100 mt-4 text-left dark:border-gray-800">

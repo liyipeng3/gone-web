@@ -7,12 +7,21 @@ export const getCommentsByCid = async (cid: number) => {
 }
 
 export const createComment = async (cid: number, parent: number = 0, data: any) => {
+  const mail = data.mail
+  let status = 'waiting'
+  // 同一邮箱只需审核一次
+  const beforeComment = await prisma.comments.findFirst({
+    where: { mail, status: 'approved' }
+  })
+  if (beforeComment) {
+    status = 'approved'
+  }
   return await prisma.comments.create({
     data: {
       ...data,
       cid,
       parent,
-      status: 'waiting',
+      status,
       created: Math.floor(Date.now() / 1000)
     }
   })

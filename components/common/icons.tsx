@@ -4,7 +4,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Command,
   CreditCard,
   File,
   FileText,
@@ -22,11 +21,12 @@ import {
   Trash,
   User,
   X,
-  MessageSquareText
+  MessageSquareText,
+  Crown
 } from 'lucide-react'
 
 export const Icons = {
-  logo: Command,
+  logo: Crown,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
