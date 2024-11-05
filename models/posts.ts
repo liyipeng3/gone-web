@@ -581,3 +581,38 @@ export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
 
   return !post
 }
+
+export const getArchiveList = async () => {
+  const posts = await prisma.posts.findMany({
+    where: {
+      status: 'publish',
+      type: 'post'
+    },
+    select: {
+      title: true,
+      slug: true,
+      created: true
+    },
+    orderBy: {
+      created: 'desc'
+    }
+  })
+
+  const archiveMap = new Map()
+
+  posts.forEach(post => {
+    const date = new Date((post.created ?? 0) * 1000)
+    const time = `${date.getFullYear()} 年 ${String(date.getMonth() + 1).padStart(2, '0')} 月`
+
+    if (!archiveMap.has(time)) {
+      archiveMap.set(time, [])
+    }
+
+    archiveMap.get(time).push(post)
+  })
+
+  return Array.from(archiveMap.entries()).map(([time, posts]) => ({
+    time,
+    posts
+  }))
+}

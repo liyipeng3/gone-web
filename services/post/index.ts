@@ -38,6 +38,7 @@ export const getPagePostList = cache(async ({
 export const getPagePost = cache(async (slug: string): Promise<{
   title: string
   content: string
+  cid: number
   created: number
   hotList: HotList
 }> => {
@@ -51,6 +52,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   return {
     title: post.title as string,
     content,
+    cid: post.cid,
     created: post.created as number,
     hotList
   }

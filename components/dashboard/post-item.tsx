@@ -32,7 +32,7 @@ export function PostItem ({ post }: PostItemProps) {
           </span>
         </Link>
         <div>
-          <p className="text-sm text-muted-foreground grid grid-cols-2">
+          <p className="text-sm text-muted-foreground grid grid-cols-2 gap-2">
            <span>Create: {dayjs((post.created || post.draft.created) * 1000).format('YYYY年M月D日 HH:mm')}</span>
            <span>Update: {dayjs((post?.modified || post.draft?.modified) * 1000).format('YYYY年M月D日 HH:mm')}</span>
           </p>

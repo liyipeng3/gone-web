@@ -41,17 +41,15 @@ export const Header: React.FC<HeaderProps> = ({
     children: []
   }, {
     name: '归档',
-    id: 'archive',
-    disabled: true
+    id: 'archive'
   },
   {
     name: '留言',
     id: 'guestbook'
   },
   {
-    name: '友链',
-    id: 'link',
-    disabled: true
+    name: '邻居',
+    id: 'links'
   }, {
     name: '关于',
     id: 'about'
