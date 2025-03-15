@@ -30,16 +30,11 @@ model comments {
 }
 
 model fields {
-  cid         Int     @db.UnsignedInt
-  name        String  @db.VarChar(200)
-  type        String? @default("str") @db.VarChar(8)
-  str_value   String? @db.Text
-  int_value   Int?    @default(0)
-  float_value Float?  @default(0) @db.Float
+  cid   Int     @db.UnsignedInt
+  type  String  @db.VarChar(200)
+  value String? @db.Text
 
-  @@id([cid, name])
-  @@index([float_value], map: "float_value")
-  @@index([int_value], map: "int_value")
+  @@id([cid, type])
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
