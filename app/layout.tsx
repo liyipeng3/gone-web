@@ -10,7 +10,7 @@ import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: {
-    default: 'lyp123 - C',
+    default: 'lyp123 - 彼方尚有荣光在',
     template: '%s - lyp123'
   }
 }
