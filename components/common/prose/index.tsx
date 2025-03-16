@@ -56,6 +56,9 @@ const options: HTMLReactParserOptions = {
     if (domNode.type === 'text') {
       return <>{parseEmoji(domNode.data)}</>
     }
+    if (domNode.type === 'tag' && domNode.tagName === 'img') {
+      domNode.attribs.className = cn('lightbox', domNode.attribs.className)
+    }
   }
 }
 
