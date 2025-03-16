@@ -7,11 +7,11 @@ import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
-
+import { siteConfig } from '@/config/site'
 export const metadata: Metadata = {
   title: {
-    default: 'lyp123 - 彼方尚有荣光在',
-    template: '%s - lyp123'
+    default: `${siteConfig.name} - ${siteConfig.signature}`,
+    template: `%s - ${siteConfig.name}`
   }
 }
 

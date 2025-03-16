@@ -28,6 +28,7 @@ export interface SidebarNavItem {
 export interface SiteConfig {
   name: string
   description: string
+  signature: string
   url: string
   links: {
     github: string

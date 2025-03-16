@@ -1,9 +1,9 @@
 import React from 'react'
 import List from '@/components/custom/List'
 import { type Metadata } from 'next/types'
-
+import { siteConfig } from '@/config/site'
 export const metadata: Metadata = {
-  title: 'lyp123 - 做自己'
+  title: `${siteConfig.name} - ${siteConfig.signature}`
 }
 const Page: React.FC<{
   searchParams?: Record<string, string | string[] | undefined>
