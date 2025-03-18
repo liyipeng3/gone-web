@@ -3,6 +3,7 @@ import { type HotList } from '@/types'
 import { getHotList, getPostBySlug, getPostList } from '@/models/posts'
 import marked from '@/lib/marked'
 import prisma from '@/lib/prisma'
+import { type ListProps } from '@/components/custom/List'
 
 export const getPagePostList = cache(async ({
   pageNum = 1,
@@ -61,13 +62,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
 export const getPageCategoryPostList = cache(async ({
   pageNum = 1,
   category = ''
-}): Promise<{
-  list: any[]
-  total: number
-  hotList: HotList
-  description: string
-  baseLink: string
-}> => {
+}): Promise<ListProps> => {
   if (category === '') {
     throw new Error('not found')
   }
@@ -103,6 +98,7 @@ export const getPageCategoryPostList = cache(async ({
     total,
     hotList,
     description,
+    pageNum,
     baseLink: `/category/${category}/?p=`
   }
 })
