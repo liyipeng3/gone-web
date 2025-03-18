@@ -24,20 +24,24 @@ const List: React.FC<ListProps> = async ({
   description,
   baseLink = '/page/',
   searchParams,
-  params
+  params,
+  list,
+  total,
+  hotList
 }) => {
   const num = params?.num ?? searchParams?.p as string ?? '1'
   const search = searchParams?.q as string ?? ''
   const currentPage = parseInt((num ?? '1') as unknown as string)
 
-  const {
-    list,
-    total,
-    hotList
-  } = await getPagePostList({
-    pageNum: currentPage,
-    search
-  })
+  if (!list || !total || !hotList) {
+    const res = await getPagePostList({
+      pageNum: currentPage,
+      search
+    })
+    list ||= res.list
+    total ||= res.total
+    hotList ||= res.hotList
+  }
 
   const pageNum = Math.ceil((total ?? 0) / pageSize)
   if (search !== '') {
