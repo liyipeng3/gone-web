@@ -5,7 +5,7 @@ import marked from '@/lib/marked'
 import prisma from '@/lib/prisma'
 import { type ListProps } from '@/components/custom/List'
 
-export const getPagePostList = cache(async ({
+export const getPagePostList = async ({
   pageNum = 1,
   search = ''
 }: {
@@ -16,9 +16,6 @@ export const getPagePostList = cache(async ({
   total: number
   hotList: HotList
 }> => {
-  // const pageNum: number = ((context.params?.num ?? context.query.p) as unknown as number) ?? 1
-  // const search = context.query.q as string ?? ''
-
   const {
     list,
     total
@@ -34,7 +31,7 @@ export const getPagePostList = cache(async ({
     total,
     hotList
   }
-})
+}
 
 export const getPagePost = cache(async (slug: string): Promise<{
   title: string
