@@ -38,6 +38,7 @@ export default function RootLayout ({
       <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
       <meta name="mobile-web-app-capable" content="yes"/>
+      <meta name="description" content={siteConfig.description}/>
       <meta name="theme-color" content="#ffffff"/>
       <script
         dangerouslySetInnerHTML={{
