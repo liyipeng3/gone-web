@@ -75,7 +75,7 @@ const List: React.FC<ListProps> = async ({
             {parseEmoji(item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述')}
           </Link>
         </div>
-        <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-500">
+        <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-400">
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
