@@ -8,8 +8,10 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import Pagination from '@/components/common/pagination'
 import type { HotList } from '@/types'
+import { parseEmoji } from '@/lib/emoji'
 
 export interface ListProps {
+  pageNum?: number
   list?: any[]
   total?: number
   hotList?: HotList
@@ -20,32 +22,36 @@ export interface ListProps {
 }
 
 const List: React.FC<ListProps> = async ({
+  pageNum,
   description,
   baseLink = '/page/',
   searchParams,
-  params
+  params,
+  list,
+  total,
+  hotList
 }) => {
-  const num = params?.num ?? searchParams?.p as string ?? '1'
+  const num = pageNum ?? params?.num ?? searchParams?.p as string ?? '1'
   const search = searchParams?.q as string ?? ''
   const currentPage = parseInt((num ?? '1') as unknown as string)
 
-  const {
-    list,
-    total,
-    hotList
-  } = await getPagePostList({
-    pageNum: currentPage,
-    search
-  })
+  if (!list || !total || !hotList) {
+    const res = await getPagePostList({
+      pageNum: currentPage,
+      search
+    })
+    list ||= res.list
+    total ||= res.total
+    hotList ||= res.hotList
+  }
 
-  const pageNum = Math.ceil((total ?? 0) / pageSize)
+  const pages = Math.ceil((total ?? 0) / pageSize)
   if (search !== '') {
     baseLink = `/search?q=${search}&p=`
     description = `包含关键字 ${search} 的文章`
   }
 
   return <Main hotList={hotList}>
-
     <div className="hidden mt-4"/>
     <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl md:w-auto w-screen">
       {(description != null) && <Breadcrumb items={[{ name: description }]}/>}
@@ -66,14 +72,14 @@ const List: React.FC<ListProps> = async ({
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl break-all text-justify">
           <Link
             href={`/post/${item?.category as string}/${item?.slug as string}`}>
-            {item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述'}
+            {parseEmoji(item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述')}
           </Link>
         </div>
-        <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-500">
+        <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-400">
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
-      <Pagination pageNum={pageNum} currentPage={currentPage} baseLink={baseLink}/>
+      <Pagination pages={pages} current={currentPage} baseLink={baseLink}/>
     </div>
   </Main>
 }

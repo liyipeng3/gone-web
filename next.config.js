@@ -6,7 +6,14 @@ const nextConfig = {
     includePaths: [__dirname]
   },
   images: {
-    domains: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cravatar.com',
+        port: '',
+        pathname: '/avatar/**'
+      }
+    ]
   },
 }
 

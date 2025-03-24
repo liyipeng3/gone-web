@@ -3,8 +3,9 @@ import { type HotList } from '@/types'
 import { getHotList, getPostBySlug, getPostList } from '@/models/posts'
 import marked from '@/lib/marked'
 import prisma from '@/lib/prisma'
+import { type ListProps } from '@/components/custom/List'
 
-export const getPagePostList = cache(async ({
+export const getPagePostList = async ({
   pageNum = 1,
   search = ''
 }: {
@@ -15,9 +16,6 @@ export const getPagePostList = cache(async ({
   total: number
   hotList: HotList
 }> => {
-  // const pageNum: number = ((context.params?.num ?? context.query.p) as unknown as number) ?? 1
-  // const search = context.query.q as string ?? ''
-
   const {
     list,
     total
@@ -33,11 +31,12 @@ export const getPagePostList = cache(async ({
     total,
     hotList
   }
-})
+}
 
 export const getPagePost = cache(async (slug: string): Promise<{
   title: string
   content: string
+  cid: number
   created: number
   hotList: HotList
 }> => {
@@ -51,6 +50,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   return {
     title: post.title as string,
     content,
+    cid: post.cid,
     created: post.created as number,
     hotList
   }
@@ -59,13 +59,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
 export const getPageCategoryPostList = cache(async ({
   pageNum = 1,
   category = ''
-}): Promise<{
-  list: any[]
-  total: number
-  hotList: HotList
-  description: string
-  baseLink: string
-}> => {
+}): Promise<ListProps> => {
   if (category === '') {
     throw new Error('not found')
   }
@@ -101,6 +95,7 @@ export const getPageCategoryPostList = cache(async ({
     total,
     hotList,
     description,
+    pageNum,
     baseLink: `/category/${category}/?p=`
   }
 })

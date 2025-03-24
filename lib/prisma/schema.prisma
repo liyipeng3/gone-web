@@ -8,37 +8,33 @@ datasource db {
 }
 
 model comments {
-  coid      Int     @id @default(autoincrement()) @db.UnsignedInt
-  cid       Int?    @default(0) @db.UnsignedInt
-  created   Int?    @default(0) @db.UnsignedInt
-  author    String? @db.VarChar(200)
-  authorId  Int?    @default(0) @db.UnsignedInt
-  ownerId   Int?    @default(0) @db.UnsignedInt
-  mail      String? @db.VarChar(200)
-  url       String? @db.VarChar(200)
-  ip        String? @db.VarChar(64)
-  agent     String? @db.VarChar(200)
-  text      String? @db.Text
-  type      String? @default("comment") @db.VarChar(16)
-  status    String? @default("approved") @db.VarChar(16)
-  parent    Int?    @default(0) @db.UnsignedInt
-  authorImg String? @db.VarChar(500)
+  coid     Int     @id @default(autoincrement()) @db.UnsignedInt
+  cid      Int?    @default(0) @db.UnsignedInt
+  created  Int?    @default(0) @db.UnsignedInt
+  author   String? @db.VarChar(200)
+  authorId Int?    @default(0) @db.UnsignedInt
+  ownerId  Int?    @default(0) @db.UnsignedInt
+  mail     String? @db.VarChar(200)
+  url      String? @db.VarChar(200)
+  ip       String? @db.VarChar(64)
+  agent    String? @db.VarChar(200)
+  text     String? @db.Text
+  type     String? @default("comment") @db.VarChar(16)
+  status   String? @default("approved") @db.VarChar(16)
+  parent   Int?    @default(0) @db.UnsignedInt
+  reply    Int?    @db.UnsignedInt
+  posts    posts?  @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
 
   @@index([cid], map: "cid")
   @@index([created], map: "created")
 }
 
 model fields {
-  cid         Int     @db.UnsignedInt
-  name        String  @db.VarChar(200)
-  type        String? @default("str") @db.VarChar(8)
-  str_value   String? @db.Text
-  int_value   Int?    @default(0)
-  float_value Float?  @default(0) @db.Float
+  cid   Int     @db.UnsignedInt
+  type  String  @db.VarChar(200)
+  value String? @db.Text
 
-  @@id([cid, name])
-  @@index([float_value], map: "float_value")
-  @@index([int_value], map: "int_value")
+  @@id([cid, type])
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -75,7 +71,7 @@ model metas {
   parent        Int?            @default(0) @db.UnsignedInt
   relationships relationships[]
 
-  @@unique([slug, type], map: "tag slug unique")
+  @@unique([slug, type], map: "metas_pk")
   @@index([slug], map: "slug")
 }
 
@@ -86,7 +82,7 @@ model options {
 
 model posts {
   cid           Int             @id @default(autoincrement()) @db.UnsignedInt
-  uid           Int?            @default(1)
+  uid           Int?            @default(1) @db.UnsignedInt
   title         String?         @db.VarChar(200)
   slug          String?         @unique(map: "slug") @db.VarChar(200)
   created       Int?            @default(0) @db.UnsignedInt
@@ -101,9 +97,12 @@ model posts {
   parent        Int?            @default(0) @db.UnsignedInt
   viewsNum      Int?            @default(0)
   likesNum      Int?            @default(0)
+  comments      comments[]
+  users         users?          @relation(fields: [uid], references: [uid], onDelete: Restrict, onUpdate: Restrict, map: "posts_users_uid_fk")
   relationships relationships[]
 
   @@index([created], map: "created")
+  @@index([uid], map: "posts_users_uid_fk")
 }
 
 model relationships {
@@ -129,4 +128,5 @@ model users {
   logged     Int?    @default(0) @db.UnsignedInt
   group      String? @default("visitor") @db.VarChar(16)
   authCode   String? @db.VarChar(64)
+  posts      posts[]
 }

@@ -28,16 +28,22 @@ export const authOptions: NextAuthOptions = {
           type: 'password'
         }
       },
+
       async authorize (credentials, req) {
         // console.log('===', await bcryptjs.genSalt(10))
         const user = await prisma.users.findUnique({
           where: {
-            username: credentials?.username,
-            password: bcryptjs.hashSync(credentials?.password as string, process.env.SALT as string)
+            username: credentials?.username
           }
         })
-        // If no error and we have user data, return it
-        if (user !== null) {
+        // 如果找到用户并且密码匹配
+        if (
+          user &&
+          (await bcryptjs.compare(
+            credentials?.password as string,
+            user.password as string
+          ))
+        ) {
           return {
             id: user.uid,
             name: user.username,
@@ -51,10 +57,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async session ({
-      token,
-      session
-    }) {
+    async session ({ token, session }) {
       if (token !== null) {
         session.user.id = token.id
         session.user.name = token.name
@@ -64,10 +67,7 @@ export const authOptions: NextAuthOptions = {
 
       return session
     },
-    async jwt ({
-      token,
-      user
-    }) {
+    async jwt ({ token, user }) {
       const dbUser = await prisma.users.findFirst({
         where: {
           username: token.name

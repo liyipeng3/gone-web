@@ -24,16 +24,17 @@ export function PostItem ({ post }: PostItemProps) {
             className="text-gray-500 text-xs">
             {
               post?.status !== 'publish'
-                ? '（未发布）'
+                ? `（未发布:${dayjs((post.draft?.modified || post.draft.created) * 1000).format('YYYY-M-D HH:mm')}）`
                 : post.draft?.cid
-                  ? '（草稿）'
+                  ? `（草稿:${dayjs((post.draft?.modified || post.draft.created) * 1000).format('YYYY-M-D HH:mm')}）`
                   : null
             }
           </span>
         </Link>
         <div>
-          <p className="text-sm text-muted-foreground">
-            {dayjs((post.created || post.draft.created) * 1000).format('YYYY年M月D日 HH:mm')}
+          <p className="text-sm text-muted-foreground grid grid-cols-2 gap-2">
+           <span>Create: {dayjs((post.created || post.draft.created) * 1000).format('YYYY年M月D日 HH:mm')}</span>
+           <span>Update: {dayjs((post?.modified || post.draft?.modified) * 1000).format('YYYY年M月D日 HH:mm')}</span>
           </p>
         </div>
       </div>

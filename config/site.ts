@@ -2,10 +2,9 @@ import { type SiteConfig } from '@/types'
 
 export const siteConfig: SiteConfig = {
   name: 'lyp123',
+  signature: '彼方尚有荣光在',
   description:
-    'An open source application built using the new router, server components and everything new in Next.js 14.',
+    '好久不见',
   url: 'https://lyp123.com',
-  links: {
-    github: 'https://github.com/liyipeng3/gone-web'
-  }
+  github: 'https://github.com/liyipeng3'
 }

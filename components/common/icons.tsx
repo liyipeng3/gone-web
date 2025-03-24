@@ -4,7 +4,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Command,
   CreditCard,
   File,
   FileText,
@@ -21,11 +20,13 @@ import {
   SunMedium,
   Trash,
   User,
-  X
+  X,
+  MessageSquareText,
+  Crown
 } from 'lucide-react'
 
 export const Icons = {
-  logo: Command,
+  logo: Crown,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
@@ -46,6 +47,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  comment: MessageSquareText,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

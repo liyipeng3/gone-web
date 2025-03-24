@@ -41,19 +41,15 @@ export const Header: React.FC<HeaderProps> = ({
     children: []
   }, {
     name: '归档',
-    id: 'archive',
-    disabled: true
+    id: 'archive'
   },
   {
     name: '留言',
-    id: 'message',
-    disabled: true
+    id: 'guestbook'
   },
   {
-    name: '友链',
-    id: 'link',
-    disabled: true
-
+    name: '邻居',
+    id: 'links'
   }, {
     name: '关于',
     id: 'about'
@@ -155,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle flex items-start ">
+      className="border-b border-solid border-b-light-line dark:bg-dark-light dark:border-b-dark-line align-middle flex items-start">
       <Link href="/" className="md:mr-auto">
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>
@@ -217,12 +213,19 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             ref={inputRef}
             autoFocus
-            placeholder="请输入关键词搜索" value={search} onChange={(e) => {
+            placeholder="请输入关键词搜索"
+            value={search}
+            onChange={(e) => {
               setSearch(e.target.value)
-            }}/>
-          <button className="search-icon absolute right-0" onClick={() => {
-            startSearch()
-          }}></button>
+            }}
+          />
+          <button
+            className="search-icon absolute right-0"
+            onClick={() => {
+              startSearch()
+            }}
+            aria-label="搜索"
+          />
         </div>
 
       </div>
@@ -233,13 +236,16 @@ export const Header: React.FC<HeaderProps> = ({
           }
           setMenuType(menuType === 'close' ? 'search' : 'close')
         }}>
-          <button className="nav-icon relative translate-y-[1%]">
-            <span></span>
+          <button
+            className="nav-icon relative translate-y-[1%]"
+            aria-label="菜单导航"
+          >
+            <span />
           </button>
         </div>
         <div className="hover:cursor-pointer flex justify-center translate-y-[1px] w-7" onClick={clickTheme}>
-          <SunIcon className="md:w-6 w-7 block dark:hidden"/>
-          <MoonIcon className="md:w-5 w-6 hidden dark:block"/>
+          <SunIcon className="md:w-6 w-7 block dark:hidden" />
+          <MoonIcon className="md:w-5 w-6 hidden dark:block" />
         </div>
       </div>
     </header>

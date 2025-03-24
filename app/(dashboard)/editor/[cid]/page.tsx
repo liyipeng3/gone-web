@@ -20,12 +20,18 @@ interface EditorProps {
   params: { cid: string }
 }
 
+interface Category {
+  name: string
+  slug: string
+  description: string
+}
+
 const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const isInitialRef = React.useRef(false)
   const [post, setPost] = useState<any>({})
   const [draft, setDraft] = useState<any>({})
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
-  const [categories, setCategories] = useState<Array<{ name: string, slug: string, description: string }>>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const getData = useCallback(async () => {
     const res: any = await http.get(`/api/post/${params.cid}`)
     setPost(res)
@@ -102,7 +108,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     void getData()
 
     void http.get('/api/category').then(res => {
-      setCategories(res)
+      setCategories(res as Category[])
     })
   }, [params.cid])
 

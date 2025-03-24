@@ -10,7 +10,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({
     className,
     type,
-    value = '',
     ...props
   }, ref) => {
     return (
@@ -21,7 +20,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         ref={ref}
-        value={value}
         {...props}
       />
     )

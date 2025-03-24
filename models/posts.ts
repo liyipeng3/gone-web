@@ -2,7 +2,18 @@ import prisma from '@/lib/prisma'
 import { marked } from 'marked'
 import { type HotList } from '@/types'
 
+import NodeCache from 'node-cache'
+
+const cache = new NodeCache({ stdTTL: 600 }) // 10分钟缓存
+
 export const getHotList = async (): Promise<HotList> => {
+  const cacheKey = 'hot_list'
+  const cachedData = cache.get<HotList>(cacheKey)
+
+  if (cachedData) {
+    return cachedData
+  }
+
   const hotData = await prisma.relationships.findMany({
     include: {
       posts: {
@@ -33,10 +44,14 @@ export const getHotList = async (): Promise<HotList> => {
     },
     take: 10
   })
-  return hotData.map((item: { posts: any, metas: { slug: any } }) => ({
+
+  const result = hotData.map((item: { posts: any, metas: { slug: any } }) => ({
     ...item.posts,
     category: item.metas.slug
   })) as HotList
+
+  cache.set(cacheKey, result)
+  return result
 }
 
 export const getPostBySlug = async (slug: string) => {
@@ -65,6 +80,7 @@ export const getPostBySlug = async (slug: string) => {
 }
 
 export const updateMetas = async (cid: number, category: string, tags: string[]) => {
+  // 删除旧关系
   await prisma.relationships.deleteMany({
     where: {
       posts: {
@@ -72,75 +88,62 @@ export const updateMetas = async (cid: number, category: string, tags: string[])
       }
     }
   })
-  const categoryMid = (await prisma.metas.findFirst({
+  // 获取分类 mid
+  const categoryMeta = await prisma.metas.findFirst({
     where: {
       slug: category,
       type: 'category'
     }
-  }))?.mid
+  })
 
-  for (let i = 0; i < tags.length; i++) {
-    const tagMid = (await prisma.metas.findFirst({
+  // 批量处理标签
+  const tagOperations = tags.map(async (tag) => {
+    const tagMeta = await prisma.metas.findFirst({
       where: {
-        slug: tags[i],
+        slug: tag,
         type: 'tag'
       }
-    }))?.mid
-    if (tagMid === undefined) {
-      await prisma.metas.create({
+    })
+    if (!tagMeta) {
+      // 创建新标签
+      const newTag = await prisma.metas.create({
         data: {
-          name: tags[i],
-          slug: tags[i],
+          name: tag,
+          slug: tag,
           type: 'tag',
           count: 0
         }
       })
-    } else {
-      const count = (await prisma.relationships.count({
-        where: {
-          metas: {
-            mid: tagMid
-          }
-        }
-      }))
-      await prisma.metas.update({
-        where: {
-          mid: tagMid
-        },
+      return newTag.mid
+    }
+
+    return tagMeta.mid
+  })
+
+  // 并行处理所有标签
+  const tagMids = await Promise.all(tagOperations)
+
+  // 准备创建关系的数据
+  const relationshipData = [
+    ...tagMids.map(mid => ({ cid, mid })),
+    { cid, mid: categoryMeta?.mid }
+  ].filter(item => item.mid !== undefined)
+
+  // 准备创建关系的数据
+  const createPromises = []
+  for (const data of relationshipData) {
+    createPromises.push(
+      prisma.relationships.create({
         data: {
-          count
+          cid: data.cid,
+          mid: data.mid as number
         }
       })
-    }
-    await prisma.relationships.create({
-      data: {
-        metas: {
-          connect: {
-            mid: tagMid
-          }
-        },
-        posts: {
-          connect: {
-            cid
-          }
-        }
-      }
-    })
+    )
   }
-  return await prisma.relationships.create({
-    data: {
-      metas: {
-        connect: {
-          mid: categoryMid
-        }
-      },
-      posts: {
-        connect: {
-          cid
-        }
-      }
-    }
-  })
+
+  // 使用事务批量创建关系
+  return await prisma.$transaction(createPromises)
 }
 
 export const updatePost = async (cid: number, data: any) => {
@@ -166,34 +169,64 @@ export const incrementViews = async (cid: number) => {
 }
 
 export const getPostByCid = async (cid: number, draft?: boolean) => {
-  let draftPost = null
-  const post = await prisma.posts.findUnique({
-    include: {
-      relationships: {
-        include: {
-          metas: {
-            select: {
-              name: true,
-              slug: true,
-              type: true
+  // 构建查询条件
+  const queries = [
+    prisma.posts.findUnique({
+      include: {
+        relationships: {
+          include: {
+            metas: {
+              select: {
+                name: true,
+                slug: true,
+                type: true
+              }
             }
           }
         }
+      },
+      where: {
+        cid
       }
-    },
-    where: {
-      cid
-    }
-  })
+    })
+  ]
 
-  if (draft && post) {
-    const draft = await getDraftPostByCid(post.cid)
-    draftPost = {
-      ...draft,
-      category: draft?.relationships?.find((item: {
+  // 如果需要草稿数据，添加草稿查询
+  if (draft) {
+    queries.push(
+      prisma.posts.findFirst({
+        where: {
+          parent: cid
+        },
+        include: {
+          relationships: {
+            include: {
+              metas: {
+                select: {
+                  name: true,
+                  slug: true,
+                  type: true
+                }
+              }
+            }
+          }
+        }
+      })
+    )
+  }
+
+  // 并行执行查询
+  const [post, draftPost] = await Promise.all(queries)
+
+  // 处理返回数据
+  let formattedDraftPost = null
+  if (draft && draftPost) {
+    formattedDraftPost = {
+      ...draftPost,
+      category: draftPost?.relationships?.find((item: {
         metas: { type: string }
       }) => item.metas.type === 'category')?.metas?.slug,
-      tags: draft?.relationships?.filter((item: {
+      tags: draftPost?.relationships?.filter((item: {
         metas: { type: string }
       }) => item.metas.type === 'tag')?.map((item) => item.metas.slug)
     }
@@ -201,7 +234,7 @@ export const getPostByCid = async (cid: number, draft?: boolean) => {
 
   return {
     ...post,
-    draft: draftPost,
+    draft: formattedDraftPost,
     category: post?.relationships?.find((item: {
       metas: { type: string }
     }) => item.metas.type === 'category')?.metas?.slug,
@@ -580,4 +613,39 @@ export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
   })
 
   return !post
+}
+
+export const getArchiveList = async () => {
+  const posts = await prisma.posts.findMany({
+    where: {
+      status: 'publish',
+      type: 'post'
+    },
+    select: {
+      title: true,
+      slug: true,
+      created: true
+    },
+    orderBy: {
+      created: 'desc'
+    }
+  })
+
+  const archiveMap = new Map()
+
+  posts.forEach(post => {
+    const date = new Date((post.created ?? 0) * 1000)
+    const time = `${date.getFullYear()} 年 ${String(date.getMonth() + 1).padStart(2, '0')} 月`
+
+    if (!archiveMap.has(time)) {
+      archiveMap.set(time, [])
+    }
+
+    archiveMap.get(time).push(post)
+  })
+
+  return Array.from(archiveMap.entries()).map(([time, posts]) => ({
+    time,
+    posts
+  }))
 }

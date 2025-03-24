@@ -7,11 +7,11 @@ import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
-
+import { siteConfig } from '@/config/site'
 export const metadata: Metadata = {
   title: {
-    default: 'lyp123 - 做自己',
-    template: '%s - lyp123'
+    default: `${siteConfig.name} - ${siteConfig.signature}`,
+    template: `%s - ${siteConfig.name}`
   }
 }
 
@@ -35,8 +35,10 @@ export default function RootLayout ({
   return (
     <html lang="en">
     <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
+      <meta name="mobile-web-app-capable" content="yes"/>
+      <meta name="description" content={siteConfig.description}/>
       <meta name="theme-color" content="#ffffff"/>
       <script
         dangerouslySetInnerHTML={{

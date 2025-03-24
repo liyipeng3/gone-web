@@ -1,4 +1,5 @@
 'use client'
+import { siteConfig } from '@/config/site'
 import type React from 'react'
 import { useEffect } from 'react'
 
@@ -12,7 +13,7 @@ const AllView: React.FC = () => {
       }).then(_ => {
       })
     }
-    console.log('%c lyp123 %c https://lyp123.com ', 'color: #fff; margin: 1em 0; padding: 5px 0; background: #00a9e0;', 'margin: 1em 0; padding: 5px 0; background: #efefef;')
+    console.log(`%c ${siteConfig.name} %c ${siteConfig.url} `, 'color: #fff; margin: 1em 0; padding: 5px 0; background: #00a9e0;', 'margin: 1em 0; padding: 5px 0; background: #efefef;')
   }, [])
 
   return null

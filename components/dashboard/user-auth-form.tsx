@@ -78,7 +78,7 @@ export function UserAuthForm ({
               disabled={isLoading}
               {...register('username')}
             />
-            {(Boolean((errors?.username))) && (
+            {(Boolean(errors?.username)) && (
               <p className="px-1 text-xs text-red-600">
                 {errors?.username?.message}
               </p>
@@ -93,7 +93,7 @@ export function UserAuthForm ({
               disabled={isLoading}
               {...register('password')}
             />
-            {(Boolean((errors?.password))) && (
+            {(Boolean(errors?.password)) && (
               <p className="px-1 text-xs text-red-600">
                 {errors?.password?.message}
               </p>

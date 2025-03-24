@@ -12,5 +12,4 @@ const highLightExtension = markedHighlight({
 })
 
 marked.use(highLightExtension)
-
 export default marked

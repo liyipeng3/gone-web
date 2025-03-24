@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: '关于'
 }
 
-const Page: React.FC = async () => {
+const About: React.FC = async () => {
   const {
     title,
     content,
@@ -30,4 +30,4 @@ const Page: React.FC = async () => {
   )
 }
 
-export default Page
+export default About

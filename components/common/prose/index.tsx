@@ -1,5 +1,6 @@
 import cn from 'classnames'
 import React, { type FC } from 'react'
+import { parseEmoji } from '@/lib/emoji'
 
 import parse, { type DOMNode, domToReact, type HTMLReactParserOptions } from 'html-react-parser'
 import Lightbox from './lightbox'
@@ -23,6 +24,22 @@ function getText (node: DOMNode): string {
   return ''
 }
 
+// const options: HTMLReactParserOptions = {
+//   replace: (domNode) => {
+//     if (domNode.type === 'tag' && domNode.tagName === 'pre' && domNode.children[0]?.type === 'tag' && domNode.children[0].tagName === 'code') {
+//       const originalCode = getText(domNode.children[0])
+//       return (
+//         <div className="relative">
+//           <pre>
+//             {domToReact(domNode.children as DOMNode[], options)}
+//           </pre>
+//           <CopyButton text={originalCode} className="absolute right-2 top-2"/>
+//         </div>
+//       )
+//     }
+//   }
+// }
+
 const options: HTMLReactParserOptions = {
   replace: (domNode) => {
     if (domNode.type === 'tag' && domNode.tagName === 'pre' && domNode.children[0]?.type === 'tag' && domNode.children[0].tagName === 'code') {
@@ -35,6 +52,12 @@ const options: HTMLReactParserOptions = {
           <CopyButton text={originalCode} className="absolute right-2 top-2"/>
         </div>
       )
+    }
+    if (domNode.type === 'text') {
+      return <>{parseEmoji(domNode.data)}</>
+    }
+    if (domNode.type === 'tag' && domNode.tagName === 'img') {
+      domNode.attribs.className = cn('lightbox', domNode.attribs.className)
     }
   }
 }
