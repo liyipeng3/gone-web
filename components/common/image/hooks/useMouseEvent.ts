@@ -105,8 +105,8 @@ export default function useMouseEvent (
   }
 
   useEffect(() => {
-    let onTopMouseUpListener: { remove: () => void }
-    let onTopMouseMoveListener: { remove: () => void }
+    // let onTopMouseUpListener: { remove: () => void }
+    // let onTopMouseMoveListener: { remove: () => void }
     let onMouseUpListener: { remove: () => void }
     let onMouseMoveListener: { remove: () => void }
 
@@ -118,10 +118,10 @@ export default function useMouseEvent (
     return () => {
       onMouseUpListener?.remove()
       onMouseMoveListener?.remove()
-      /* istanbul ignore next */
-      onTopMouseUpListener?.remove()
-      /* istanbul ignore next */
-      onTopMouseMoveListener?.remove()
+      // /* istanbul ignore next */
+      // onTopMouseUpListener?.remove()
+      // /* istanbul ignore next */
+      // onTopMouseMoveListener?.remove()
     }
   }, [visible, isMoving, x, y, rotate, movable])
 
