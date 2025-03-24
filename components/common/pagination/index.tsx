@@ -19,7 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({
       className="text-center md:space-x-10 space-x-5 w-full py-2  border-black text-sm md:pt-10 md:pb-5 flex-row flex justify-center">
       {current !== 1 &&
         <Link href={`${baseLink}${current - 1}`} className="border-inherit hover:border-b">上一页</Link>}
-      <div className="md:space-x-3 space-x-1 border-inherit">
+      <div className="space-x-3 border-inherit">
         {
           pageArr.map((_, index) =>
             (<Link key={index}
