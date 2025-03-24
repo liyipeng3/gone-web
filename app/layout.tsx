@@ -25,6 +25,32 @@ const fontHeading = localFont({
   variable: '--font-heading'
 })
 
+const initScript = `
+                try {
+                  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark')
+                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#161b22')
+                  } else {
+                    document.documentElement.classList.remove('dark')
+                  }
+                } catch (_) {}
+
+                let loadedLive2d = false
+
+                function loadLive2d () {
+                   if (screen && screen.width >= 768 && !loadedLive2d) {
+                    const script = document.createElement('script')
+                    script.src = '/lib/l2d.js'
+                    document.head.appendChild(script)
+                    loadedLive2d = true
+                  }
+                }
+
+                loadLive2d()
+
+                window.addEventListener('resize', loadLive2d)
+              `
+
 export default function RootLayout ({
   // Layouts must accept a children prop.
   // This will be populated with nested layouts or pages
@@ -40,21 +66,12 @@ export default function RootLayout ({
       <meta name="mobile-web-app-capable" content="yes"/>
       <meta name="description" content={siteConfig.description}/>
       <meta name="theme-color" content="#ffffff"/>
-      <script
+      <Script
+        id="init-script"
         dangerouslySetInnerHTML={{
-          __html: `
-                try {
-                  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark')
-                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#161b22')
-                  } else {
-                    document.documentElement.classList.remove('dark')
-                  }
-                } catch (_) {}
-              `
+          __html: initScript
         }}
       />
-      <Script src="/lib/l2d.js" strategy="beforeInteractive"/>
     </head>
     <body className={cn(
       'min-h-screen bg-background font-sans antialiased',
