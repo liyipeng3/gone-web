@@ -10,7 +10,7 @@ export const Assistant: FC = () => {
         interval = setInterval(() => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-          if (window?.loadlive2d) {
+          if (window?.loadlive2d && !loaded) {
             assistant({
               hidden: false,
               model: '/lib/assistant/model.json',

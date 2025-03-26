@@ -141,7 +141,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ cid, initialLikes = 0 }) => {
             'flex items-center gap-2 px-6 py-5 rounded-full transition-all ' +
             (isLiked
               ? 'bg-pink-100 hover:bg-pink-200 text-pink-600 dark:bg-pink-950 dark:hover:bg-pink-900 dark:text-pink-400'
-              : 'hover:text-pink-600 dark:hover:text-pink-400')
+              : 'hover:text-pink-600 dark:hover:text-pink-400 dark:text-gray-400')
           }
           onClick={handleLike}
           disabled={isLoading}
