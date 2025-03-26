@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build:dev": "env-cmd -f .env.development.local prisma generate && env-cmd -f .env.development.local next build",
     "build": "prisma generate && next build",
     "analyze": "ANALYZE=true next build",

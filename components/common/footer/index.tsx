@@ -29,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({
   return (
     <footer
       className="dark:bg-dark-light dark:border-t-dark-line border-t border-solid flex flex-col md:flex-row md:justify-between md:flex">
-      {/* <span>{logo}</span> */}
+      <span>{logo}</span>
       <button className="text-xs text-gray-400 select-none" disabled>
         <div>Copyright &copy; 2018-{now.year()} <span className="text-gray-600 dark:text-gray-300">小明难亡</span> All
           Rights Reserved
