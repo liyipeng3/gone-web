@@ -8,6 +8,7 @@ import PostView from '@/components/custom/View/post'
 import { type Metadata } from 'next/types'
 import CommentList from '@/components/common/comment'
 import Link from 'next/link'
+import LikeButton from '@/components/common/like-button'
 
 export async function generateMetadata (
   { params }: { params: { slug: string } }
@@ -31,7 +32,8 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     category,
     viewsNum,
     hotList,
-    cid
+    cid,
+    likesNum
   } = await getPagePostInfo({ slug: params.slug })
 
   return (
@@ -52,6 +54,11 @@ const Content: React.FC<{ params: { slug: string } }> = async (
             <span>{viewsNum}人阅读</span>
           </div>
           <Prose content={content}/>
+          <div className="flex justify-center items-center my-8 py-4">
+            <div className="flex items-center gap-2">
+              <LikeButton cid={cid as number} initialLikes={likesNum} />
+            </div>
+          </div>
         </article>
         <CommentList cid={cid as number}/>
       </div>

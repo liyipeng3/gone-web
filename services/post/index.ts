@@ -107,6 +107,7 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   name: string
   hotList: HotList
   viewsNum: number
+  likesNum: number
   category?: string
   cid?: number
 }> => {
@@ -124,6 +125,7 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
     name: post.relationships[0].metas.name as string,
     category: post.relationships[0].metas.slug as string,
     viewsNum: post.viewsNum as number,
+    likesNum: post.likesNum as number || 0,
     hotList,
     cid: post.cid
   }
