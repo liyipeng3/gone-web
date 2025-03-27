@@ -1,5 +1,7 @@
 # gone-web
 
+[English](README.md) **|** [简体中文](README_CN.md)
+
 基于 TypeScript、Next.js 和 Tailwind CSS 构建的现代化博客系统。
 
 本项目为个人开发作品，欢迎使用并提出改进建议。

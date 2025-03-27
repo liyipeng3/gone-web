@@ -1,5 +1,7 @@
 # gone-web
 
+[English](README.md) **|** [简体中文](README_CN.md)
+
 This is a blog built with TypeScript, Next.js and Tailwind CSS.
 
 I write it for me, but if you find it useful, that's great, if you can help me improve it, that's even better.
