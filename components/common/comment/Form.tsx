@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { emojiMap } from '@/lib/emoji'
 import { toast } from '@/components/ui/use-toast'
 import Image from 'next/image'
+import { Loader2 } from 'lucide-react'
 
 interface CommentFormProps {
   cid: number
@@ -24,6 +25,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [showEmojis, setShowEmojis] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
     // 添加邮箱和名称的验证，邮箱需要符合邮箱格式
@@ -43,26 +45,38 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
       })
       return
     }
-    await fetch(`/api/comment/${cid}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        author,
-        mail,
-        url,
-        cid,
-        parent: parent ?? 0,
-        text
+
+    try {
+      setIsSubmitting(true)
+      await fetch(`/api/comment/${cid}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          author,
+          mail,
+          url,
+          cid,
+          parent: parent ?? 0,
+          text
+        })
       })
-    })
-    toast({
-      title: '提交成功',
-      variant: 'success',
-      description: '感谢您的评论，您的评论正等待审核！'
-    })
-    setText('')
-    setMail('')
-    setAuthor('')
-    setUrl('')
+      toast({
+        title: '提交成功',
+        variant: 'success',
+        description: '感谢您的评论，您的评论正等待审核！'
+      })
+      setText('')
+      setMail('')
+      setAuthor('')
+      setUrl('')
+    } catch (error) {
+      toast({
+        title: '提交失败',
+        variant: 'destructive',
+        description: '评论提交时发生错误，请稍后再试'
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -107,8 +121,22 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
           setUrl(e.target.value)
         }} />
       </div>
-      <Button className='dark:bg-gray-800 dark:text-white hover:bg-gray-700 hover:dark:bg-gray-700'
-              onClick={handleSubmit}>提交{parent ? '回复' : '评论'}</Button>
+      <Button
+        className='dark:bg-gray-800 dark:text-white hover:bg-gray-700 hover:dark:bg-gray-700'
+        onClick={handleSubmit}
+        disabled={isSubmitting}
+      >
+        {isSubmitting
+          ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            提交中...
+          </>
+            )
+          : (
+          <>提交{parent ? '回复' : '评论'}</>
+            )}
+      </Button>
     </div>
   )
 }

@@ -53,22 +53,22 @@ export async function GET (request: Request, context: { params: { cid: string } 
 
 export async function PATCH (request: Request, context: { params: any }) {
   const { coid, comment } = await request.json()
-  
+
   // 获取更新前的评论信息
   const oldComment = await getCommentById(Number(coid))
-  
+
   // 更新评论
   await updateComment(Number(coid), comment)
-  
+
   // 如果评论状态从待审核变为已批准，则发送审核通过通知
   if (oldComment && oldComment.status !== 'approved' && comment.status === 'approved' && oldComment.mail) {
     // 获取文章信息用于邮件通知
     const postInfo = await getPostInfoByCid(Number(oldComment.cid))
     const postUrl = `${process.env.SITE_URL}/post/${postInfo.category}/${postInfo.slug}`
-    
+
     // 发送评论审核通过通知
     await sendCommentApprovedNotification(oldComment, postInfo.title ?? '暂无标题', postUrl)
   }
-  
+
   return NextResponse.json({ success: true })
 }
