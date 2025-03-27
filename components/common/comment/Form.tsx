@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
 import { siteConfig } from '@/config/site'
+import Link from 'next/link'
 
 interface CommentFormProps {
   cid: number
@@ -101,10 +102,11 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
       {session?.user
         ? (
         <div className="flex justify-start items-center text-sm mb-2 text-gray-600 gap-2">
-          <span>登录身份: {session.user.name}</span>
+          <span>登录身份: <Link href="/dashboard/profile" target="_blank" className="text-gray-500 hover:text-gray-700 hover:underline">{session.user.name}</Link></span>
           <button
             onClick={async () => { await signOut({ callbackUrl: window.location.href }) }}
             className="text-gray-500 hover:text-gray-700"
+            aria-label="退出登录"
           >
             退出 »
           </button>
