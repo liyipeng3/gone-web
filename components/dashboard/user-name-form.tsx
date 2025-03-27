@@ -42,7 +42,7 @@ export function UserNameForm ({
   async function onSubmit (data: FormData) {
     setIsSaving(true)
 
-    const response = await fetch(`/api/users/${user.id}`, {
+    const response = await fetch(`/api/user/${user.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

@@ -1,12 +1,14 @@
 'use client'
 import { Textarea } from '@/components/ui/textarea'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { emojiMap } from '@/lib/emoji'
 import { toast } from '@/components/ui/use-toast'
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
+import { siteConfig } from '@/config/site'
 
 interface CommentFormProps {
   cid: number
@@ -26,6 +28,18 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
   const [url, setUrl] = useState('')
   const [showEmojis, setShowEmojis] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // 获取用户会话信息
+  const { data: session } = useSession()
+
+  // 当会话信息加载完成后，自动填写用户信息
+  useEffect(() => {
+    if (session?.user) {
+      setAuthor(session.user.name ?? '')
+      setMail(session.user.email ?? '')
+      setUrl(siteConfig.url)
+    }
+  }, [session])
 
   const handleSubmit = async () => {
     // 添加邮箱和名称的验证，邮箱需要符合邮箱格式
@@ -65,9 +79,12 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
         description: '感谢您的评论，您的评论正等待审核！'
       })
       setText('')
-      setMail('')
-      setAuthor('')
-      setUrl('')
+      // 如果用户已登录，不清空用户信息
+      if (!session?.user) {
+        setMail('')
+        setAuthor('')
+        setUrl('')
+      }
     } catch (error) {
       toast({
         title: '提交失败',
@@ -81,6 +98,19 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
 
   return (
     <div className="flex flex-col gap-2">
+      {session?.user
+        ? (
+        <div className="flex justify-start items-center text-sm mb-2 text-gray-600 gap-2">
+          <span>登录身份: {session.user.name}</span>
+          <button
+            onClick={async () => { await signOut({ callbackUrl: window.location.href }) }}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            退出 »
+          </button>
+        </div>
+          )
+        : null}
       <Textarea placeholder={parent ? `回复 ${nameMap[parent]}：` : '来都来了，说点啥吧'} value={text} onChange={(e) => {
         setText(e.target.value)
       }} />
@@ -110,17 +140,31 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
           </div>
         )}
       </div>
-      <div className="flex flex-row gap-2">
-        <Input placeholder="称呼 *" value={author} onChange={(e) => {
-          setAuthor(e.target.value)
-        }} />
-        <Input placeholder="邮箱 *" value={mail} onChange={(e) => {
-          setMail(e.target.value)
-        }} />
-        <Input placeholder="网站" value={url} onChange={(e) => {
-          setUrl(e.target.value)
-        }} />
-      </div>
+      {!session?.user && (
+        <div className="flex flex-row gap-2">
+          <Input
+            placeholder="称呼 *"
+            value={author}
+            onChange={(e) => {
+              setAuthor(e.target.value)
+            }}
+          />
+          <Input
+            placeholder="邮箱 *"
+            value={mail}
+            onChange={(e) => {
+              setMail(e.target.value)
+            }}
+          />
+          <Input
+            placeholder="网站"
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value)
+            }}
+          />
+        </div>
+      )}
       <Button
         className='dark:bg-gray-800 dark:text-white hover:bg-gray-700 hover:dark:bg-gray-700'
         onClick={handleSubmit}
@@ -128,13 +172,13 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
       >
         {isSubmitting
           ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            提交中...
-          </>
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              提交中...
+            </>
             )
           : (
-          <>提交{parent ? '回复' : '评论'}</>
+            <>提交{parent ? '回复' : '评论'}</>
             )}
       </Button>
     </div>

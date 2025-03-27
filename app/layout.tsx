@@ -8,6 +8,8 @@ import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
 import { siteConfig } from '@/config/site'
+import { SessionProvider } from '@/components/provider/session-provider'
+
 export const metadata: Metadata = {
   title: {
     default: `${siteConfig.name} - ${siteConfig.signature}`,
@@ -79,7 +81,9 @@ export default function RootLayout ({
       fontSans.variable,
       fontHeading.variable
     )}>
-    {children}
+    <SessionProvider>
+      {children}
+    </SessionProvider>
     <Toaster/>
     </body>
     </html>
