@@ -108,7 +108,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
         }} />
       </div>
       <Button className='dark:bg-gray-800 dark:text-white hover:bg-gray-700 hover:dark:bg-gray-700'
-              onClick={handleSubmit}>提交评论</Button>
+              onClick={handleSubmit}>提交{parent ? '回复' : '评论'}</Button>
     </div>
   )
 }

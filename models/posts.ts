@@ -649,3 +649,40 @@ export const getArchiveList = async () => {
     posts
   }))
 }
+
+export const getPostInfoByCid = async (cid: number) => {
+  const post = await prisma.posts.findUnique({
+    include: {
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              slug: true,
+              type: true
+            }
+          }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
+        }
+      }
+    },
+    where: {
+      cid
+    }
+  })
+
+  if (!post) {
+    throw new Error('文章不存在')
+  }
+
+  const category = post.relationships[0]?.metas?.slug || 'uncategorized'
+
+  return {
+    title: post.title,
+    slug: post.slug,
+    category
+  }
+}

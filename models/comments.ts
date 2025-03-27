@@ -6,6 +6,12 @@ export const getCommentsByCid = async (cid: number) => {
   })
 }
 
+export const getCommentById = async (coid: number) => {
+  return await prisma.comments.findUnique({
+    where: { coid }
+  })
+}
+
 export const createComment = async (cid: number, parent: number = 0, data: any) => {
   const mail = data.mail
   let status = 'waiting'
