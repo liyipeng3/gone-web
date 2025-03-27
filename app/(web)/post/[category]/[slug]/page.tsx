@@ -39,7 +39,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
   return (
     <Main hotList={hotList}>
       <div className="md:max-w-3xl max-w-full md:min-w-[48rem]">
-        <article className="md:max-w-3xl max-w-full md:min-w-[48rem] text-left flex-1 prose min-h-[30vh]">
+        <article className="md:max-w-3xl max-w-full md:min-w-[48rem] text-left flex-1 prose min-h-[22vh]">
           <Breadcrumb items={[{
             name,
             href: `/category/${category as string}`
@@ -54,12 +54,12 @@ const Content: React.FC<{ params: { slug: string } }> = async (
             <span>{viewsNum}人阅读</span>
           </div>
           <Prose content={content}/>
-          <div className="flex justify-center items-center my-8 py-4">
-            <div className="flex items-center gap-2">
-              <LikeButton cid={cid as number} initialLikes={likesNum} />
-            </div>
-          </div>
         </article>
+        <div className="flex justify-center items-center my-8 py-4">
+          <div className="flex items-center gap-2">
+            <LikeButton cid={cid as number} initialLikes={likesNum} />
+          </div>
+        </div>
         <CommentList cid={cid as number}/>
       </div>
       <PostView cid={cid as number}/>
