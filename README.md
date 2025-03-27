@@ -1,8 +1,18 @@
 # gone-web
 
-This is a blog built with typescript, next.js and tailwindcss.
+This is a blog built with TypeScript, Next.js and Tailwind CSS.
 
 I write it for me, but if you find it useful, that's great, if you can help me improve it, that's even better.
+
+## Features
+
+- Modern user interface design
+- Responsive layout for various devices
+- Blog post creation, editing, and management
+- User comment system
+- Personal dashboard
+- Search functionality
+- Accessibility support
 
 ## Getting Started
 
@@ -16,7 +26,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/utils.ts`. The page auto-updates as you edit the file.
+You can start editing the page by modifying files in the `app` directory. The page auto-updates as you edit the file.
 
 ## Learn More
 
@@ -31,7 +41,10 @@ To learn more about Next.js, take a look at the following resources:
 - [Tailwind CSS](https://tailwindcss.com/) - a utility-first CSS framework for rapidly building custom designs.
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs) - learn about Tailwind CSS features and API.
 
-## Backend
+## Contributing
 
-This blog uses gone-engine as its backend. You can find the source
-code [here](https://github.com/liyipeng123/gone-engine).
+Contributions are welcome! Feel free to submit a Pull Request or open an Issue to help improve this project.
+
+## License
+
+[MIT](LICENSE)
