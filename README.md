@@ -49,4 +49,4 @@ Contributions are welcome! Feel free to submit a Pull Request or open an Issue t
 
 ## License
 
-[MIT](LICENSE)
+[Apache License 2.0](LICENSE)
