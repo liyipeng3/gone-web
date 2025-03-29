@@ -13,13 +13,11 @@ export const Assistant: FC = () => {
         // @ts-expect-error
           if (window?.loadlive2d && !loaded) {
             assistant({
-              hidden: false,
               model: '/lib/assistant/model.json',
               tips: true
             })
             clearInterval(interval)
             loaded = true
-            dialogRef.current?.classList.remove('opacity-0')
           }
         }, 100)
       }
@@ -35,11 +33,9 @@ export const Assistant: FC = () => {
   }, [])
 
   return (
-    <>
-      <div className="assistant-container hidden md:block">
-        <div ref={dialogRef} className="border-[#eee] border assistant-dialog bg-white dark:bg-gray-900 dark:border-gray-700 opacity-0 transition-all"></div>
-        <canvas id="assistant" width="280" height="280"/>
-      </div>
-    </>
+    <div className="assistant-container hidden md:block">
+      <div ref={dialogRef} className="border-[#eee] border assistant-dialog bg-white dark:bg-gray-900 dark:border-gray-700 transition-all"></div>
+      <canvas id="assistant" width="280" height="280"/>
+    </div>
   )
 }

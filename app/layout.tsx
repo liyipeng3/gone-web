@@ -41,7 +41,7 @@ const initScript = `
                 function loadLive2d () {
                    if (screen && screen.width >= 768 && !loadedLive2d) {
                     const script = document.createElement('script')
-                    script.src = '/lib/l2d.js'
+                    script.src = '/lib/l2d.min.js'
                     script.async = true
                     document.head.appendChild(script)
                     loadedLive2d = true

@@ -1,5 +1,4 @@
 export const assistant = function (prop: {
-  hidden?: any
   model?: any
   tips?: any
   selector?: any
@@ -124,16 +123,21 @@ export const assistant = function (prop: {
     }
   }
 
-  if (prop.hidden === true && window.innerWidth < 400) {
-    current.body.classList.add('hidden')
-  } else {
-    action.welcome()
-    action.article()
-    action.touch()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  window?.loadlive2d('assistant', prop.model, function () {
+    console.log('Live2D loaded')
+  })
+  const innerInterval = setInterval(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    window?.loadlive2d('assistant', prop.model)
-  }
+    if (window?.Live2D?.loaded) {
+      clearInterval(innerInterval)
+      action.welcome()
+      action.article()
+      action.touch()
+    }
+  }, 100)
 
   const hitokoto = async () => {
     try {
