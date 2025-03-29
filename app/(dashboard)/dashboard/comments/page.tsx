@@ -21,7 +21,7 @@ export default async function CommentsPage ({
       cid: true,
       created: true,
       author: true,
-      mail: true,
+      email: true,
       ip: true,
       text: true,
       status: true,
@@ -93,10 +93,10 @@ export default async function CommentsPage ({
               <td className="px-4 py-2"><Checkbox /></td>
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2">
-                  <Image src={getAvatarUrl(comment.mail ?? '')} alt={`${comment.author}的头像`} className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
+                  <Image src={getAvatarUrl(comment.email ?? '')} alt={`${comment.author}的头像`} className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
                   <div className="ml-2">
                     <div className="text-sm font-semibold">{comment.author}</div>
-                    <a className="text-xs text-blue-600 hover:underline" href={`mailto:${comment.mail}`}>{comment.mail}</a>
+                    <a className="text-xs text-blue-600 hover:underline" href={`mailto:${comment.email}`}>{comment.email}</a>
                     <div className="text-xs text-gray-500 ">{comment.ip}</div>
                   </div>
                 </div>

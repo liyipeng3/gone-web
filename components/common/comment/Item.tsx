@@ -68,7 +68,7 @@ const CommentItem = ({ comment, nameMap }: { comment: any, nameMap: Record<numbe
       <div className="flex gap-2 flex-row align-start">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="w-10 h-10 rounded-full"
-             src={getAvatarUrl(comment.mail)}
+             src={getAvatarUrl(comment.email)}
              alt={comment.author} />
         <div>
           <div

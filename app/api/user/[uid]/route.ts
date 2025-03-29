@@ -19,7 +19,7 @@ export async function GET (
     }
 
     // 验证用户是否有权限访问此信息（只能访问自己的信息）
-    if (currentUser.id !== params.uid) {
+    if (String(currentUser.id) !== params.uid) {
       return NextResponse.json(
         { error: '无权访问此用户信息' },
         { status: 403 }
@@ -34,9 +34,9 @@ export async function GET (
       select: {
         uid: true,
         username: true,
-        mail: true,
+        email: true,
         url: true,
-        screenName: true
+        nickname: true
       }
     })
 
@@ -85,7 +85,7 @@ export async function PATCH (
     const body = await request.json()
 
     // 只允许更新特定字段
-    const allowedFields = ['url', 'screenName']
+    const allowedFields = ['url', 'nickname']
     const updateData: any = {}
 
     for (const field of allowedFields) {
@@ -103,9 +103,9 @@ export async function PATCH (
       select: {
         uid: true,
         username: true,
-        mail: true,
+        email: true,
         url: true,
-        screenName: true
+        nickname: true
       }
     })
 

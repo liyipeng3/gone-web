@@ -80,7 +80,7 @@ export async function sendReplyNotification (originalComment: any, replyComment:
 
     await transporter.sendMail({
       from: `"${process.env.SITE_NAME}" <${process.env.EMAIL_USER}>`,
-      to: originalComment.mail,
+      to: originalComment.email,
       subject: `您在 [${siteConfig.name}] 的评论有了新的回复！`,
       html
     })
@@ -110,7 +110,7 @@ export async function sendCommentApprovedNotification (comment: any, postTitle: 
 
     await transporter.sendMail({
       from: `"${process.env.SITE_NAME}" <${process.env.EMAIL_USER}>`,
-      to: comment.mail,
+      to: comment.email,
       subject: `您在 [${siteConfig.name}] 的评论已通过审核！`,
       html
     })

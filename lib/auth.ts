@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.uid,
             name: user.username,
-            email: user.mail
+            email: user.email
             // image: '/favicon.ico'
           } as unknown as JWT
         }
@@ -84,8 +84,8 @@ export const authOptions: NextAuthOptions = {
       return {
         id: dbUser.uid,
         name: dbUser.username,
-        email: dbUser.mail,
-        picture: dbUser.screenName
+        email: dbUser.email,
+        picture: dbUser.nickname
       } as unknown as JWT
     }
   }

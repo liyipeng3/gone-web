@@ -14,7 +14,7 @@ model comments {
   author   String? @db.VarChar(200)
   authorId Int?    @default(0) @db.UnsignedInt
   ownerId  Int?    @default(0) @db.UnsignedInt
-  mail     String? @db.VarChar(200)
+  email    String? @db.VarChar(200)
   url      String? @db.VarChar(200)
   ip       String? @db.VarChar(64)
   agent    String? @db.VarChar(200)
@@ -117,16 +117,16 @@ model relationships {
 }
 
 model users {
-  uid        Int     @id @default(autoincrement()) @db.UnsignedInt
-  username   String? @unique(map: "name") @db.VarChar(32)
-  password   String? @db.VarChar(64)
-  mail       String? @unique(map: "mail") @db.VarChar(200)
-  url        String? @db.VarChar(200)
-  screenName String? @db.VarChar(32)
-  created    Int?    @default(0) @db.UnsignedInt
-  activated  Int?    @default(0) @db.UnsignedInt
-  logged     Int?    @default(0) @db.UnsignedInt
-  group      String? @default("visitor") @db.VarChar(16)
-  authCode   String? @db.VarChar(64)
-  posts      posts[]
+  uid       Int     @id @default(autoincrement()) @db.UnsignedInt
+  username  String? @unique(map: "name") @db.VarChar(32)
+  password  String? @db.VarChar(64)
+  email     String? @unique(map: "mail") @db.VarChar(200)
+  url       String? @db.VarChar(200)
+  nickname  String? @db.VarChar(32)
+  created   Int?    @default(0) @db.UnsignedInt
+  activated Int?    @default(0) @db.UnsignedInt
+  logged    Int?    @default(0) @db.UnsignedInt
+  group     String? @default("visitor") @db.VarChar(16)
+  authCode  String? @db.VarChar(64)
+  posts     posts[]
 }

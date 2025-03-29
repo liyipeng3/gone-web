@@ -7,7 +7,7 @@ import { emojiMap } from '@/lib/emoji'
 import { toast } from '@/components/ui/use-toast'
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
-import { useSession, signOut } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { siteConfig } from '@/config/site'
 import Link from 'next/link'
 
@@ -15,6 +15,11 @@ interface CommentFormProps {
   cid: number
   parent?: number
   nameMap?: Record<number, string>
+  user?: {
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  } | null
 }
 
 const validateEmail = (email: string) => {
@@ -22,29 +27,26 @@ const validateEmail = (email: string) => {
   return emailRegex.test(email)
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) => {
+const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {}, user }) => {
   const [text, setText] = useState('')
-  const [mail, setMail] = useState('')
+  const [email, setEmail] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [showEmojis, setShowEmojis] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // 获取用户会话信息
-  const { data: session } = useSession()
-
-  // 当会话信息加载完成后，自动填写用户信息
+  // 当用户信息加载完成后，自动填写用户信息
   useEffect(() => {
-    if (session?.user) {
-      setAuthor(session.user.name ?? '')
-      setMail(session.user.email ?? '')
+    if (user) {
+      setAuthor(user.name ?? '')
+      setEmail(user.email ?? '')
       setUrl(siteConfig.url)
     }
-  }, [session])
+  }, [user])
 
   const handleSubmit = async () => {
     // 添加邮箱和名称的验证，邮箱需要符合邮箱格式
-    if (!author || !mail || !text) {
+    if (!author || !email || !text) {
       toast({
         title: '提交失败',
         variant: 'destructive',
@@ -52,7 +54,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
       })
       return
     }
-    if (!validateEmail(mail)) {
+    if (!validateEmail(email)) {
       toast({
         title: '提交失败',
         variant: 'destructive',
@@ -67,7 +69,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
         method: 'POST',
         body: JSON.stringify({
           author,
-          mail,
+          email,
           url,
           cid,
           parent: parent ?? 0,
@@ -81,8 +83,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
       })
       setText('')
       // 如果用户已登录，不清空用户信息
-      if (!session?.user) {
-        setMail('')
+      if (!user) {
+        setEmail('')
         setAuthor('')
         setUrl('')
       }
@@ -99,10 +101,10 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
 
   return (
     <div className="flex flex-col gap-2">
-      {session?.user
+      {user
         ? (
         <div className="flex justify-start items-center text-sm mb-2 text-gray-600 gap-2">
-          <span>登录身份: <Link href="/dashboard/profile" target="_blank" className="text-gray-500 hover:text-gray-700 hover:underline">{session.user.name}</Link></span>
+          <span>登录身份: <Link href="/dashboard/profile" target="_blank" className="text-gray-500 hover:text-gray-700 hover:underline">{user.name}</Link></span>
           <button
             onClick={async () => { await signOut({ callbackUrl: window.location.href }) }}
             className="text-gray-500 hover:text-gray-700"
@@ -142,7 +144,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
           </div>
         )}
       </div>
-      {!session?.user && (
+      {!user && (
         <div className="flex flex-row gap-2">
           <Input
             placeholder="称呼 *"
@@ -153,9 +155,9 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {} }) 
           />
           <Input
             placeholder="邮箱 *"
-            value={mail}
+            value={email}
             onChange={(e) => {
-              setMail(e.target.value)
+              setEmail(e.target.value)
             }}
           />
           <Input

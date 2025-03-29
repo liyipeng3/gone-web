@@ -13,11 +13,11 @@ export const getCommentById = async (coid: number) => {
 }
 
 export const createComment = async (cid: number, parent: number = 0, data: any) => {
-  const mail = data.mail
+  const email = data.email
   let status = 'waiting'
   // 同一邮箱只需审核一次
   const beforeComment = await prisma.comments.findFirst({
-    where: { mail, status: 'approved' }
+    where: { email, status: 'approved' }
   })
   if (beforeComment) {
     status = 'approved'

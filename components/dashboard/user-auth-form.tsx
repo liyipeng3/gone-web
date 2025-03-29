@@ -47,8 +47,6 @@ export function UserAuthForm ({
 
     setIsLoading(false)
 
-    console.log(signInResult)
-
     if (signInResult?.error) {
       return toast({
         title: 'Check your account and password',
