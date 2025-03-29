@@ -125,9 +125,7 @@ export const assistant = function (prop: {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
-  window?.loadlive2d('assistant', prop.model, function () {
-    console.log('Live2D loaded')
-  })
+  window?.loadlive2d('assistant', prop.model)
   const innerInterval = setInterval(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
