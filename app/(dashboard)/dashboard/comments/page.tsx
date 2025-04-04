@@ -45,6 +45,9 @@ export default async function CommentsPage ({
           }
         }
       }
+    },
+    orderBy: {
+      created: 'desc'
     }
   })
 

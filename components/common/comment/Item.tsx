@@ -9,9 +9,17 @@ import { parseEmoji } from '@/lib/emoji'
  */
 
 function getUserAgent (agentStr: string): string {
-  const strPattern = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|iPhone)(\)|;\s*([^()]*?)\))/
+  console.log(agentStr)
+  // 修改正则表达式，匹配 iPhone 设备并提取 iOS 版本号
+  const strPattern = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|(iPhone; CPU iPhone OS ([^()]*?) like Mac OS X))(\)|;\s*([^()]*?)\))/
   const arrMatches = agentStr.match(strPattern)
   let agent = arrMatches ? arrMatches[1] : ''
+
+  // 如果是 iPhone 设备，则提取 iOS 版本号
+  if (arrMatches?.[3]) {
+    return 'iOS ' + arrMatches[3].replace(/_/g, '.')
+  }
+
   agent = agent.replaceAll(/NT./g, '')
   agent = agent.replaceAll(/_/g, '.')
 

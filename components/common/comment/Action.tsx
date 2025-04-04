@@ -61,8 +61,9 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
   const handleDelete = async () => {
     if (confirm('确定要删除这条评论吗？此操作不可撤销。')) {
       try {
-        const response = await fetch(`/api/comments/${comment.coid}`, {
-          method: 'DELETE'
+        const response = await fetch('/api/comment/0', {
+          method: 'DELETE',
+          body: JSON.stringify({ coid: comment.coid })
         })
         if (response.ok) {
           router.refresh()
@@ -71,7 +72,11 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
         }
       } catch (error) {
         console.error('删除评论时出错:', error)
-        alert('删除评论失败，请重试')
+        toast({
+          title: '删除评论失败',
+          description: '请重试',
+          variant: 'destructive'
+        })
       }
     }
   }

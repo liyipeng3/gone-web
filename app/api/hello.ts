@@ -15,7 +15,7 @@ export default async function handler (
 ): Promise<void> {
   // console.log(req.headers['user-agent'])
   const ua: string = req.headers['user-agent'] ?? ''
-  const uaReg: RegExp = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|iPhone)(\)|;\s*([^()]*?)\))/
+  const uaReg: RegExp = /Mozilla\/5\.0\s*\(([^()]*(Windows|Android|Mac OS|iPhone)[^()]*?)(?:\)|;\s*([^()]*?)\))/
   const uaMatch: RegExpMatchArray | null = ua.match(uaReg)
   let device = 'unknown'
   if (uaMatch != null) {
