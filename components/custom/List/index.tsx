@@ -60,7 +60,7 @@ const List: React.FC<ListProps> = async ({
       {(list)?.map((item, index) => <div className={cn('text-left w-full', index === 0 && 'md:pt-4 mt-5')}
                                          key={item.slug as string}>
         <div className="text-base font-bold dark:text-white">
-          <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>{item.title}</Link>
+          <Link href={`/post/${item?.category as string}/${item?.slug as string}`} className='post-title'> {item.title}</Link>
         </div>
         <div className="text-xs text-gray-500 space-x-1.5 mt-2 dark:text-gray-400">
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>

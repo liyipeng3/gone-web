@@ -18,7 +18,10 @@ export const Assistant: FC = () => {
             loaded = true
             await assistant({
               model: '/lib/assistant/model.json',
-              tips: true
+              tips: true,
+              selector: {
+                articles: '.post-title'
+              }
             })
             clearInterval(interval)
             setLoading(false)

@@ -56,17 +56,32 @@ export const assistant = async function (prop: {
         referrer.href = document.referrer
         const host = referrer.hostname
         const domain = host.split('.')[1]
-        if (domain === 'baidu') {
-          modules.render('哈喽啊！来自 “百度” 的朋友！', 8000)
-        } else if (domain === 'so') {
-          modules.render('哈喽啊！来自 “360搜索” 的朋友！', 8000)
-        } else if (domain === 'google') {
-          modules.render('哈喽啊！来自 “Google” 的朋友！', 8000)
-        } else if (domain === 'csdn') {
-          modules.render('哈喽啊！来自 “CSDN” 的朋友！', 8000)
-        } else {
-          ((prop.content?.referer) != null) ? modules.render(prop.content?.referer.replace(/%t/, '“' + referrer.hostname + '”')) : modules.render('哈喽啊！来自 “' + referrer.hostname + '” 的朋友！')
+
+        const createWelcome = (siteName: string) => `哈喽啊！来自 "${siteName}" 的朋友！`
+
+        const sitesMap = {
+          baidu: '百度',
+          so: '360搜索',
+          google: 'Google',
+          csdn: 'CSDN',
+          bing: '必应搜索',
+          zhihu: '知乎',
+          bilibili: 'B站',
+          github: 'GitHub',
+          juejin: '掘金',
+          weibo: '微博'
         }
+
+        let welcomeMessage = ''
+        if (domain in sitesMap) {
+          welcomeMessage = createWelcome(sitesMap[domain as keyof typeof sitesMap])
+        } else {
+          welcomeMessage = (prop.content?.referer) != null
+            ? prop.content?.referer.replace(/%t/, '"' + referrer.hostname + '"')
+            : createWelcome(referrer.hostname)
+        }
+
+        modules.render(welcomeMessage, 8000)
       } else if (prop.tips !== undefined) {
         let text
         const hour = new Date().getHours()
@@ -76,9 +91,9 @@ export const assistant = async function (prop: {
         } else if (hour > 5 && hour <= 8) {
           text = '早上好！'
         } else if (hour > 8 && hour <= 11) {
-          text = '上午好！工作顺利嘛，不要久坐，多起来走动走动哦！'
+          text = '上午好！进展顺利嘛，不要久坐，多起来走动走动哦！'
         } else if (hour > 11 && hour <= 14) {
-          text = '中午了，工作了一个上午，现在是午餐时间！'
+          text = '中午了，午餐时间！'
         } else if (hour > 14 && hour <= 17) {
           text = '午后很容易犯困呢，今天的运动目标完成了吗？'
         } else if (hour > 17 && hour <= 19) {
@@ -117,7 +132,10 @@ export const assistant = async function (prop: {
         }
       } else {
         current.canvas.onclick = function () {
-          modules.render(['你看到我的小熊了吗？', '嘻嘻嘻，你也要开心啊~', '好了啦~', '你喜欢我嘛？'])
+          modules.render(['你看到我的小熊了吗？', '嘻嘻嘻，你也要开心啊~', '好了啦~', '你喜欢我嘛？',
+            '今天天气真不错呢~', '摸摸头，摸摸头~', '你好呀，很高兴认识你！',
+            '你在干什么呢？', '要不要一起玩游戏？',
+            '我们做朋友吧！'])
         }
       }
     }
@@ -130,7 +148,6 @@ export const assistant = async function (prop: {
   const waitLoad = async () => {
     await new Promise(resolve => {
       const innerInterval = setInterval(() => {
-        console.log('waiting for live2d to load...')
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         if (window?.Live2D?.loaded) {
