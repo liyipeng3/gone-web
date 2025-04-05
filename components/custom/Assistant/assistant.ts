@@ -1,4 +1,4 @@
-export const assistant = function (prop: {
+export const assistant = async function (prop: {
   model?: any
   tips?: any
   selector?: any
@@ -126,16 +126,23 @@ export const assistant = function (prop: {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   window?.loadlive2d('assistant', prop.model)
-  const innerInterval = setInterval(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    if (window?.Live2D?.loaded) {
-      clearInterval(innerInterval)
-      action.welcome()
-      action.article()
-      action.touch()
-    }
-  }, 100)
+
+  const waitLoad = async () => {
+    await new Promise(resolve => {
+      const innerInterval = setInterval(() => {
+        console.log('waiting for live2d to load...')
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        if (window?.Live2D?.loaded) {
+          clearInterval(innerInterval)
+          action.welcome()
+          action.article()
+          action.touch()
+          resolve(null)
+        }
+      }, 100)
+    })
+  }
 
   const hitokoto = async () => {
     try {
@@ -173,5 +180,7 @@ export const assistant = function (prop: {
     canvas.style.width = String(styleW) + 'px'
     canvas.style.height = String(styleH) + 'px'
   }
+  await waitLoad()
+
   return prop
 }
