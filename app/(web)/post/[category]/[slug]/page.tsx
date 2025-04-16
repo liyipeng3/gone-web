@@ -34,7 +34,8 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     category,
     viewsNum,
     cid,
-    likesNum
+    likesNum,
+    tags
   } = await getPagePostInfo({ slug: params.slug })
 
   // 获取评论数量
@@ -70,6 +71,23 @@ const Content: React.FC<{ params: { slug: string } }> = async (
           </div>
           <Prose content={content}/>
         </article>
+
+        {/* 文章标签 */}
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-6 mb-4">
+            <span className="text-sm text-gray-600 dark:text-gray-300">标签：</span>
+            {tags.map((tag) => (
+              <Link
+                key={tag}
+                href={`/tag/${tag}`}
+                className="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+              >
+                {tag}
+              </Link>
+            ))}
+          </div>
+        )}
+
         <div className="flex justify-center items-center my-8 py-4">
           <div className="flex items-center gap-2">
             <LikeButton cid={cid as number} initialLikes={likesNum} />

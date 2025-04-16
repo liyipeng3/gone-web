@@ -62,13 +62,9 @@ export const getPostBySlug = async (slug: string) => {
           metas: {
             select: {
               name: true,
-              slug: true
+              slug: true,
+              type: true
             }
-          }
-        },
-        where: {
-          metas: {
-            type: 'category'
           }
         }
       }

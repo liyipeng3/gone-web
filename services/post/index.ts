@@ -100,6 +100,7 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   likesNum: number
   category?: string
   cid?: number
+  tags?: string[]
 }> => {
   const post = await getPostBySlug(slug)
   if (post === null) {
@@ -107,15 +108,25 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   }
   const content = marked.parse(post.text ?? '') as string
 
+  // 获取文章的标签信息
+  const tags = post.relationships
+    .filter((relation: any) => relation.metas.type === 'tag')
+    .map((relation: any) => relation.metas.slug)
+
+  const category = post.relationships
+    .filter((relation: any) => relation.metas.type === 'category')
+    .map((relation: any) => relation.metas.slug)
+
   return {
     title: post.title as string,
     content,
     created: post.created as number,
     name: post.relationships[0].metas.name as string,
-    category: post.relationships[0].metas.slug as string,
+    category: category[0] as string,
     viewsNum: post.viewsNum as number,
     likesNum: post.likesNum as number || 0,
-    cid: post.cid
+    cid: post.cid,
+    tags
   }
 })
 
