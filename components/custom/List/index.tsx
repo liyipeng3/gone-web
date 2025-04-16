@@ -65,12 +65,12 @@ const List: React.FC<ListProps> = async ({
           <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
           <span className="text-gray-400">•</span>
           <span>{item.name}</span>
-          <span className="text-gray-400">•</span>
-          <span>{item.commentsNum ? `${item.commentsNum}条评论` : '暂无评论'}</span>
+          {item.commentsNum > 0 && <span className="text-gray-400">•</span>}
+          {item.commentsNum > 0 && <span>{item.commentsNum}条评论</span>}
           <span className="text-gray-400">•</span>
           <span>{item.viewsNum}人阅读</span>
-          {item.likesNum && <span className="text-gray-400">•</span>}
-          <span>{item.likesNum ? `${item.likesNum}人喜欢` : ''}</span>
+          {item.likesNum > 0 && <span className="text-gray-400">•</span>}
+          {item.likesNum > 0 && <span>{item.likesNum}人喜欢</span>}
         </div>
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl break-all text-justify">
           <Link

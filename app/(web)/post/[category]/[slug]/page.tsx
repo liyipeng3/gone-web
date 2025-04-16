@@ -10,7 +10,7 @@ import CommentList from '@/components/common/comment'
 import Link from 'next/link'
 import LikeButton from '@/components/common/like-button'
 import { getCommentsByCid } from '@/models/comments'
-import { calculateReadingTime, formatReadingTime, getWordCount } from '@/lib/readingTime'
+import { calculateReadingTime, getWordCount } from '@/lib/readingTime'
 
 export async function generateMetadata (
   { params }: { params: { slug: string } }
@@ -62,12 +62,14 @@ const Content: React.FC<{ params: { slug: string } }> = async (
                   className="text-gray-500 dark:text-gray-400 no-underline font-normal">{name}</Link>
             <span>•</span>
             <span>{viewsNum}人阅读</span>
-            <span>•</span>
-            <span>{commentsNum ? `${commentsNum}条评论` : '暂无评论'}</span>
+            {commentsNum > 0 && <span>•</span>}
+            {commentsNum > 0 && <span>{commentsNum}条评论</span>}
             {likesNum > 0 && <span>•</span>}
             {likesNum > 0 && <span>{likesNum}人喜欢</span>}
             <span>•</span>
-            <span>{formatReadingTime(readingTime, wordCount)}</span>
+            <span>约 {wordCount} 字</span>
+            <span>•</span>
+            <span>阅读时间 {readingTime} 分钟</span>
           </div>
           <Prose content={content}/>
         </article>
