@@ -9,6 +9,8 @@ import { type Metadata } from 'next/types'
 import CommentList from '@/components/common/comment'
 import Link from 'next/link'
 import LikeButton from '@/components/common/like-button'
+import { getCommentsByCid } from '@/models/comments'
+import { calculateReadingTime, formatReadingTime, getWordCount } from '@/lib/readingTime'
 
 export async function generateMetadata (
   { params }: { params: { slug: string } }
@@ -35,6 +37,14 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     likesNum
   } = await getPagePostInfo({ slug: params.slug })
 
+  // 获取评论数量
+  const comments = cid ? await getCommentsByCid(cid) : []
+  const commentsNum = comments.length
+
+  // 计算预计阅读时间和字数
+  const readingTime = calculateReadingTime(content)
+  const wordCount = getWordCount(content)
+
   return (
     <Main>
       <div className="md:max-w-3xl max-w-full md:min-w-[48rem] min-w-[88vw]">
@@ -51,6 +61,12 @@ const Content: React.FC<{ params: { slug: string } }> = async (
                   className="text-gray-500 dark:text-gray-400 no-underline font-normal">{name}</Link>
             <span>•</span>
             <span>{viewsNum}人阅读</span>
+            <span>•</span>
+            <span>{commentsNum ? `${commentsNum}条评论` : '暂无评论'}</span>
+            {likesNum > 0 && <span>•</span>}
+            {likesNum > 0 && <span>{likesNum}人喜欢</span>}
+            <span>•</span>
+            <span>{formatReadingTime(readingTime, wordCount)}</span>
           </div>
           <Prose content={content}/>
         </article>
@@ -58,6 +74,9 @@ const Content: React.FC<{ params: { slug: string } }> = async (
           <div className="flex items-center gap-2">
             <LikeButton cid={cid as number} initialLikes={likesNum} />
           </div>
+        </div>
+        <div className="text-xs mb-5 -mt-3 md:mt-3 my-3 text-gray-400 space-x-1.5 dark:text-gray-500">
+          本作品采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 font-normal hover:underline">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可。
         </div>
         <CommentList cid={cid as number}/>
       </div>
