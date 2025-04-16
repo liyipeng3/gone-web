@@ -8,9 +8,10 @@ interface SidebarProps {
   hotList?: HotList
   recentComments?: any[]
   tags?: any[]
+  links?: any[]
 }
 
-const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [] }) => {
+const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [], links = [] }) => {
   const [sticky, setSticky] = useState(false)
   useEffect(() => {
     const sidebar = document.getElementById('sidebar') ?? { clientHeight: 0 }
@@ -66,6 +67,33 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [
                   {tag.name} ({tag.count})
                 </Link>
               ))}
+            </div>
+          </div>
+        )}
+        {/* 邻居 */}
+        {links.length > 0 && (
+          <div>
+            <div className="text-lg font-bold">邻居</div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {links.slice(0, 8).map(link => (
+                <Link
+                  key={link.lid}
+                  href={link.url ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+            <div className="text-left mt-2">
+              <Link
+                href="/links"
+                className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              >
+                查看更多...
+              </Link>
             </div>
           </div>
         )}
