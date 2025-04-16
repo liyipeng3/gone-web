@@ -314,6 +314,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     include: {
       posts: {
         select: {
+          cid: true,
           title: true,
           slug: true,
           created: true,
@@ -393,8 +394,23 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
       .replaceAll(/```(\n|\r|.)*?```/g, '')
       .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
   }))
+  // 为每篇文章添加评论数量
+  const listWithComments = await Promise.all(list.map(async (item: any) => {
+    const comments = await prisma.comments.count({
+      where: {
+        cid: item.cid,
+        status: 'approved'
+      }
+    })
+    console.log(comments, item)
+    return {
+      ...item,
+      commentsNum: comments
+    }
+  }))
+
   return {
-    list,
+    list: listWithComments,
     total
   }
 }
