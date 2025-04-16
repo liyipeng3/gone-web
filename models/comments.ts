@@ -49,3 +49,19 @@ export const updateComment = async (coid: number, data: any) => {
     data
   })
 }
+
+export const getRecentComments = async (limit: number = 10) => {
+  return await prisma.comments.findMany({
+    where: { status: 'approved' },
+    orderBy: { created: 'desc' },
+    take: limit,
+    include: {
+      posts: {
+        select: {
+          title: true,
+          slug: true
+        }
+      }
+    }
+  })
+}

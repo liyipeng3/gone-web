@@ -31,13 +31,12 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     name,
     category,
     viewsNum,
-    hotList,
     cid,
     likesNum
   } = await getPagePostInfo({ slug: params.slug })
 
   return (
-    <Main hotList={hotList}>
+    <Main>
       <div className="md:max-w-3xl max-w-full md:min-w-[48rem] min-w-[88vw]">
         <article className="md:max-w-3xl max-w-full md:min-w-[48rem] text-left flex-1 prose min-h-[22vh]">
           <Breadcrumb items={[{

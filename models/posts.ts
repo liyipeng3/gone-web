@@ -6,7 +6,7 @@ import NodeCache from 'node-cache'
 
 const cache = new NodeCache({ stdTTL: 600 }) // 10分钟缓存
 
-export const getHotList = async (): Promise<HotList> => {
+export const getHotList = async (limit: number = 5): Promise<HotList> => {
   const cacheKey = 'hot_list'
   const cachedData = cache.get<HotList>(cacheKey)
 
@@ -42,7 +42,7 @@ export const getHotList = async (): Promise<HotList> => {
         viewsNum: 'desc'
       }
     },
-    take: 10
+    take: limit
   })
 
   const result = hotData.map((item: { posts: any, metas: { slug: any } }) => ({

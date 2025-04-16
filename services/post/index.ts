@@ -1,6 +1,5 @@
 import { cache } from 'react'
-import { type HotList } from '@/types'
-import { getHotList, getPostBySlug, getPostList } from '@/models/posts'
+import { getPostBySlug, getPostList } from '@/models/posts'
 import marked from '@/lib/marked'
 import prisma from '@/lib/prisma'
 import { type ListProps } from '@/components/custom/List'
@@ -14,7 +13,6 @@ export const getPagePostList = async ({
 }): Promise<{
   list: any[]
   total: number
-  hotList: HotList
 }> => {
   const {
     list,
@@ -24,12 +22,10 @@ export const getPagePostList = async ({
     pageSize: 7,
     search
   })
-  const hotList = await getHotList()
 
   return {
     list,
-    total,
-    hotList
+    total
   }
 }
 
@@ -38,21 +34,18 @@ export const getPagePost = cache(async (slug: string): Promise<{
   content: string
   cid: number
   created: number
-  hotList: HotList
 }> => {
   const post = await getPostBySlug(slug)
   if (post === null) {
     throw new Error('not found')
   }
   const content = marked.parse(post?.text ?? '') as string
-  const hotList = await getHotList()
 
   return {
     title: post.title as string,
     content,
     cid: post.cid,
-    created: post.created as number,
-    hotList
+    created: post.created as number
   }
 })
 
@@ -87,13 +80,11 @@ export const getPageCategoryPostList = cache(async ({
   if (list.length === 0) {
     throw new Error('not found')
   }
-  const hotList = await getHotList()
   const description = `分类 ${categoryData[0].name as string} 下的文章列表`
 
   return {
     list,
     total,
-    hotList,
     description,
     pageNum,
     baseLink: `/category/${category}/?p=`
@@ -105,7 +96,6 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   content: string
   created: number
   name: string
-  hotList: HotList
   viewsNum: number
   likesNum: number
   category?: string
@@ -116,7 +106,6 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
     throw new Error('not found')
   }
   const content = marked.parse(post.text ?? '') as string
-  const hotList = await getHotList()
 
   return {
     title: post.title as string,
@@ -126,7 +115,120 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
     category: post.relationships[0].metas.slug as string,
     viewsNum: post.viewsNum as number,
     likesNum: post.likesNum as number || 0,
-    hotList,
     cid: post.cid
+  }
+})
+
+export const getPageTagPostList = cache(async ({
+  pageNum = 1,
+  tag = ''
+}: {
+  pageNum?: number
+  tag: string
+}): Promise<ListProps> => {
+  // 查找标签信息
+  const tagData = await prisma.metas.findFirst({
+    where: {
+      type: 'tag',
+      slug: tag
+    },
+    select: {
+      mid: true,
+      name: true
+    }
+  })
+
+  if (!tagData) {
+    throw new Error('not found')
+  }
+
+  // 自定义查询获取与标签关联的文章
+  const pageSize = 7
+  const data = await prisma.relationships.findMany({
+    include: {
+      posts: {
+        select: {
+          cid: true,
+          title: true,
+          slug: true,
+          created: true,
+          modified: true,
+          text: true,
+          viewsNum: true,
+          likesNum: true
+        }
+      },
+      metas: {
+        select: {
+          name: true,
+          slug: true,
+          type: true
+        }
+      }
+    },
+    where: {
+      mid: tagData.mid,
+      posts: {
+        status: 'publish',
+        type: 'post'
+      }
+    },
+    orderBy: {
+      posts: {
+        created: 'desc'
+      }
+    },
+    skip: (pageNum - 1) * pageSize,
+    take: pageSize
+  })
+
+  const total = await prisma.relationships.count({
+    where: {
+      mid: tagData.mid,
+      posts: {
+        status: 'publish',
+        type: 'post'
+      }
+    }
+  })
+
+  // 处理文章数据
+  const list = await Promise.all(data.map(async (item) => {
+    // 获取文章的分类信息
+    const categoryRel = await prisma.relationships.findFirst({
+      where: {
+        cid: item.posts.cid,
+        metas: {
+          type: 'category'
+        }
+      },
+      include: {
+        metas: {
+          select: {
+            name: true,
+            slug: true
+          }
+        }
+      }
+    })
+
+    return {
+      ...item.posts,
+      category: categoryRel?.metas.slug ?? '',
+      name: categoryRel?.metas.name ?? '',
+      description: (marked.parse((item.posts.text?.split('<!--more-->')[0]
+        .replaceAll(/```(\n|\r|.)*?```/g, '')
+        .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
+    }
+  }))
+
+  const description = `标签 ${tagData.name} 下的文章列表`
+
+  return {
+    list,
+    total,
+    description,
+    pageNum,
+    baseLink: `/tag/${tag}/?p=`
   }
 })

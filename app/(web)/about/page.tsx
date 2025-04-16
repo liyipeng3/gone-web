@@ -12,12 +12,11 @@ export const metadata: Metadata = {
 const About: React.FC = async () => {
   const {
     title,
-    content,
-    hotList
+    content
   } = await getPagePost('about')
 
   return (
-    <Main hotList={hotList}>
+    <Main>
       <article className="md:max-w-3xl max-w-full text-left flex-1 prose w-screen lg:w-[48rem] md:w-[36rem]">
         <Breadcrumb items={[{
           name: '关于',

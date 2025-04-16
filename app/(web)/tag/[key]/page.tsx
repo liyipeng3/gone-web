@@ -1,8 +1,8 @@
 import React from 'react'
-import { getPageCategoryPostList } from '@/services/post'
+import { getPageTagPostList } from '@/services/post'
 import List from '@/components/custom/List'
 
-const Category: React.FC<{
+const Tag: React.FC<{
   searchParams: Record<string, string | string[] | undefined>
   params: Record<string, string | string[] | undefined>
 }> = async ({
@@ -10,12 +10,12 @@ const Category: React.FC<{
   params
 }) => {
   const pageNum: number = searchParams?.p as unknown as boolean ? parseInt(searchParams?.p as string) : 1
-  const category: string = params?.type as string ?? ''
-  const pageProps = await getPageCategoryPostList({
+  const tag: string = decodeURIComponent(params?.key as string ?? '')
+  const pageProps = await getPageTagPostList({
     pageNum,
-    category
+    tag
   })
   return <List {...pageProps} />
 }
 
-export default Category
+export default Tag

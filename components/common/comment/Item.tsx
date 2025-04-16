@@ -72,6 +72,7 @@ function getUserBrowser (agentStr: string): string {
 const CommentItem = ({ comment, nameMap }: { comment: any, nameMap: Record<number, string> }) => {
   return (
     <div
+      id={`comment-${comment.coid}`}
       className="mb-4 p-4 bg-white dark:bg-gray-800 rounded-md border border-solid border-gray-100 dark:border-gray-700 flex flex-col gap-2">
       <div className="flex gap-2 flex-row align-start">
         {/* eslint-disable-next-line @next/next/no-img-element */}

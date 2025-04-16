@@ -42,7 +42,6 @@ const List: React.FC<ListProps> = async ({
     })
     list ||= res.list
     total ||= res.total
-    hotList ||= res.hotList
   }
 
   const pages = Math.ceil((total ?? 0) / pageSize)
@@ -51,7 +50,7 @@ const List: React.FC<ListProps> = async ({
     description = `包含关键字 ${search} 的文章`
   }
 
-  return <Main hotList={hotList}>
+  return <Main>
     <div className="hidden mt-4"/>
     <div className="md:space-y-3 flex flex-col items-start justify-start flex-1 max-w-4xl md:w-auto w-screen">
       {(description != null) && <Breadcrumb items={[{ name: description }]}/>}
