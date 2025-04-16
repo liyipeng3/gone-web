@@ -256,7 +256,7 @@ const FloatingButtons: React.FC = () => {
           <ArrowUp size={20} />
         </button>
       )}
-      <div className="relative">
+      <div className="relative hidden">
         {isPlaying && (
           <div
             className="absolute top-0 left-0 w-10 h-10 z-20 pointer-events-none"
