@@ -3,6 +3,8 @@ import cn from 'classnames'
 import { Header } from '@/components/common/header'
 import { Footer } from '@/components/common/footer'
 import { siteConfig } from '@/config/site'
+import FloatingButtons from '@/components/common/FloatingButtons'
+
 interface LayoutProps {
   children: ReactNode
   hotList?: any[]
@@ -16,6 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({
       <Header logo={siteConfig.name}/>
       {children}
       <Footer/>
+      <FloatingButtons />
     </div>
   )
 }
