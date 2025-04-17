@@ -45,6 +45,7 @@
   position: absolute;
   word-break: break-all;
   transition: opacity .3s, visibility .3s;
+  text-align: start;
 }
 
 .assistant-container .assistant-dialog.active {
