@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Header } from '@/components/common/header'
 import { Footer } from '@/components/common/footer'
 import { siteConfig } from '@/config/site'
-import FloatingButtons from '@/components/common/FloatingButtons'
+import FloatingButtons from '@/components/common/floating-buttons'
 
 interface LayoutProps {
   children: ReactNode
