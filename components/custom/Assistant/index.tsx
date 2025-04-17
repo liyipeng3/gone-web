@@ -49,7 +49,7 @@ export const Assistant: FC = () => {
           </div>
         </div>
       )}
-      <div ref={dialogRef} className="border-[#eee] border assistant-dialog bg-white dark:bg-gray-900 dark:border-gray-700 transition-all"></div>
+      <div ref={dialogRef} className="border-[#eee] border assistant-dialog bg-white dark:bg-gray-900 dark:border-gray-700 transition-all max-w-[20vw] break-words" />
       <canvas
         id="assistant"
         width="280"

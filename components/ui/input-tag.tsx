@@ -24,7 +24,6 @@ const InputTag: FC<InputTagProps> = ({
 
   const addTags = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
-      console.log(tags, inputRef.current?.textContent)
       if (!Array.isArray(tags)) {
         return
       }

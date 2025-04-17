@@ -402,7 +402,6 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
         status: 'approved'
       }
     })
-    console.log(comments, item)
     return {
       ...item,
       commentsNum: comments
