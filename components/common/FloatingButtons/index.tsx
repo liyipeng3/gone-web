@@ -10,36 +10,32 @@ interface ChapterItem {
   level: number
 }
 
-const musicList = [
-  'https://music.163.com/song/media/outer/url?id=28481105.mp3',
-  'https://music.163.com/song/media/outer/url?id=486999661.mp3',
-  'https://music.163.com/song/media/outer/url?id=1293886117.mp3',
-  'https://music.163.com/song/media/outer/url?id=507795470.mp3',
-  'https://music.163.com/song/media/outer/url?id=1313354324.mp3',
-  'https://music.163.com/song/media/outer/url?id=651387737.mp3',
-  'https://music.163.com/song/media/outer/url?id=533259686.mp3',
-  'https://music.163.com/song/media/outer/url?id=30431367.mp3',
-  'https://music.163.com/song/media/outer/url?id=35476049.mp3',
-  'https://music.163.com/song/media/outer/url?id=408814900.mp3',
-  'https://music.163.com/song/media/outer/url?id=417250673.mp3',
-  'https://music.163.com/song/media/outer/url?id=438801672.mp3',
-  'https://music.163.com/song/media/outer/url?id=30903117.mp3',
-  'https://music.163.com/song/media/outer/url?id=108251.mp3',
-  'https://music.163.com/song/media/outer/url?id=31445772.mp3',
-  'https://music.163.com/song/media/outer/url?id=562594191.mp3',
-  'https://music.163.com/song/media/outer/url?id=25638273.mp3',
-  'https://music.163.com/song/media/outer/url?id=543607345.mp3',
-  'https://music.163.com/song/media/outer/url?id=1330348068.mp3',
-  'https://music.163.com/song/media/outer/url?id=480768067.mp3',
-  'https://music.163.com/song/media/outer/url?id=462523414.mp3',
-  'https://music.163.com/song/media/outer/url?id=464674509.mp3',
-  'https://music.163.com/song/media/outer/url?id=406000625.mp3',
-  'https://music.163.com/song/media/outer/url?id=569214126.mp3',
-  'https://music.163.com/song/media/outer/url?id=175072.mp3',
-  'https://music.163.com/song/media/outer/url?id=410801653.mp3',
-  'https://music.163.com/song/media/outer/url?id=28285910.mp3',
-  'https://music.163.com/song/media/outer/url?id=364877.mp3'
+// 有效的音乐ID列表
+const musicIds = [
+  '507795470',
+  '1313354324',
+  '533259686',
+  '408814900',
+  '30903117',
+  '562594191',
+  '25638273',
+  '480768067',
+  '462523414',
+  '464674509',
+  '406000625',
+  '175072',
+  '410801653',
+  '28285910'
 ]
+
+/**
+ * 根据音乐ID生成网易云音乐URL
+ * @param id 音乐ID
+ * @returns 完整的音乐URL
+ */
+const getMusicUrl = (id: string): string => {
+  return `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+}
 
 const FloatingButtons: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -57,7 +53,7 @@ const FloatingButtons: React.FC = () => {
 
   // 获取随机音乐索引
   const getRandomTrackIndex = () => {
-    const randomIndex = Math.floor(Math.random() * musicList.length)
+    const randomIndex = Math.floor(Math.random() * musicIds.length)
     return randomIndex
   }
 
@@ -83,7 +79,7 @@ const FloatingButtons: React.FC = () => {
     // 选择一个随机的初始曲目
     const initialTrackIndex = getRandomTrackIndex()
     setCurrentTrackIndex(initialTrackIndex)
-    audioElement.src = musicList[initialTrackIndex]
+    audioElement.src = getMusicUrl(musicIds[initialTrackIndex])
     // 预加载音频
     audioElement.load()
 
@@ -111,7 +107,6 @@ const FloatingButtons: React.FC = () => {
     if (audioDuration > 0) {
       const percentage = (currentTime / audioDuration) * 100
       setProgressPercentage(percentage)
-      console.log('Progress:', percentage.toFixed(2) + '%')
     }
   }, [audioRef.current])
 
@@ -145,6 +140,9 @@ const FloatingButtons: React.FC = () => {
 
   // 获取文章章节
   useEffect(() => {
+    if (showChapters) {
+      setShowChapters(false)
+    }
     if (pathname.includes('/post/')) {
       const articleElement = document.querySelector('article')
       if (articleElement) {
@@ -187,12 +185,12 @@ const FloatingButtons: React.FC = () => {
     let nextIndex
     do {
       nextIndex = getRandomTrackIndex()
-    } while (nextIndex === currentTrackIndex && musicList.length > 1)
+    } while (nextIndex === currentTrackIndex && musicIds.length > 1)
 
     setCurrentTrackIndex(nextIndex)
-    audio.src = musicList[nextIndex]
+    audio.src = getMusicUrl(musicIds[nextIndex])
     audio.load() // 确保加载新的音频
-    if (isPlaying) {
+    if (!isPlaying) {
       const playPromise = audio.play()
 
       if (playPromise !== undefined) {
@@ -212,16 +210,9 @@ const FloatingButtons: React.FC = () => {
       audio.pause()
       setIsPlaying(false)
     } else {
-      const playPromise = audio.play()
-
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.error('播放音乐失败:', error)
-          // 尝试加载新的音频并播放
-          playNextTrack()
-        })
-        setIsPlaying(true)
-      }
+      // 每次播放时切换到新的歌曲
+      playNextTrack()
+      setIsPlaying(true)
     }
   }
 
@@ -256,7 +247,7 @@ const FloatingButtons: React.FC = () => {
           <ArrowUp size={20} />
         </button>
       )}
-      <div className="relative hidden">
+      <div className="relative">
         {isPlaying && (
           <div
             className="absolute top-0 left-0 w-10 h-10 z-20 pointer-events-none"
