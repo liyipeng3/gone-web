@@ -26,7 +26,7 @@ const Guestbook = async () => {
     <h2 className="md:mb-2 mt-4 dark:text-white text-xl font-bold">邻居</h2>
     <Prose content={content} />
     <div className='grid grid-cols-2 gap-4'>
-      {links.map((link) => (
+      {links?.map((link) => (
         <a
           href={link.url ?? ''}
           key={link.lid}

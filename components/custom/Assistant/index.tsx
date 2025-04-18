@@ -27,6 +27,10 @@ export const Assistant: FC = () => {
             setLoading(false)
           }
         }, 100)
+        setTimeout(() => {
+          clearInterval(interval)
+          setLoading(false)
+        }, 30 * 1000)
       }
     }
 

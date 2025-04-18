@@ -13,9 +13,9 @@ const Main: React.FC<MainProps> = async ({
   children
 }) => {
   // 获取最近回复、标签和邻居数据
-  const recentComments = await getRecentComments()
-  const tags = await getTags()
-  const hotList = await getHotList()
+  const recentComments = await getRecentComments() as any[]
+  const tags = await getTags() as any[]
+  const hotList = await getHotList() as any[]
   const links = await getLinks(10) // 获取10个友情链接
 
   return <div

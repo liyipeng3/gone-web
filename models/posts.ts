@@ -310,6 +310,39 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
   mid,
   search = ''
 }) => {
+  // 使用缓存键，包含所有查询参数
+  const cacheKey = `post_list_${pageNum}_${pageSize}_${mid || 'all'}_${search}`
+  const cachedData = cache.get(cacheKey)
+  
+  // 如果缓存中有数据，直接返回
+  if (cachedData) {
+    return cachedData
+  }
+  
+  // 构建查询条件
+  const whereCondition = {
+    metas: {
+      type: 'category'
+    },
+    posts: {
+      status: 'publish',
+      type: 'post'
+    }
+  } as any
+  
+  // 只有在有搜索条件时才添加 OR 条件，避免不必要的复杂查询
+  if (search) {
+    whereCondition.posts.OR = [
+      { title: { contains: search } },
+      { text: { contains: search } }
+    ]
+  }
+  
+  // 只有在指定分类时才添加 mid 条件
+  if (mid) {
+    whereCondition.metas.mid = mid
+  }
+  
   const data = await prisma.relationships.findMany({
     include: {
       posts: {
@@ -321,7 +354,17 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
           modified: true,
           text: true,
           viewsNum: true,
-          likesNum: true
+          likesNum: true,
+          // 直接在这里包含评论数，减少额外的查询
+          _count: {
+            select: {
+              comments: {
+                where: {
+                  status: 'approved'
+                }
+              }
+            }
+          }
         }
       },
       metas: {
@@ -331,26 +374,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
         }
       }
     },
-    where: {
-      metas: {
-        type: 'category',
-        mid
-      },
-      posts: {
-        status: 'publish',
-        type: 'post',
-        OR: [{
-          title: {
-            contains: search
-          }
-        },
-        {
-          text: {
-            contains: search
-          }
-        }]
-      }
-    },
+    where: whereCondition,
     orderBy: {
       posts: {
         created: 'desc'
@@ -360,122 +384,239 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     take: pageSize
   })
 
-  const total = await prisma.posts.count({
-    where: {
-      status: 'publish',
-      type: 'post',
-      OR: [{
-        title: {
-          contains: search
-        }
-      },
-      {
-        text: {
-          contains: search
-        }
-      }],
-      relationships: {
-        some: {
-          metas: {
-            mid
-          }
-        }
+  // 构建总数查询条件
+  const countWhereCondition = {
+    status: 'publish',
+    type: 'post',
+    relationships: {
+      some: {
+        metas: {}
       }
+    }
+  } as any
+  
+  if (search) {
+    countWhereCondition.OR = [
+      { title: { contains: search } },
+      { text: { contains: search } }
+    ]
+  }
+  
+  if (mid) {
+    countWhereCondition.relationships.some.metas.mid = mid
+  }
+  
+  const total = await prisma.posts.count({
+    where: countWhereCondition
+  })
+
+  // 处理数据，避免多次遍历
+  const list = data.map((item: any) => {
+    const post = item.posts
+    const commentsNum = post._count?.comments || 0
+    
+    // 提取并处理描述
+    let description = ''
+    if (post.text) {
+      const textPart = post.text.split('<!--more-->')[0]
+        .replaceAll(/```(\n|\r|.)*?```/g, '')
+        .slice(0, 150)
+      
+      description = (marked.parse(textPart) as string)?.replaceAll(/<.*?>/g, '')
+    }
+    
+    return {
+      ...post,
+      category: item.metas.slug,
+      name: item.metas.name,
+      description,
+      commentsNum,
+      // 移除不需要的字段
+      _count: undefined
     }
   })
 
-  const list = data.map((item: { posts: any, metas: { slug: any, name: any } }) => ({
-    ...item.posts,
-    category: item.metas.slug,
-    name: item.metas.name
-  })).map((item: { text: string }) => ({
-    ...item,
-    description: (marked.parse((item.text?.split('<!--more-->')[0]
-      .replaceAll(/```(\n|\r|.)*?```/g, '')
-      .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
-  }))
-  // 为每篇文章添加评论数量
-  const listWithComments = await Promise.all(list.map(async (item: any) => {
-    const comments = await prisma.comments.count({
-      where: {
-        cid: item.cid,
-        status: 'approved'
-      }
-    })
-    return {
-      ...item,
-      commentsNum: comments
-    }
-  }))
-
-  return {
-    list: listWithComments,
+  const result = {
+    list,
     total
   }
+  
+  // 缓存结果，设置较短的缓存时间（2分钟）
+  cache.set(cacheKey, result, 120)
+  
+  return result
 }
 
 export const updatePostTags = async (cid: number, tags: string[]) => {
-  // 获取帖子当前的所有标签
-  const currentTags = await prisma.relationships.findMany({
-    where: {
-      posts: {
-        cid
-      },
-      metas: {
-        type: 'tag'
-      }
-    },
-    include: {
-      metas: true
-    }
-  })
-
-  // 删除所有与该帖子相关的标签关系，并减少相应标签的count
-  for (const tag of currentTags) {
-    await prisma.relationships.delete({
+  // 使用事务处理所有数据库操作，确保原子性
+  return await prisma.$transaction(async (tx) => {
+    // 获取帖子当前的所有标签
+    const currentTags = await tx.relationships.findMany({
       where: {
-        cid_mid: {
+        posts: {
+          cid
+        },
+        metas: {
+          type: 'tag'
+        }
+      },
+      include: {
+        metas: true
+      }
+    })
+
+    // 获取当前标签的 mid 列表
+    const currentTagMids = currentTags.map(tag => tag.metas.mid)
+    
+    // 批量删除所有与该帖子相关的标签关系
+    if (currentTagMids.length > 0) {
+      await tx.relationships.deleteMany({
+        where: {
           cid,
-          mid: tag.metas.mid
+          mid: {
+            in: currentTagMids
+          }
         }
-      }
-    })
-    await prisma.metas.update({
-      where: {
-        mid: tag.metas.mid
-      },
-      data: {
-        count: {
-          decrement: 1
-        }
-      }
-    })
-  }
-
-  // 检查每个新标签是否已经存在，如果不存在则创建新的标签
-  for (const tag of tags) {
-    let existingTag = await prisma.metas.findUnique({
-      where: {
-        slug_type: {
+      })
+    }
+    
+    // 批量更新标签计数
+    const decrementPromises = currentTagMids.map(mid => 
+      tx.metas.update({
+        where: { mid },
+        data: { count: { decrement: 1 } }
+      })
+    )
+    
+    // 并行执行所有减少计数的操作
+    if (decrementPromises.length > 0) {
+      await Promise.all(decrementPromises)
+    }
+    
+    // 处理新标签
+    const tagOperations = tags.map(async (tag) => {
+      const tagMeta = await tx.metas.findFirst({
+        where: {
           slug: tag,
           type: 'tag'
         }
+      })
+      
+      if (!tagMeta) {
+        // 创建新标签
+        const newTag = await tx.metas.create({
+          data: {
+            name: tag,
+            slug: tag,
+            type: 'tag',
+            count: 1
+          }
+        })
+        
+        // 创建关系
+        await tx.relationships.create({
+          data: {
+            cid,
+            mid: newTag.mid
+          }
+        })
+        
+        return newTag.mid
+      } else {
+        // 更新已有标签计数
+        await tx.metas.update({
+          where: { mid: tagMeta.mid },
+          data: { count: { increment: 1 } }
+        })
+        
+        // 创建关系
+        await tx.relationships.create({
+          data: {
+            cid,
+            mid: tagMeta.mid
+          }
+        })
+        
+        return tagMeta.mid
+      }
+    })
+    
+    // 并行处理所有标签操作
+    await Promise.all(tagOperations)
+    
+    // 清除相关缓存
+    cache.del(`post_${cid}`)
+    cache.del('hot_list')
+    
+    return { success: true }
+  })
+}
+
+export const updatePostCategory = async (cid: number, category: string) => {
+  // 使用事务处理所有数据库操作，确保原子性
+  return await prisma.$transaction(async (tx) => {
+    // 获取当前分类
+    const currentCategory = await tx.relationships.findFirst({
+      where: {
+        posts: {
+          cid
+        },
+        metas: {
+          type: 'category'
+        }
+      },
+      include: {
+        metas: true
       }
     })
 
-    if (!existingTag) {
-      existingTag = await prisma.metas.create({
+    // 删除与该帖子相关的分类关系，并减少相应分类的count
+    if (currentCategory) {
+      await tx.relationships.delete({
+        where: {
+          cid_mid: {
+            cid,
+            mid: currentCategory.metas.mid
+          }
+        }
+      })
+      
+      await tx.metas.update({
+        where: {
+          mid: currentCategory.metas.mid
+        },
         data: {
-          name: tag,
-          slug: tag,
-          type: 'tag',
+          count: {
+            decrement: 1
+          }
+        }
+      })
+    }
+
+    // 检查新分类是否已经存在
+    let existingCategory = await tx.metas.findUnique({
+      where: {
+        slug_type: {
+          slug: category,
+          type: 'category'
+        }
+      }
+    })
+
+    // 如果不存在则创建新的分类，否则更新计数
+    if (!existingCategory) {
+      existingCategory = await tx.metas.create({
+        data: {
+          name: category,
+          slug: category,
+          type: 'category',
           count: 1
         }
       })
     } else {
-      await prisma.metas.update({
+      await tx.metas.update({
         where: {
-          mid: existingTag.mid
+          mid: existingCategory.mid
         },
         data: {
           count: {
@@ -485,131 +626,89 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
       })
     }
 
-    // 创建新的标签关系
-    await prisma.relationships.create({
+    // 创建新的分类关系
+    await tx.relationships.create({
       data: {
         cid,
-        mid: existingTag.mid
-      }
-    })
-  }
-}
-
-export const updatePostCategory = async (cid: number, category: string) => {
-  // 获取帖子当前的分类
-  const currentCategory = await prisma.relationships.findFirst({
-    where: {
-      posts: {
-        cid
-      },
-      metas: {
-        type: 'category'
-      }
-    },
-    include: {
-      metas: true
-    }
-  })
-
-  // 删除与该帖子相关的分类关系，并减少相应分类的count
-  if (currentCategory) {
-    await prisma.relationships.delete({
-      where: {
-        cid_mid: {
-          cid,
-          mid: currentCategory.metas.mid
-        }
-      }
-    })
-    await prisma.metas.update({
-      where: {
-        mid: currentCategory.metas.mid
-      },
-      data: {
-        count: {
-          decrement: 1
-        }
-      }
-    })
-  }
-
-  // 检查新分类是否已经存在，如果不存在则创建新的分类
-  let existingCategory = await prisma.metas.findUnique({
-    where: {
-      slug_type: {
-        slug: category,
-        type: 'category'
-      }
-    }
-  })
-
-  if (!existingCategory) {
-    existingCategory = await prisma.metas.create({
-      data: {
-        name: category,
-        slug: category,
-        type: 'category',
-        count: 1
-      }
-    })
-  } else {
-    await prisma.metas.update({
-      where: {
         mid: existingCategory.mid
-      },
-      data: {
-        count: {
-          increment: 1
-        }
       }
     })
-  }
-
-  // 创建新的分类关系
-  await prisma.relationships.create({
-    data: {
-      cid,
-      mid: existingCategory.mid
-    }
+    
+    // 清除相关缓存
+    cache.del(`post_${cid}`)
+    cache.del('hot_list')
+    
+    return { success: true }
   })
 }
 
 export const publishPost = async (cid: number) => {
-  const draft = await getDraftPostByCid(cid)
+  // 使用事务处理所有数据库操作，确保原子性
+  return await prisma.$transaction(async (tx) => {
+    const draft = await getDraftPostByCid(cid)
 
-  if (!draft) {
-    await prisma.posts.update({
-      where: {
-        cid
-      },
-      data: {
-        status: 'publish',
-        type: 'post'
+    if (!draft) {
+      // 如果没有草稿，直接更新状态
+      await tx.posts.update({
+        where: {
+          cid
+        },
+        data: {
+          status: 'publish',
+          type: 'post'
+        }
+      })
+    } else {
+      // 如果有草稿，先获取原文章信息
+      const post = await tx.posts.findUnique({
+        where: {
+          cid
+        }
+      })
+      
+      if (!post) {
+        throw new Error(`Post with cid ${cid} not found`)
+      }
+      
+      // 删除原文章
+      await tx.posts.delete({
+        where: {
+          cid
+        }
+      })
+      
+      // 更新草稿为正式文章
+      await tx.posts.update({
+        where: {
+          cid: draft.cid
+        },
+        data: {
+          cid,
+          status: 'publish',
+          type: 'post',
+          parent: 0,
+          slug: String(draft?.slug).slice(1),
+          created: post.created,
+          commentsNum: post.commentsNum,
+          viewsNum: post.viewsNum,
+          likesNum: post.likesNum
+        }
+      })
+    }
+    
+    // 清除相关缓存
+    cache.del(`post_${cid}`)
+    cache.del('hot_list')
+    // 清除分页缓存
+    const cacheKeys = cache.keys()
+    cacheKeys.forEach(key => {
+      if (key.startsWith('post_list_')) {
+        cache.del(key)
       }
     })
-  } else {
-    const post = await prisma.posts.delete({
-      where: {
-        cid
-      }
-    })
-    await prisma.posts.update({
-      where: {
-        cid: draft.cid
-      },
-      data: {
-        cid,
-        status: 'publish',
-        type: 'post',
-        parent: 0,
-        slug: String(draft?.slug).slice(1),
-        created: post.created,
-        commentsNum: post.commentsNum,
-        viewsNum: post.viewsNum,
-        likesNum: post.likesNum
-      }
-    })
-  }
+    
+    return { success: true }
+  })
 }
 
 export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
