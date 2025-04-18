@@ -10,7 +10,7 @@ export const Assistant: FC = () => {
     let loaded = false
 
     const loadAssistant = async () => {
-      if (screen && screen.width >= 768 && !loaded) {
+      if (window.matchMedia('(min-width: 768px)').matches && !loaded) {
         interval = setInterval(async () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

@@ -9,7 +9,6 @@ import { parseEmoji } from '@/lib/emoji'
  */
 
 function getUserAgent (agentStr: string): string {
-  console.log(agentStr)
   // 修改正则表达式，匹配 iPhone 设备并提取 iOS 版本号
   const strPattern = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|(iPhone; CPU iPhone OS ([^()]*?) like Mac OS X))(\)|;\s*([^()]*?)\))/
   const arrMatches = agentStr.match(strPattern)

@@ -11,7 +11,7 @@ try {
 let loadedLive2d = false
 
 function loadLive2d() {
-    if (screen && screen.width >= 768 && !loadedLive2d) {
+    if (window.matchMedia('(min-width: 768px)').matches && !loadedLive2d) {
         const script = document.createElement('script')
         script.src = '/lib/l2d.min.js'
         script.async = true

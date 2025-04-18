@@ -237,7 +237,7 @@ const FloatingButtons: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-3 right-3 md:bottom-6 md:right-[50%] md:mr-[-580px] flex flex-col md:gap-3 gap-1 z-50">
+    <div className="fixed bottom-3 right-3 md:bottom-6 md:right-[50%] md:mr-[-550px] flex flex-col md:gap-3 gap-1 z-50">
       {showScrollTop && (
         <button
           onClick={scrollToTop}
