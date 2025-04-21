@@ -24,5 +24,3 @@ loadLive2d()
 
 window.addEventListener('resize', loadLive2d)
 
-var _hmt = _hmt || [];
-
