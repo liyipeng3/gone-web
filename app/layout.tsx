@@ -46,6 +46,11 @@ export default function RootLayout ({
         src='/lib/init.js'
         strategy="beforeInteractive"
       />
+      <Script
+        id="baidu-script"
+        src="https://hm.baidu.com/hm.js?7bde734001f8c21cce648cc6c202f4e3"
+        strategy="afterInteractive"
+      />
     </head>
     <body className={cn(
       'min-h-screen bg-background font-sans antialiased',

@@ -23,11 +23,3 @@ function loadLive2d() {
 loadLive2d()
 
 window.addEventListener('resize', loadLive2d)
-
-var _hmt = _hmt || [];
-(function () {
-    let hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?7bde734001f8c21cce648cc6c202f4e3";
-    let s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-})();
