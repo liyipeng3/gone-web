@@ -84,14 +84,55 @@ export const getRecentComments = async (limit: number = 10) => {
       posts: {
         select: {
           title: true,
-          slug: true
+          slug: true,
+          cid: true
         }
       }
     }
   })
   
-  // 缓存结果
-  cache.set(cacheKey, comments)
+  // 获取所有评论关联的文章的 cid，过滤掉 undefined 值并确保类型正确
+  const postCids = comments
+    .map(comment => comment.posts?.cid)
+    .filter((cid): cid is number => cid !== undefined && cid !== null)
   
-  return comments
+  // 获取文章对应的分类
+  const categoriesData = await prisma.relationships.findMany({
+    where: {
+      cid: { in: postCids },
+      metas: {
+        type: 'category'
+      }
+    },
+    include: {
+      metas: true
+    }
+  })
+  
+  // 创建 cid 到 category 的映射
+  const cidToCategoryMap = new Map()
+  categoriesData.forEach(item => {
+    if (item.metas) {
+      cidToCategoryMap.set(item.cid, item.metas.slug)
+    }
+  })
+  
+  // 为每个评论的文章添加 category 字段
+  const commentsWithCategory = comments.map(comment => {
+    if (comment.posts) {
+      return {
+        ...comment,
+        posts: {
+          ...comment.posts,
+          category: cidToCategoryMap.get(comment.posts.cid)
+        }
+      }
+    }
+    return comment
+  })
+  
+  // 缓存结果
+  cache.set(cacheKey, commentsWithCategory)
+  
+  return commentsWithCategory
 }
