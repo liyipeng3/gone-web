@@ -24,7 +24,5 @@ loadLive2d()
 
 window.addEventListener('resize', loadLive2d)
 
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-ZKEPJ3W5V0');
+var _hmt = _hmt || [];
+

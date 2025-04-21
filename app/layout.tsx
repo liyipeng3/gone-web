@@ -42,14 +42,14 @@ export default function RootLayout ({
       <meta name="description" content={siteConfig.description}/>
       <meta name="theme-color" content="#ffffff"/>
       <Script
-        id="google-script"
-        src="https://www.googletagmanager.com/gtag/js?id=G-ZKEPJ3W5V0"
-        strategy="beforeInteractive"
-      />
-      <Script
         id="init-script"
         src='/lib/init.js'
         strategy="beforeInteractive"
+      />
+      <Script
+        id="baidu-script"
+        src="https://hm.baidu.com/hm.js?7bde734001f8c21cce648cc6c202f4e3"
+        strategy="afterInteractive"
       />
     </head>
     <body className={cn(
