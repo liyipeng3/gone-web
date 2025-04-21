@@ -30,7 +30,7 @@ const Archive = async () => {
                     {dayjs(post.created * 1000).format('MM/DD')}:
                   </span>
                   <Link
-                    href={`/post/${post.slug}`}
+                    href={`/post/${post.category}/${post.slug}`}
                     className="text-gray-700 hover:text-black dark:hover:text-white text-sm ml-2"
                   >
                     {post.title}
