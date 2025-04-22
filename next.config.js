@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
+  // use brotli compression
+  compress: false,
   sassOptions: {
     includePaths: [__dirname]
   },
