@@ -49,7 +49,7 @@ export async function POST (
       category: undefined,
       tags: undefined,
       draft: undefined,
-      relationships: { createMany: { data: mids.map(mid => ({ mid })) } },
+      relationships: { createMany: { data: mids.map(item => ({ mid: item.mid })) } },
       parent: cid,
       type: 'post_draft'
     })

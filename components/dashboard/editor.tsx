@@ -4,6 +4,7 @@ import marked from '@/lib/marked'
 import dynamic from 'next/dynamic'
 import type EasyMDE from 'easymde'
 import { type FC } from 'react'
+import { cn } from '@/lib/utils'
 
 const SimpleMDE = dynamic(async () => await import('react-simplemde-editor'), { ssr: false })
 
@@ -26,5 +27,5 @@ export const Editor: FC<EditorProps> = ({
   onChange,
   className
 }) => {
-  return (<SimpleMDE options={options} value={value} onChange={onChange} className={className}/>)
+  return <SimpleMDE options={options} value={value} onChange={onChange} className={cn(className, 'editor-container')} />
 }

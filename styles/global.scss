@@ -97,6 +97,20 @@
   @apply prose break-all text-left max-w-none dark:prose-invert bg-white px-5
 }
 
+.editor-container {
+  .CodeMirror {
+    @apply dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 
+  }
+
+  .editor-toolbar {
+    @apply dark:border-gray-700
+  }
+
+  .separator {
+    @apply dark:border-gray-700
+  }
+}
+
 
 
 
