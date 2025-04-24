@@ -1,14 +1,11 @@
 import prisma from '@/lib/prisma'
 import { marked } from 'marked'
 import { type HotList } from '@/types'
-
-import NodeCache from 'node-cache'
-
-const cache = new NodeCache({ stdTTL: 600 }) // 10分钟缓存
+import { cacheService, cacheKeys } from '@/lib/cache'
 
 export const getHotList = async (limit: number = 5): Promise<HotList> => {
-  const cacheKey = 'hot_list'
-  const cachedData = cache.get<HotList>(cacheKey)
+  const cacheKey = `${cacheKeys.hotList}:${limit}`
+  const cachedData = cacheService.get<HotList>(cacheKey)
 
   if (cachedData) {
     return cachedData
@@ -50,7 +47,7 @@ export const getHotList = async (limit: number = 5): Promise<HotList> => {
     category: item.metas.slug
   })) as HotList
 
-  cache.set(cacheKey, result)
+  cacheService.set(cacheKey, result, 600)
   return result
 }
 
@@ -152,16 +149,19 @@ export const updatePost = async (cid: number, data: any) => {
 }
 
 export const incrementViews = async (cid: number) => {
+  // 使用批处理更新视图计数，同时清除相关缓存
+  // 分开执行，避免在表达式中使用 void
   await prisma.posts.update({
-    where: {
-      cid
-    },
+    where: { cid },
     data: {
       viewsNum: {
         increment: 1
       }
     }
   })
+
+  // 清除热门文章缓存，因为视图计数变化会影响热门列表
+  cacheService.delByPrefix(cacheKeys.hotList)
 }
 
 export const getPostByCid = async (cid: number, draft?: boolean) => {
@@ -311,14 +311,14 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
   search = ''
 }) => {
   // 使用缓存键，包含所有查询参数
-  const cacheKey = `post_list_${pageNum}_${pageSize}_${mid || 'all'}_${search}`
-  const cachedData = cache.get(cacheKey)
-  
+  const cacheKey = `${cacheKeys.postList}:${pageNum}_${pageSize}_${mid ?? 'all'}_${search}`
+  const cachedData = cacheService.get(cacheKey)
+
   // 如果缓存中有数据，直接返回
   if (cachedData) {
     return cachedData
   }
-  
+
   // 构建查询条件
   const whereCondition = {
     metas: {
@@ -329,7 +329,7 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
       type: 'post'
     }
   } as any
-  
+
   // 只有在有搜索条件时才添加 OR 条件，避免不必要的复杂查询
   if (search) {
     whereCondition.posts.OR = [
@@ -337,12 +337,12 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
       { text: { contains: search } }
     ]
   }
-  
+
   // 只有在指定分类时才添加 mid 条件
   if (mid) {
     whereCondition.metas.mid = mid
   }
-  
+
   const data = await prisma.relationships.findMany({
     include: {
       posts: {
@@ -394,18 +394,18 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
       }
     }
   } as any
-  
+
   if (search) {
     countWhereCondition.OR = [
       { title: { contains: search } },
       { text: { contains: search } }
     ]
   }
-  
+
   if (mid) {
     countWhereCondition.relationships.some.metas.mid = mid
   }
-  
+
   const total = await prisma.posts.count({
     where: countWhereCondition
   })
@@ -414,17 +414,17 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
   const list = data.map((item: any) => {
     const post = item.posts
     const commentsNum = post._count?.comments || 0
-    
+
     // 提取并处理描述
     let description = ''
     if (post.text) {
       const textPart = post.text.split('<!--more-->')[0]
         .replaceAll(/```(\n|\r|.)*?```/g, '')
         .slice(0, 150)
-      
+
       description = (marked.parse(textPart) as string)?.replaceAll(/<.*?>/g, '')
     }
-    
+
     return {
       ...post,
       category: item.metas.slug,
@@ -440,10 +440,10 @@ export const getPostList: (postListParams: getPostListParams) => Promise<any> = 
     list,
     total
   }
-  
+
   // 缓存结果，设置较短的缓存时间（2分钟）
-  cache.set(cacheKey, result, 120)
-  
+  cacheService.set(cacheKey, result, 120)
+
   return result
 }
 
@@ -467,7 +467,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
 
     // 获取当前标签的 mid 列表
     const currentTagMids = currentTags.map(tag => tag.metas.mid)
-    
+
     // 批量删除所有与该帖子相关的标签关系
     if (currentTagMids.length > 0) {
       await tx.relationships.deleteMany({
@@ -479,20 +479,20 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
         }
       })
     }
-    
+
     // 批量更新标签计数
-    const decrementPromises = currentTagMids.map(mid => 
-      tx.metas.update({
+    const decrementPromises = currentTagMids.map(async mid =>
+      await tx.metas.update({
         where: { mid },
         data: { count: { decrement: 1 } }
       })
     )
-    
+
     // 并行执行所有减少计数的操作
     if (decrementPromises.length > 0) {
       await Promise.all(decrementPromises)
     }
-    
+
     // 处理新标签
     const tagOperations = tags.map(async (tag) => {
       const tagMeta = await tx.metas.findFirst({
@@ -501,7 +501,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
           type: 'tag'
         }
       })
-      
+
       if (!tagMeta) {
         // 创建新标签
         const newTag = await tx.metas.create({
@@ -512,7 +512,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
             count: 1
           }
         })
-        
+
         // 创建关系
         await tx.relationships.create({
           data: {
@@ -520,7 +520,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
             mid: newTag.mid
           }
         })
-        
+
         return newTag.mid
       } else {
         // 更新已有标签计数
@@ -528,7 +528,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
           where: { mid: tagMeta.mid },
           data: { count: { increment: 1 } }
         })
-        
+
         // 创建关系
         await tx.relationships.create({
           data: {
@@ -536,18 +536,18 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
             mid: tagMeta.mid
           }
         })
-        
+
         return tagMeta.mid
       }
     })
-    
+
     // 并行处理所有标签操作
     await Promise.all(tagOperations)
-    
+
     // 清除相关缓存
-    cache.del(`post_${cid}`)
-    cache.del('hot_list')
-    
+    cacheService.del(`${cacheKeys.post}:${cid}`)
+    cacheService.delByPrefix(cacheKeys.hotList)
+
     return { success: true }
   })
 }
@@ -580,7 +580,7 @@ export const updatePostCategory = async (cid: number, category: string) => {
           }
         }
       })
-      
+
       await tx.metas.update({
         where: {
           mid: currentCategory.metas.mid
@@ -633,11 +633,11 @@ export const updatePostCategory = async (cid: number, category: string) => {
         mid: existingCategory.mid
       }
     })
-    
+
     // 清除相关缓存
-    cache.del(`post_${cid}`)
-    cache.del('hot_list')
-    
+    cacheService.del(`${cacheKeys.post}:${cid}`)
+    cacheService.delByPrefix(cacheKeys.hotList)
+
     return { success: true }
   })
 }
@@ -665,18 +665,18 @@ export const publishPost = async (cid: number) => {
           cid
         }
       })
-      
+
       if (!post) {
         throw new Error(`Post with cid ${cid} not found`)
       }
-      
+
       // 删除原文章
       await tx.posts.delete({
         where: {
           cid
         }
       })
-      
+
       // 更新草稿为正式文章
       await tx.posts.update({
         where: {
@@ -695,18 +695,18 @@ export const publishPost = async (cid: number) => {
         }
       })
     }
-    
+
     // 清除相关缓存
-    cache.del(`post_${cid}`)
-    cache.del('hot_list')
+    cacheService.del(`${cacheKeys.post}:${cid}`)
+    cacheService.delByPrefix(cacheKeys.hotList)
     // 清除分页缓存
-    const cacheKeys = cache.keys()
-    cacheKeys.forEach(key => {
-      if (key.startsWith('post_list_')) {
-        cache.del(key)
-      }
+    const cacheKeyPrefix = `${cacheKeys.postList}:`
+    const allKeys = cacheService.getAllKeys()
+    const keys = allKeys.filter((key: string) => key.startsWith(cacheKeyPrefix))
+    keys.forEach((key: string) => {
+      cacheService.del(key)
     })
-    
+
     return { success: true }
   })
 }
@@ -725,46 +725,38 @@ export async function checkDraftSlugUnique (slug: string, excludeCid: number) {
   return !post
 }
 
-export const getArchiveList = async () => {
-  const posts = await prisma.relationships.findMany({
-    include: {
-      posts: {
-        select: {
-          title: true,
-          slug: true,
-          created: true
-        }
-      },
-      metas: {
-        select: {
-          slug: true
-        }
-      }
+export type ArchiveList = Array<{
+  time: string
+  posts: any
+}>
+
+export const getArchiveList: () => Promise<ArchiveList> = async () => {
+  const cacheKey = cacheKeys.archive
+  const cachedData = cacheService.get<ArchiveList>(cacheKey)
+
+  if (cachedData) {
+    return cachedData
+  }
+
+  const posts = await prisma.posts.findMany({
+    select: {
+      title: true,
+      slug: true,
+      created: true
     },
     where: {
-      metas: {
-        type: 'category'
-      },
-      posts: {
-        status: 'publish',
-        type: 'post'
-      }
+      status: 'publish',
+      type: 'post'
     },
     orderBy: {
-      posts: {
-        created: 'desc'
-      }
+      created: 'desc'
     }
   })
 
-  const formattedPosts = posts.map((item) => ({
-    ...item.posts,
-    category: item.metas.slug
-  }))
-
+  // 按年月分组
   const archiveMap = new Map()
 
-  formattedPosts.forEach(post => {
+  posts.forEach(post => {
     const date = new Date((post.created ?? 0) * 1000)
     const time = `${date.getFullYear()} 年 ${String(date.getMonth() + 1).padStart(2, '0')} 月`
 
@@ -775,10 +767,16 @@ export const getArchiveList = async () => {
     archiveMap.get(time).push(post)
   })
 
-  return Array.from(archiveMap.entries()).map(([time, posts]) => ({
+  // 转换为数组格式
+  const result = Array.from(archiveMap.entries()).map(([time, posts]) => ({
     time,
     posts
   }))
+
+  // 缓存结果，设置较长的过期时间（1小时）
+  cacheService.set(cacheKey, result, 3600)
+
+  return result
 }
 
 export const getPostInfoByCid = async (cid: number) => {
@@ -809,7 +807,7 @@ export const getPostInfoByCid = async (cid: number) => {
     throw new Error('文章不存在')
   }
 
-  const category = post.relationships[0]?.metas?.slug || 'uncategorized'
+  const category = post.relationships[0]?.metas?.slug ?? 'uncategorized'
 
   return {
     title: post.title,
