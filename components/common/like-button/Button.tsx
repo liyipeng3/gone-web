@@ -10,6 +10,7 @@ interface LikeButtonProps {
   initialLikes?: number
 }
 
+// 优化组件以支持动态导入
 const LikeButton: React.FC<LikeButtonProps> = ({ cid, initialLikes = 0 }) => {
   const [likes, setLikes] = useState<number>(initialLikes)
   const [isLiked, setIsLiked] = useState<boolean>(false)
@@ -163,4 +164,5 @@ const LikeButton: React.FC<LikeButtonProps> = ({ cid, initialLikes = 0 }) => {
   )
 }
 
+// 默认导出组件，以支持动态导入
 export default LikeButton

@@ -6,11 +6,11 @@ import Breadcrumb from '@/components/common/breadcrumb'
 import { getPagePostInfo } from '@/services/post'
 import PostView from '@/components/custom/View/post'
 import { type Metadata } from 'next/types'
-import CommentList from '@/components/common/comment'
 import Link from 'next/link'
-import LikeButton from '@/components/common/like-button'
 import { getCommentsByCid } from '@/models/comments'
 import { calculateReadingTime, getWordCount } from '@/lib/readingTime'
+import CommentList from '@/components/common/comment'
+import LikeButton from '@/components/common/like-button'
 
 export async function generateMetadata (
   { params }: { params: { slug: string } }
