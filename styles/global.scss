@@ -109,8 +109,13 @@
   .separator {
     @apply dark:border-gray-700
   }
+  
+  // 深色模式下光标为白色
+  .CodeMirror.cm-s-easymde.CodeMirror-focused .CodeMirror-cursor {
+    @apply dark:border-l-white
+  }
+
+  .active {
+    @apply dark:bg-gray-700 dark:text-gray-100
+  }
 }
-
-
-
-

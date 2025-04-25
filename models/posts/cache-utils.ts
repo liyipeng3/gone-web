@@ -26,9 +26,10 @@ export const getArchiveCacheKey = (): string => {
 /**
  * 清除帖子相关缓存
  */
-export const clearPostRelatedCaches = (cid: number): void => {
+export const clearPostRelatedCaches = ({ cid, slug }: { cid?: number, slug?: string }): void => {
   // 清除特定帖子缓存
-  cacheService.del(getPostCacheKey(cid))
+  slug && cacheService.del(getPostCacheKey(slug))
+  cid && cacheService.del(getPostCacheKey(cid))
 
   // 清除可能受影响的列表缓存
   cacheService.delByPrefix(cacheKeys.hotList)

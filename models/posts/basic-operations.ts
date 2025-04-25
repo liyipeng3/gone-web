@@ -26,7 +26,7 @@ export const updatePostByCid = async (cid: number, data: PostUpdateData) => {
  * 根据 cid 删除帖子
  */
 export const deletePostByCid = async (cid: number) => {
-  clearPostRelatedCaches(cid)
+  clearPostRelatedCaches({cid})
   return await prisma.posts.delete({
     where: { cid }
   })
@@ -47,7 +47,7 @@ export const incrementViews = async (cid: number) => {
   })
 
   // 清除缓存
-  clearPostRelatedCaches(cid)
+  clearPostRelatedCaches({cid})
 }
 
 /**

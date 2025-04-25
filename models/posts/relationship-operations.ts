@@ -218,7 +218,7 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
     }
 
     // 清除相关缓存
-    clearPostRelatedCaches(cid)
+    clearPostRelatedCaches({cid})
 
     return { success: true }
   })
@@ -307,7 +307,7 @@ export const updatePostCategory = async (cid: number, category: string) => {
     })
 
     // 清除相关缓存
-    clearPostRelatedCaches(cid)
+    clearPostRelatedCaches({cid})
 
     return { success: true }
   })
@@ -371,7 +371,7 @@ export const publishPost = async (cid: number) => {
     }
 
     // 清除相关缓存
-    clearPostRelatedCaches(cid)
+    clearPostRelatedCaches({cid})
 
     return { success: true }
   })
