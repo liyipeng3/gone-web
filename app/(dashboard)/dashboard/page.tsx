@@ -8,17 +8,38 @@ import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import { getDraftPostByCid } from '@/models/posts'
 import { type Key } from 'react'
+import { Pagination } from '@/components/ui/pagination'
 
 export const metadata = {
   title: 'Dashboard'
 }
 
-export default async function DashboardPage () {
+export default async function DashboardPage ({
+  searchParams
+}: {
+  searchParams: Record<string, string | string[] | undefined>
+}) {
   const user = await getCurrentUser()
 
   if (!user) {
     return notFound()
   }
+
+  // 分页参数
+  const page = Number(searchParams.page) || 1
+  const pageSize = 10
+  const skip = (page - 1) * pageSize
+
+  // 获取总数量
+  const totalPosts = await prisma.posts.count({
+    where: {
+      uid: parseInt(user.id),
+      type: 'post',
+      status: {
+        not: 'deleted'
+      }
+    }
+  })
 
   const posts: any = await prisma.posts.findMany({
     where: {
@@ -37,7 +58,9 @@ export default async function DashboardPage () {
     },
     orderBy: {
       modified: 'desc'
-    }
+    },
+    skip,
+    take: pageSize
   })
 
   for (let i = 0; i < posts.length; i++) {
@@ -73,6 +96,14 @@ export default async function DashboardPage () {
             </EmptyPlaceholder>
             )}
       </div>
+      {totalPosts > 0 && (
+        <Pagination
+          totalItems={totalPosts}
+          currentPage={page}
+          pageSize={pageSize}
+          baseUrl="/dashboard"
+        />
+      )}
     </DashboardShell>
   )
 }
