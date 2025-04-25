@@ -3,15 +3,10 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
+import List from './List' // 直接导入列表组件，不使用懒加载
 
-// 动态导入评论表单组件
+// 只对表单组件使用懒加载
 const CommentForm = dynamic(async () => await import('./Form'), {
-  loading: () => <div className="flex items-center justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>,
-  ssr: false
-})
-
-// 动态导入评论列表项组件
-const List = dynamic(async () => await import('./List'), {
   loading: () => <div className="flex items-center justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>,
   ssr: false
 })

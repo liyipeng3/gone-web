@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import CommentForm from './Form'
+import dynamic from 'next/dynamic'
+import { Loader2 } from 'lucide-react'
+
+const CommentForm = dynamic(async () => await import('./Form'), { ssr: false, loading: () => <div className="flex items-center justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div> })
 
 const Reply = ({ comment, nameMap }: { comment: any, nameMap: Record<number, string> }) => {
   const [showReplyForm, setShowReplyForm] = useState(false)
