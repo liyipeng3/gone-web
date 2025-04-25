@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/lib/session'
 import { MainNav } from '@/components/dashboard/main-nav'
 import { SiteFooter } from '@/components/dashboard/site-footer'
 import { UserAccountNav } from '@/components/dashboard/user-account-nav'
+import { ModeToggle } from '@/components/dashboard/mode-toggle'
 import React from 'react'
 import { authOptions } from '@/lib/auth'
 
@@ -26,13 +27,16 @@ export default async function DashboardLayout ({
       <header className="p-0 top-0 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <MainNav items={dashboardConfig.mainNav}/>
-          <UserAccountNav
-            user={{
-              name: user?.name,
-              image: user?.image,
-              email: user?.email
-            }}
-          />
+          <div className="flex items-center gap-4">
+            <ModeToggle />
+            <UserAccountNav
+              user={{
+                name: user?.name,
+                image: user?.image,
+                email: user?.email
+              }}
+            />
+          </div>
         </div>
       </header>
       {children}

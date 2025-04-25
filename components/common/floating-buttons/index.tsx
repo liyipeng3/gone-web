@@ -76,12 +76,12 @@ const FloatingButtons: React.FC = () => {
     setAudio(audioElement)
     audioRef.current = audioElement
 
-    // 选择一个随机的初始曲目
+    // 选择一个随机的初始曲目，但不加载音频
     const initialTrackIndex = getRandomTrackIndex()
     setCurrentTrackIndex(initialTrackIndex)
-    audioElement.src = getMusicUrl(musicIds[initialTrackIndex])
-    // 预加载音频
-    audioElement.load()
+    // 不再预加载音频
+    // audioElement.src = getMusicUrl(musicIds[initialTrackIndex])
+    // audioElement.load()
 
     return () => {
       if (audioElement) {
@@ -212,6 +212,7 @@ const FloatingButtons: React.FC = () => {
     } else {
       // 每次播放时切换到新的歌曲
       playNextTrack()
+
       setIsPlaying(true)
     }
   }

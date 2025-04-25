@@ -6,26 +6,11 @@ import cn from 'classnames'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 import { useRouter } from 'next/navigation'
+import { setTheme, updateTheme } from './theme'
 
 interface HeaderProps {
   logo?: string | ReactNode
   menus?: Array<{ name: string, id?: string, path?: string, children?: Array<{ name: string, path: string }> }>
-}
-
-function updateTheme () {
-  if (
-    localStorage.theme === 'dark' ||
-    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
-    document.documentElement.classList.add('dark', 'changing-theme')
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#161b22')
-  } else {
-    document.documentElement.classList.remove('dark', 'changing-theme')
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff')
-  }
-  window.setTimeout(() => {
-    document.documentElement.classList.remove('changing-theme')
-  })
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -93,15 +78,6 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }
 
-  const setTheme = (theme: 'dark' | 'light') => {
-    if (theme === 'dark') {
-      localStorage.theme = 'dark'
-    } else {
-      localStorage.theme = 'light'
-    }
-    updateTheme()
-  }
-
   useIsomorphicLayoutEffect(() => {
     if (typeof window !== 'undefined') {
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -121,13 +97,10 @@ export const Header: React.FC<HeaderProps> = ({
       }
     })
   }, [])
-  // const user = useSelector(selectUser)
 
   useIsomorphicLayoutEffect(() => {
     function onStorage () {
       updateTheme()
-      const theme = localStorage.theme
-      setTheme(theme)
     }
 
     window.addEventListener('storage', onStorage)

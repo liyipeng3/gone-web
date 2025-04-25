@@ -1,15 +1,33 @@
 'use client'
 
 import * as React from 'react'
-import { useTheme } from 'next-themes'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/common/icons'
+import { setTheme } from '../common/header/theme'
+import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 
 export function ModeToggle () {
-  const { setTheme } = useTheme()
+  useIsomorphicLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        setTheme('dark')
+      } else {
+        setTheme('light')
+      }
+    }
 
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', (event) => {
+      if (event.matches) {
+        setTheme('dark')
+      } else {
+        setTheme('light')
+      }
+    })
+  }, [])
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,12 +50,12 @@ export function ModeToggle () {
           <Icons.moon className="mr-2 h-4 w-4"/>
           <span>Dark</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => {
+        {/* <DropdownMenuItem onClick={() => {
           setTheme('system')
         }}>
           <Icons.laptop className="mr-2 h-4 w-4"/>
           <span>System</span>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
