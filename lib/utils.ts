@@ -66,3 +66,66 @@ export function addEventListener (target: {
     }
   }
 }
+/**
+ * 获取用户设备名称
+ */
+
+export function getUserAgent (agentStr: string): string {
+  // 修改正则表达式，匹配 iPhone 设备并提取 iOS 版本号
+  const strPattern = /Mozilla\/5.0\s*\([^()]*?(Windows[^()]*?|Android[^()]*?|Mac OS[^()]*?|(iPhone; CPU iPhone OS ([^()]*?) like Mac OS X))(\)|;\s*([^()]*?)\))/
+  const arrMatches = agentStr.match(strPattern)
+  let agent = arrMatches ? arrMatches[1] : ''
+
+  // 如果是 iPhone 设备，则提取 iOS 版本号
+  if (arrMatches?.[3]) {
+    return 'iOS ' + arrMatches[3].replace(/_/g, '.')
+  }
+
+  agent = agent.replaceAll(/NT./g, '')
+  agent = agent.replaceAll(/_/g, '.')
+
+  return agent
+}
+
+/**
+ * 获取用户浏览器类型
+ */
+
+export function getUserBrowser (agentStr: string): string {
+  const flag = agentStr
+  let browser
+
+  if (/Chrome\/[\d]*.[\d]*/.test(flag)) {
+    // 检查Chrome
+    browser = flag.match(/Chrome\/[\d]*.[\d]*/)?.[0]
+  } else if (/Safari\/[\d]*.[\d]*/.test(flag)) {
+    // 检查Safari
+    browser = flag.match(/Safari\/[\d]*.[\d]*/)?.[0]
+  } else if (/MSIE [\d]*.[\d]*/.test(flag)) {
+    // IE
+    browser = flag.match(/MSIE [\d]*.[\d]*/)?.[0]
+  } else if (/Opera\/[\d]*.[\d]*/.test(flag)) {
+    // opera
+    browser = flag.match(/Opera\/[\d]*.[\d]*/)?.[0]
+  } else if (/Firefox\/[\d]*.[\d]*/.test(flag)) {
+    // Firefox
+    browser = flag.match(/Firefox\/[\d]*.[\d]*/)?.[0]
+  } else if (/OmniWeb\/(v*)([^\s|;]+)/i.test(flag)) {
+    // OmniWeb
+    browser = flag.match(/OmniWeb\/(v*)([^\s|;]+)/i)?.[2]
+  } else if (/Netscape([\d]*)\/([^\s]+)/i.test(flag)) {
+    // Netscape
+    browser = flag.match(/Netscape([\d]*)\/([^\s]+)/i)?.[2]
+  } else if (/Lynx\/([^\s]+)/i.test(flag)) {
+    // Lynx
+    browser = flag.match(/Lynx\/([^\s]+)/i)?.[1]
+  } else if (/360SE/i.test(flag)) {
+    // 360SE
+    browser = '360安全浏览器'
+  } else if (/SE 2.x/i.test(flag)) {
+    // 搜狗
+    browser = '搜狗浏览器'
+  }
+
+  return browser ?? 'unknown'
+}
