@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import Reply from './Reply'
 import { parseEmoji } from '@/lib/emoji'
 import dynamic from 'next/dynamic'
+import { getUserBrowser, getUserAgent } from '@/lib/utils'
 
 const Avatar = dynamic(async () => await import('./Avatar'), {
   ssr: false,
@@ -10,14 +11,6 @@ const Avatar = dynamic(async () => await import('./Avatar'), {
 })
 
 const CommentItem = ({ comment, nameMap }: { comment: any, nameMap: Record<number, string> }) => {
-  function getUserBrowser (agent: any): React.ReactNode {
-    throw new Error('Function not implemented.')
-  }
-
-  function getUserAgent (agent: any): React.ReactNode {
-    throw new Error('Function not implemented.')
-  }
-
   return (
     <div
       id={`comment-${comment.coid}`}
