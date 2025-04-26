@@ -6,6 +6,8 @@ This is a blog built with TypeScript, Next.js and Tailwind CSS.
 
 I write it for me, but if you find it useful, that's great, if you can help me improve it, that's even better.
 
+![Image](https://oss.lyp123.com/img/20250426112658201.png)
+
 ## Features
 
 - Modern user interface design
