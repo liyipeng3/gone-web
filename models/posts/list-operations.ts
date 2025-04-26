@@ -25,21 +25,43 @@ export const getHotList = async (limit: number = 5): Promise<HotList> => {
   const hotData = await prisma.posts.findMany({
     select: {
       title: true,
-      slug: true
+      slug: true,
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              slug: true,
+              type: true
+            }
+          }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
+        }
+      }
     },
     where: {
-      status: 'publish'
+      status: 'publish',
+      type: 'post'
     },
     orderBy: {
-      created: 'desc'
+      viewsNum: 'desc'
     },
     take: limit
   })
 
-  const result: HotList = hotData.map(item => ({
-    title: item.title ?? '',
-    slug: item.slug ?? ''
-  }))
+  const result: HotList = hotData.map(item => {
+    const categoryRelation = item.relationships?.[0];
+    const category = categoryRelation?.metas?.slug ?? 'uncategorized';
+    
+    return {
+      title: item.title ?? '',
+      slug: item.slug ?? '',
+      category
+    };
+  })
 
   setHotListCache(limit, result)
   return result

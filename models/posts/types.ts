@@ -21,6 +21,7 @@ export type ArchiveList = ArchiveItem[]
 export type HotList = Array<{
   title: string
   slug: string
+  category: string
 }>
 
 // 帖子创建/更新数据类型
