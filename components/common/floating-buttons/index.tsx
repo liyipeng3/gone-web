@@ -291,7 +291,7 @@ const FloatingButtons: React.FC = () => {
           {isPlaying ? <Pause size={20} /> : <Music size={20} />}
         </button>
       </div>
-      {chapters.length > 0 && (
+      {chapters.length > 1 && (
         <div className="relative">
           <button
             onClick={() => {
@@ -307,7 +307,6 @@ const FloatingButtons: React.FC = () => {
               <div className="p-2">
                 <ul className="space-y-0">
                   {chapters.map((chapter, index) => {
-                    // 跳过第一个标题
                     if (index === 0) return null
 
                     return (
