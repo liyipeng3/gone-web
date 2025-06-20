@@ -130,7 +130,7 @@ export default function AboutPage () {
         <div className="flex justify-end">
           <Button onClick={() => { saveAboutPage() }}>
             {saveLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              <Icons.spinner className="h-4 w-4 animate-spin" />
             )}
             保存更改
           </Button>
