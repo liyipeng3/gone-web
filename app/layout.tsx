@@ -8,6 +8,7 @@ import localFont from 'next/font/local'
 import type { Metadata } from 'next'
 import { Toaster } from '@/components/ui/toaster'
 import { siteConfig } from '@/config/site'
+import { ThemeProvider } from 'next-themes'
 
 export const metadata: Metadata = {
   title: {
@@ -52,7 +53,9 @@ export default function RootLayout ({
       fontSans.variable,
       fontHeading.variable
     )}>
-      {children}
+      <ThemeProvider attribute="class">
+        {children}
+      </ThemeProvider>
     <Toaster/>
     </body>
     </html>
