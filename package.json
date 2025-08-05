@@ -13,7 +13,8 @@
     "pm2": "yarn pm2:start",
     "lint": "next lint --fix",
     "prepare": "husky",
-    "prisma": "cp .env.development.local .env && prisma db pull && prisma generate && rm -rf .env"
+    "prisma": "cp .env.development.local .env && prisma db pull && prisma generate && rm -rf .env",
+    "prisma:push": "cp .env.development.local .env && prisma db push && rm -rf .env"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",

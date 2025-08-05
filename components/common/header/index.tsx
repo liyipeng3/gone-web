@@ -27,6 +27,10 @@ export const Header: React.FC<HeaderProps> = ({
   }, {
     name: '归档',
     id: 'archive'
+  }, {
+    name: '相册',
+    id: 'gallery',
+    path: '/gallery'
   },
   {
     name: '留言',

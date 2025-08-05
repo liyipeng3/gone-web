@@ -37,15 +37,36 @@ model fields {
   @@id([cid, type])
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// 相册模型 - 用于存储照片信息
 model gallery {
-  gid         Int     @id @default(autoincrement()) @db.UnsignedInt
-  thumb       String? @db.VarChar(200)
-  image       String? @db.VarChar(200)
-  sort        Int?    @default(0)
-  name        String? @db.VarChar(200)
-  description String? @db.VarChar(200)
-  order       Int?    @default(0) @db.UnsignedInt
+  gid           Int     @id @default(autoincrement()) @db.UnsignedInt
+  description   String? @db.Text
+  order         Int?    @default(0) @db.UnsignedInt
+  aperture      String? @db.VarChar(50)
+  camera        String? @db.VarChar(200)
+  category      String? @db.VarChar(100)
+  createdAt     Int     @default(0) @db.UnsignedInt
+  fileSize      Int?    @db.UnsignedInt
+  focalLength   String? @db.VarChar(50)
+  height        Int?    @db.UnsignedInt
+  imagePath     String  @db.VarChar(500)
+  isPublic      Boolean @default(true)
+  iso           Int?    @db.UnsignedInt
+  lens          String? @db.VarChar(200)
+  location      String? @db.VarChar(200)
+  mimeType      String? @db.VarChar(100)
+  shutterSpeed  String? @db.VarChar(50)
+  tags          String? @db.Text
+  takenAt       Int?    @db.UnsignedInt
+  thumbnailPath String? @db.VarChar(500)
+  title         String? @db.VarChar(200)
+  updatedAt     Int     @default(0) @db.UnsignedInt
+  width         Int?    @db.UnsignedInt
+
+  @@index([category])
+  @@index([createdAt], map: "gallery_created_idx")
+  @@index([takenAt], map: "gallery_taken_idx")
+  @@index([isPublic], map: "gallery_public_idx")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
