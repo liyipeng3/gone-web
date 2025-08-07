@@ -174,7 +174,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       for (const filePreview of files) {
         // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
-        
+
         // 如果用户没有填写地点但 EXIF 中有地点信息，自动填充
         if (!filePreview.location && uploadResult.exif.location) {
           console.log('自动填充地点信息:', uploadResult.exif.location)
@@ -186,7 +186,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           headers: {
             'Content-Type': 'application/json'
           },
-                      body: JSON.stringify({
+          body: JSON.stringify({
             title: filePreview.title,
             description: filePreview.description,
             imagePath: uploadResult.url,
