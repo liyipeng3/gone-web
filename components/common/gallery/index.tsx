@@ -7,6 +7,7 @@ import Pagination from '@/components/common/pagination'
 import ImagePreview from '@/components/common/image'
 import { formatDate } from '@/lib/utils'
 import { defaultIcons } from '../prose/lightbox'
+import { useRouter } from 'next/navigation'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -25,10 +26,18 @@ interface GalleryItemProps {
 
 // 单个相册项组件
 const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => {
+  const router = useRouter()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
   const handleClick = useCallback(() => {
+    // 点击跳转到详情页面
+    router.push(`/gallery/photo/${item.gid}`)
+  }, [router, item.gid])
+
+  const handlePreviewClick = useCallback((e: React.MouseEvent) => {
+    // 阻止事件冒泡，只在预览按钮上触发预览
+    e.stopPropagation()
     onPreview(item.imagePath, index)
   }, [item.imagePath, index, onPreview])
 
@@ -77,14 +86,24 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
         {/* 悬浮信息层 */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end">
           <div className="w-full p-3 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {item.camera && (
-              <p className="text-white text-xs truncate">📸 {item.camera}</p>
-            )}
-            {item.takenAt && (
-              <p className="text-white text-xs mt-1">
-                📅 {formatDate(item.takenAt * 1000)}
-              </p>
-            )}
+            <div className="flex items-end justify-between">
+              <div className="flex-1 min-w-0">
+                {item.camera && (
+                  <p className="text-white text-xs truncate">📸 {item.camera}</p>
+                )}
+                {item.takenAt && (
+                  <p className="text-white text-xs mt-1">
+                    📅 {formatDate(item.takenAt * 1000)}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handlePreviewClick}
+                className="ml-2 px-2 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded text-xs transition-all duration-200 backdrop-blur-sm flex-shrink-0"
+              >
+                🔍 预览
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -188,7 +207,64 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
           visible: previewVisible,
           onVisibleChange: setPreviewVisible,
           current: previewCurrent,
-          onChange: (current: number) => { setPreviewCurrent(current) }
+          onChange: (current: number) => { setPreviewCurrent(current) },
+          toolbarRender: (originalNode, { current: currentIndex }) => {
+            const currentItem = items[currentIndex]
+            return (
+              <div className="flex flex-col items-center">
+                {originalNode}
+                {/* EXIF 信息展示 */}
+                {currentItem && (
+                  <div className="mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-white text-sm max-w-md">
+                    <h3 className="font-medium mb-2">{currentItem.title ?? '未命名'}</h3>
+                    {currentItem.description && (
+                      <p className="text-gray-300 mb-2">{currentItem.description}</p>
+                    )}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {currentItem.camera && (
+                        <div><span className="text-gray-400">相机:</span> {currentItem.camera}</div>
+                      )}
+                      {currentItem.lens && (
+                        <div><span className="text-gray-400">镜头:</span> {currentItem.lens}</div>
+                      )}
+                      {currentItem.focalLength && (
+                        <div><span className="text-gray-400">焦距:</span> {currentItem.focalLength}</div>
+                      )}
+                      {currentItem.aperture && (
+                        <div><span className="text-gray-400">光圈:</span> {currentItem.aperture}</div>
+                      )}
+                      {currentItem.shutterSpeed && (
+                        <div><span className="text-gray-400">快门:</span> {currentItem.shutterSpeed}</div>
+                      )}
+                      {currentItem.iso && (
+                        <div><span className="text-gray-400">ISO:</span> {currentItem.iso}</div>
+                      )}
+                      {currentItem.width && currentItem.height && (
+                        <div><span className="text-gray-400">尺寸:</span> {currentItem.width}×{currentItem.height}</div>
+                      )}
+                      {currentItem.location && (
+                        <div className="col-span-2"><span className="text-gray-400">位置:</span> {currentItem.location}</div>
+                      )}
+                    </div>
+                    {/* 标签 */}
+                    {currentItem.tags && JSON.parse(currentItem.tags).length > 0 && (
+                      <div className="mt-2">
+                        <span className="text-gray-400">标签: </span>
+                        {JSON.parse(currentItem.tags).map((tag: string, index: number) => (
+                          <span
+                            key={index}
+                            className="inline-block bg-blue-600 bg-opacity-50 px-2 py-1 rounded-full mr-1 text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          }
         }}
       />
     </>

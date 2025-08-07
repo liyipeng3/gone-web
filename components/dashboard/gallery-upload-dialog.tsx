@@ -106,7 +106,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
   }
 
   // 上传文件到OSS
-  const uploadFileToServer = async (file: File): Promise<string> => {
+  const uploadFileToServer = async (file: File): Promise<{ url: string, exif: any }> => {
     const formData = new FormData()
     formData.append('file', file)
 
@@ -150,7 +150,18 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     }
 
     const result = await response.json()
-    return result.data.url
+
+    // 调试信息
+    console.log('上传结果:', result)
+    console.log('EXIF 数据:', result.data.exif)
+    if (result.data.debug) {
+      console.log('EXIF 调试信息:', result.data.debug)
+    }
+
+    return {
+      url: result.data.url,
+      exif: result.data.exif || {}
+    }
   }
 
   // 处理上传
@@ -162,7 +173,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     try {
       for (const filePreview of files) {
         // 上传文件
-        const imagePath = await uploadFileToServer(filePreview.file)
+        const uploadResult = await uploadFileToServer(filePreview.file)
 
         // 创建相册项
         const response = await fetch('/api/gallery', {
@@ -173,13 +184,15 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           body: JSON.stringify({
             title: filePreview.title,
             description: filePreview.description,
-            imagePath,
+            imagePath: uploadResult.url,
             category: filePreview.category || undefined,
             tags: filePreview.tags,
             location: filePreview.location || undefined,
             isPublic: filePreview.isPublic,
             mimeType: filePreview.file.type,
-            fileSize: filePreview.file.size
+            fileSize: filePreview.file.size,
+            // 添加 EXIF 信息
+            ...uploadResult.exif
           })
         })
 

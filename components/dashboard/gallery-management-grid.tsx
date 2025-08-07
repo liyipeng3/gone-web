@@ -173,6 +173,51 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
           )}
         </div>
 
+        {/* EXIF 信息 */}
+        {(item.camera ?? item.aperture ?? item.iso ?? item.focalLength) && (
+          <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
+            <div className="text-gray-700 dark:text-gray-300 font-medium mb-1">EXIF 信息</div>
+            <div className="text-gray-600 dark:text-gray-400 space-y-1">
+              {item.camera && (
+                <div className="flex justify-between">
+                  <span>相机</span>
+                  <span>{item.camera}</span>
+                </div>
+              )}
+              {item.lens && (
+                <div className="flex justify-between">
+                  <span>镜头</span>
+                  <span>{item.lens}</span>
+                </div>
+              )}
+              {item.focalLength && (
+                <div className="flex justify-between">
+                  <span>焦距</span>
+                  <span>{item.focalLength}</span>
+                </div>
+              )}
+              {item.aperture && (
+                <div className="flex justify-between">
+                  <span>光圈</span>
+                  <span>{item.aperture}</span>
+                </div>
+              )}
+              {item.shutterSpeed && (
+                <div className="flex justify-between">
+                  <span>快门</span>
+                  <span>{item.shutterSpeed}</span>
+                </div>
+              )}
+              {item.iso && (
+                <div className="flex justify-between">
+                  <span>ISO</span>
+                  <span>{item.iso}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* 元数据 */}
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <div className="flex justify-between">
