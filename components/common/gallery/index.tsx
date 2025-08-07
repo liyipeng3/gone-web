@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Pagination from '@/components/common/pagination'
 import ImagePreview from '@/components/common/image'
 import { formatDate } from '@/lib/utils'
+import { defaultIcons } from '../prose/lightbox'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -183,6 +184,7 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
       <ImagePreview.PreviewGroup
         items={previewImages}
         preview={{
+          icons: defaultIcons,
           visible: previewVisible,
           onVisibleChange: setPreviewVisible,
           current: previewCurrent,

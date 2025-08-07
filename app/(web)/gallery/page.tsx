@@ -6,8 +6,8 @@ import GalleryGrid from '@/components/common/gallery'
 import GalleryFilter from '@/components/common/gallery/filter'
 
 export const metadata: Metadata = {
-  title: '相册 - 记录美好时光',
-  description: '分享生活中的美好瞬间，记录旅行与日常的精彩照片。'
+  title: '相册 - 定格当下',
+  description: '记录生活的美好瞬间'
 }
 
 interface GalleryPageProps {
@@ -52,7 +52,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
       <div className="md:mb-6 mt-4">
         <h1 className="dark:text-white text-2xl font-bold mb-2">相册</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          分享生活中的美好瞬间，共 {total} 张照片
+          共 {total} 张照片
         </p>
       </div>
 

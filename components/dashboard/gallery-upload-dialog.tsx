@@ -105,18 +105,52 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       .filter(tag => tag.length > 0)
   }
 
-  // 模拟上传文件到服务器的函数
+  // 上传文件到OSS
   const uploadFileToServer = async (file: File): Promise<string> => {
-    // 这里应该实现实际的文件上传逻辑
-    // 返回上传后的文件路径
-    // 为了演示，我们使用 base64 URL（实际项目中应该上传到服务器或云存储）
-    return await new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        resolve(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch('/api/upload/image', {
+      method: 'POST',
+      body: formData
     })
+
+    if (!response.ok) {
+      let errorMessage = `上传失败 (HTTP ${response.status})`
+
+      try {
+        const errorData = await response.json()
+        console.error('上传错误详情:', errorData)
+
+        if (errorData.error) {
+          errorMessage = errorData.error
+        } else if (errorData.message) {
+          errorMessage = errorData.message
+        }
+
+        // 如果有调试信息，也打印出来
+        if (errorData.debug) {
+          console.error('调试信息:', errorData.debug)
+        }
+      } catch (parseError) {
+        console.error('无法解析错误响应:', parseError)
+        // 尝试获取原始文本
+        try {
+          const errorText = await response.text()
+          console.error('错误响应文本:', errorText)
+          if (errorText) {
+            errorMessage += ': ' + errorText.substring(0, 100)
+          }
+        } catch (textError) {
+          console.error('无法获取错误文本:', textError)
+        }
+      }
+
+      throw new Error(errorMessage)
+    }
+
+    const result = await response.json()
+    return result.data.url
   }
 
   // 处理上传
@@ -163,7 +197,10 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       router.refresh()
     } catch (error) {
       console.error('上传失败:', error)
-      alert('上传失败，请重试')
+
+      // 显示详细的错误信息
+      const errorMessage = error instanceof Error ? error.message : '上传失败，请重试'
+      alert(`上传失败: ${errorMessage}`)
     } finally {
       setUploading(false)
     }
@@ -200,7 +237,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <div className="space-y-2">
               <p className="text-lg font-medium">拖拽照片到这里或点击选择</p>
-              <p className="text-sm text-gray-500">支持 JPG、PNG、WebP 格式</p>
+              <p className="text-sm text-gray-500">支持 JPG、PNG、WebP、GIF 格式，最大50MB</p>
               <input
                 type="file"
                 multiple
