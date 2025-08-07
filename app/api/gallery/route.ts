@@ -51,6 +51,8 @@ export async function POST (request: NextRequest) {
       category: body.category,
       tags: body.tags,
       location: body.location,
+      latitude: body.latitude,
+      longitude: body.longitude,
       takenAt: body.takenAt,
       width: body.width,
       height: body.height,

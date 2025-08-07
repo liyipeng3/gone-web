@@ -180,6 +180,24 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
                     <div className="text-gray-900 dark:text-gray-100">
                       {photo.location}
                     </div>
+                    {photo.latitude && photo.longitude && (
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        坐标: {Number(photo.latitude).toFixed(6)}, {Number(photo.longitude).toFixed(6)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 如果只有GPS坐标但没有地址的情况 */}
+              {!photo.location && photo.latitude && photo.longitude && (
+                <div className="flex items-start">
+                  <MapPin className="w-4 h-4 mr-2 mt-0.5 text-gray-500" />
+                  <div>
+                    <div className="text-gray-500 dark:text-gray-400">GPS坐标</div>
+                    <div className="text-gray-900 dark:text-gray-100">
+                      {Number(photo.latitude).toFixed(6)}, {Number(photo.longitude).toFixed(6)}
+                    </div>
                   </div>
                 </div>
               )}

@@ -174,7 +174,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
         </div>
 
         {/* EXIF 信息 */}
-        {(item.camera ?? item.aperture ?? item.iso ?? item.focalLength) && (
+        {(item.camera ?? item.aperture ?? item.iso ?? item.focalLength ?? item.location ?? item.latitude) && (
           <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
             <div className="text-gray-700 dark:text-gray-300 font-medium mb-1">EXIF 信息</div>
             <div className="text-gray-600 dark:text-gray-400 space-y-1">
@@ -212,6 +212,18 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
                 <div className="flex justify-between">
                   <span>ISO</span>
                   <span>{item.iso}</span>
+                </div>
+              )}
+              {item.location && (
+                <div className="flex justify-between">
+                  <span>地点</span>
+                  <span>{item.location}</span>
+                </div>
+              )}
+              {item.latitude && item.longitude && (
+                <div className="flex justify-between">
+                  <span>GPS</span>
+                  <span>{Number(item.latitude).toFixed(6)}, {Number(item.longitude).toFixed(6)}</span>
                 </div>
               )}
             </div>

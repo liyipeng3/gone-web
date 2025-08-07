@@ -13,6 +13,8 @@ export interface GalleryCreateInput {
   category?: string
   tags?: string[]
   location?: string
+  latitude?: number
+  longitude?: number
   takenAt?: number
   width?: number
   height?: number

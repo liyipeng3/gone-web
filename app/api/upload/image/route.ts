@@ -94,9 +94,14 @@ export async function POST (request: NextRequest) {
 
       // EXIF 信息主要存在于 JPEG 格式中，部分 TIFF 和 RAW 格式也支持
 
-      // 解析所有 EXIF/元数据信息
+      // 解析所有 EXIF/元数据信息，包括 GPS 数据
       exifData = await exifr.parse(buffer, true)
       console.log('提取到的元数据:', exifData ? '✓ 有数据' : '✗ 无数据')
+      if (exifData?.latitude && exifData?.longitude) {
+        console.log('发现 GPS 坐标:', exifData.latitude, exifData.longitude)
+      } else if (exifData?.GPS) {
+        console.log('发现 GPS 原始数据:', exifData.GPS)
+      }
     } catch (error) {
       console.error('EXIF 提取失败:', error)
       // EXIF 提取失败不影响上传流程
@@ -114,8 +119,57 @@ export async function POST (request: NextRequest) {
     // 上传到OSS
     const result = await uploadToOSS(buffer, fileName, { headers })
 
-    // 处理 EXIF 数据 - 支持多种格式的元数
+    // 处理 GPS 地理位置信息
+    let locationInfo = null
+    let latitude = null
+    let longitude = null
 
+    console.log('exifData', exifData)
+
+    // 尝试多种方式获取 GPS 坐标
+    if (exifData) {
+      // 方式1: 直接从根级别获取
+      if (exifData.latitude && exifData.longitude) {
+        latitude = exifData.latitude
+        longitude = exifData.longitude
+      } else if (exifData.GPS?.GPSLatitude && exifData.GPS?.GPSLongitude) {
+        // 方式2: 从 GPS 对象获取
+        latitude = exifData.GPS.GPSLatitude
+        longitude = exifData.GPS.GPSLongitude
+      } else if (exifData.GPSLatitude && exifData.GPSLongitude) {
+        // 方式3: 从 EXIF 原始数据获取
+        latitude = exifData.GPSLatitude
+        longitude = exifData.GPSLongitude
+      }
+    }
+
+    if (latitude && longitude) {
+      console.log('发现 GPS 坐标:', latitude, longitude)
+      try {
+        // 使用免费的反向地理编码服务
+        const geocodeResponse = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`
+        )
+        if (geocodeResponse.ok) {
+          const geocodeData = await geocodeResponse.json()
+          // 构建地址字符串
+          const locationParts = []
+          if (geocodeData.countryName) locationParts.push(geocodeData.countryName)
+          if (geocodeData.principalSubdivision) locationParts.push(geocodeData.principalSubdivision)
+          if (geocodeData.city) locationParts.push(geocodeData.city)
+          if (geocodeData.locality) locationParts.push(geocodeData.locality)
+
+          locationInfo = locationParts.length > 0 ? locationParts.join(', ') : `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+          console.log('地理位置解析结果:', locationInfo)
+        }
+      } catch (error) {
+        console.warn('地理位置解析失败:', error)
+        // 如果解析失败，至少保存坐标
+        locationInfo = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+      }
+    }
+
+    // 处理 EXIF 数据 - 支持多种格式的元数据
     const processedExifData = exifData
       ? {
           camera: (exifData.Make && exifData.Model)
@@ -146,6 +200,9 @@ export async function POST (request: NextRequest) {
           iso: exifData.ISO || exifData.ISOSpeedRatings || exifData.PhotographicSensitivity || exifData.StandardOutputSensitivity || null,
           width: exifData.ExifImageWidth || exifData.ImageWidth || exifData.PixelXDimension || null,
           height: exifData.ExifImageHeight || exifData.ImageHeight || exifData.PixelYDimension || null,
+          location: locationInfo,
+          latitude,
+          longitude,
           takenAt: (exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated)
             ? Math.floor(new Date(exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated).getTime() / 1000)
             : null

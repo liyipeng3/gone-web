@@ -39,29 +39,31 @@ model fields {
 
 /// 相册模型 - 用于存储照片信息
 model gallery {
-  gid           Int     @id @default(autoincrement()) @db.UnsignedInt
-  description   String? @db.Text
-  order         Int?    @default(0) @db.UnsignedInt
-  aperture      String? @db.VarChar(50)
-  camera        String? @db.VarChar(200)
-  category      String? @db.VarChar(100)
-  createdAt     Int     @default(0) @db.UnsignedInt
-  fileSize      Int?    @db.UnsignedInt
-  focalLength   String? @db.VarChar(50)
-  height        Int?    @db.UnsignedInt
-  imagePath     String  @db.VarChar(500)
-  isPublic      Boolean @default(true)
-  iso           Int?    @db.UnsignedInt
-  lens          String? @db.VarChar(200)
-  location      String? @db.VarChar(200)
-  mimeType      String? @db.VarChar(100)
-  shutterSpeed  String? @db.VarChar(50)
-  tags          String? @db.Text
-  takenAt       Int?    @db.UnsignedInt
-  thumbnailPath String? @db.VarChar(500)
-  title         String? @db.VarChar(200)
-  updatedAt     Int     @default(0) @db.UnsignedInt
-  width         Int?    @db.UnsignedInt
+  gid           Int      @id @default(autoincrement()) @db.UnsignedInt
+  description   String?  @db.Text
+  order         Int?     @default(0) @db.UnsignedInt
+  aperture      String?  @db.VarChar(50)
+  camera        String?  @db.VarChar(200)
+  category      String?  @db.VarChar(100)
+  createdAt     Int      @default(0) @db.UnsignedInt
+  fileSize      Int?     @db.UnsignedInt
+  focalLength   String?  @db.VarChar(50)
+  height        Int?     @db.UnsignedInt
+  imagePath     String   @db.VarChar(500)
+  isPublic      Boolean  @default(true)
+  iso           Int?     @db.UnsignedInt
+  lens          String?  @db.VarChar(200)
+  location      String?  @db.VarChar(200)
+  mimeType      String?  @db.VarChar(100)
+  shutterSpeed  String?  @db.VarChar(50)
+  tags          String?  @db.Text
+  takenAt       Int?     @db.UnsignedInt
+  thumbnailPath String?  @db.VarChar(500)
+  title         String?  @db.VarChar(200)
+  updatedAt     Int      @default(0) @db.UnsignedInt
+  width         Int?     @db.UnsignedInt
+  latitude      Decimal? @db.Decimal(10, 8)
+  longitude     Decimal? @db.Decimal(11, 8)
 
   @@index([category])
   @@index([createdAt], map: "gallery_created_idx")
