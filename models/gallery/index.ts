@@ -39,7 +39,7 @@ export interface GalleryQuery {
   offset?: number
   orderBy?: 'createdAt' | 'takenAt' | 'order'
   orderDirection?: 'asc' | 'desc'
-  isPublic?: boolean
+  isPublic?: boolean | undefined
 }
 
 // 创建相册项
@@ -72,8 +72,11 @@ export async function getGalleryList (query: GalleryQuery = {}): Promise<{
     isPublic = true
   } = query
 
-  const where: any = {
-    isPublic
+  const where: any = {}
+
+  // 只有当 isPublic 不是 undefined 时才添加到查询条件中
+  if (query.isPublic !== undefined) {
+    where.isPublic = isPublic
   }
 
   if (category) {

@@ -82,7 +82,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
               <Button
                 variant="secondary"
                 size="sm"
-                className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+                className="h-8 w-8 p-0 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 dark:border-gray-600"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
