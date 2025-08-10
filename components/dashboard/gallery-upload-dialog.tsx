@@ -151,12 +151,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
 
     const result = await response.json()
 
-    // 调试信息
-    console.log('上传结果:', result)
-    console.log('EXIF 数据:', result.data.exif)
-    if (result.data.debug) {
-      console.log('EXIF 调试信息:', result.data.debug)
-    }
 
     return {
       url: result.data.url,
@@ -175,11 +169,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
 
-        // 如果用户没有填写地点但 EXIF 中有地点信息，自动填充
-        if (!filePreview.location && uploadResult.exif.location) {
-          console.log('自动填充地点信息:', uploadResult.exif.location)
-        }
-
+    
         // 创建相册项
         const response = await fetch('/api/gallery', {
           method: 'POST',

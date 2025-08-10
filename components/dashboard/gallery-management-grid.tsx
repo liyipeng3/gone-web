@@ -85,7 +85,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
           </div>
         )}
 
-        {/* 操作按钮 */}
+        {/* 更多操作菜单 - 保持在右上角 */}
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -98,10 +98,6 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={(event) => { event.preventDefault(); event.stopPropagation(); onViewDetail(item) }}>
-                <Info className="mr-2 h-4 w-4" />
-                查看详情
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => { onEdit(item) }}>
                 <Edit2 className="mr-2 h-4 w-4" />
                 编辑
@@ -132,7 +128,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* 可见性标识 */}
+        {/* 私有标识 - 左下角 */}
         {!item.isPublic && (
           <div className="absolute top-2 left-2">
             <div className="bg-yellow-500 text-white text-xs px-2 py-1 rounded">
@@ -140,6 +136,19 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
             </div>
           </div>
         )}
+
+        {/* 查看详情按钮 - 右下角 */}
+        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="h-8 w-8 p-0 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 dark:border-gray-600"
+            onClick={(event) => { event.preventDefault(); event.stopPropagation(); onViewDetail(item) }}
+            title="查看详情"
+          >
+            <Info className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* 图片信息 */}
