@@ -3,14 +3,17 @@
 import React, { useState } from 'react'
 import type { gallery } from '@prisma/client'
 import Image from 'next/image'
+import CustomImage from '@/components/common/image'
 import Pagination from '@/components/common/pagination'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Edit2, Trash2, Eye, EyeOff } from 'lucide-react'
+import { MoreHorizontal, Edit2, Trash2, Eye, EyeOff, Info } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { formatDate } from '@/lib/utils'
 import GalleryEditDialog from './gallery-edit-dialog'
 import GalleryDeleteDialog from './gallery-delete-dialog'
+import GalleryDetailDialog from './gallery-detail-dialog'
+import { defaultIcons } from '../common/prose/lightbox'
 
 interface GalleryManagementGridProps {
   items: gallery[]
@@ -25,6 +28,8 @@ interface GalleryManagementItemProps {
   onEdit: (item: gallery) => void
   onDelete: (item: gallery) => void
   onToggleVisibility: (item: gallery) => void
+  onViewDetail: (item: gallery) => void
+  onImageClick: (item: gallery) => void
 }
 
 // 单个相册管理项组件
@@ -32,7 +37,9 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
   item,
   onEdit,
   onDelete,
-  onToggleVisibility
+  onToggleVisibility,
+  onViewDetail,
+  onImageClick
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -43,7 +50,10 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
   return (
     <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
       {/* 图片容器 */}
-      <div className="relative aspect-square bg-gray-100 dark:bg-gray-700 overflow-hidden">
+      <div
+        className="relative aspect-square bg-gray-100 dark:bg-gray-700 overflow-hidden cursor-pointer"
+        onClick={() => { onImageClick(item) }}
+      >
         {!imageError && (
           <>
             <Image
@@ -88,6 +98,10 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={(event) => { event.preventDefault(); event.stopPropagation(); onViewDetail(item) }}>
+                <Info className="mr-2 h-4 w-4" />
+                查看详情
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => { onEdit(item) }}>
                 <Edit2 className="mr-2 h-4 w-4" />
                 编辑
@@ -173,63 +187,6 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
           )}
         </div>
 
-        {/* EXIF 信息 */}
-        {(item.camera ?? item.aperture ?? item.iso ?? item.focalLength ?? item.location ?? item.latitude) && (
-          <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
-            <div className="text-gray-700 dark:text-gray-300 font-medium mb-1">EXIF 信息</div>
-            <div className="text-gray-600 dark:text-gray-400 space-y-1">
-              {item.camera && (
-                <div className="flex justify-between">
-                  <span>相机</span>
-                  <span>{item.camera}</span>
-                </div>
-              )}
-              {item.lens && (
-                <div className="flex justify-between">
-                  <span>镜头</span>
-                  <span>{item.lens}</span>
-                </div>
-              )}
-              {item.focalLength && (
-                <div className="flex justify-between">
-                  <span>焦距</span>
-                  <span>{item.focalLength}</span>
-                </div>
-              )}
-              {item.aperture && (
-                <div className="flex justify-between">
-                  <span>光圈</span>
-                  <span>{item.aperture}</span>
-                </div>
-              )}
-              {item.shutterSpeed && (
-                <div className="flex justify-between">
-                  <span>快门</span>
-                  <span>{item.shutterSpeed}</span>
-                </div>
-              )}
-              {item.iso && (
-                <div className="flex justify-between">
-                  <span>ISO</span>
-                  <span>{item.iso}</span>
-                </div>
-              )}
-              {item.location && (
-                <div className="flex justify-between">
-                  <span>地点</span>
-                  <span>{item.location}</span>
-                </div>
-              )}
-              {item.latitude && item.longitude && (
-                <div className="flex justify-between">
-                  <span>GPS</span>
-                  <span>{Number(item.latitude).toFixed(6)}, {Number(item.longitude).toFixed(6)}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* 元数据 */}
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <div className="flex justify-between">
@@ -263,6 +220,10 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
   const router = useRouter()
   const [editingItem, setEditingItem] = useState<gallery | null>(null)
   const [deletingItem, setDeletingItem] = useState<gallery | null>(null)
+  const [detailItem, setDetailItem] = useState<gallery | null>(null)
+  const [detailIndex, setDetailIndex] = useState<number>(0)
+  const [showImagePreview, setShowImagePreview] = useState(false)
+  const [previewIndex, setPreviewIndex] = useState<number>(0)
 
   // 处理编辑
   const handleEdit = (item: gallery) => {
@@ -272,6 +233,28 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
   // 处理删除
   const handleDelete = (item: gallery) => {
     setDeletingItem(item)
+  }
+
+  // 处理查看详情
+  const handleViewDetail = (item: gallery) => {
+    const index = items.findIndex(i => i.gid === item.gid)
+    setDetailItem(item)
+    setDetailIndex(index)
+  }
+
+  // 处理导航
+  const handleNavigate = (index: number) => {
+    if (index >= 0 && index < items.length) {
+      setDetailItem(items[index])
+      setDetailIndex(index)
+    }
+  }
+
+  // 处理图片点击 - 打开大图预览
+  const handleImageClick = (item: gallery) => {
+    const index = items.findIndex(i => i.gid === item.gid)
+    setPreviewIndex(index)
+    setShowImagePreview(true)
   }
 
   // 处理可见性切换
@@ -308,6 +291,8 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
             onEdit={handleEdit}
             onDelete={handleDelete}
             onToggleVisibility={handleToggleVisibility}
+            onViewDetail={handleViewDetail}
+            onImageClick={handleImageClick}
           />
         ))}
       </div>
@@ -342,6 +327,35 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
           }}
         />
       )}
+
+      {/* 详情对话框 */}
+      <GalleryDetailDialog
+        item={detailItem}
+        open={detailItem !== null}
+        onOpenChange={(open) => {
+          if (!open) setDetailItem(null)
+        }}
+        allItems={items}
+        currentIndex={detailIndex}
+        onNavigate={handleNavigate}
+      />
+
+      {/* 图片预览组件 */}
+      <CustomImage.PreviewGroup
+        items={items.map(item => item.imagePath)}
+        preview={{
+          icons: defaultIcons,
+          visible: showImagePreview,
+          onVisibleChange: (visible) => {
+            setShowImagePreview(visible)
+          },
+          current: previewIndex,
+          onChange: (current, prev) => {
+            setPreviewIndex(current)
+          }
+        }}
+      >
+      </CustomImage.PreviewGroup>
     </>
   )
 }

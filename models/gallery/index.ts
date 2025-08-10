@@ -203,3 +203,46 @@ export async function getGalleryStats (): Promise<{
     recentImages
   }
 }
+
+// 获取相邻的照片（用于导航）
+export async function getAdjacentPhotos (currentGid: number, category?: string): Promise<{
+  previous: gallery | null
+  next: gallery | null
+  current: number
+  total: number
+}> {
+  const where: any = { isPublic: true }
+  if (category) {
+    where.category = category
+  }
+
+  // 获取所有公开照片的ID，按拍摄时间排序
+  const allPhotos = await prisma.gallery.findMany({
+    where,
+    select: { gid: true },
+    orderBy: { takenAt: 'desc' }
+  })
+
+  const currentIndex = allPhotos.findIndex(photo => photo.gid === currentGid)
+  
+  if (currentIndex === -1) {
+    return { previous: null, next: null, current: 0, total: allPhotos.length }
+  }
+
+  // 获取前一张和后一张照片的详细信息
+  const [previous, next] = await Promise.all([
+    currentIndex > 0 
+      ? prisma.gallery.findUnique({ where: { gid: allPhotos[currentIndex - 1].gid } })
+      : null,
+    currentIndex < allPhotos.length - 1
+      ? prisma.gallery.findUnique({ where: { gid: allPhotos[currentIndex + 1].gid } })
+      : null
+  ])
+
+  return {
+    previous,
+    next,
+    current: currentIndex + 1,
+    total: allPhotos.length
+  }
+}

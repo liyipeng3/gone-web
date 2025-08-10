@@ -1,14 +1,18 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
-import Breadcrumb from '@/components/common/breadcrumb'
-import { getGalleryById } from '@/models/gallery'
+import { getGalleryById, getAdjacentPhotos } from '@/models/gallery'
+import KeyboardNavigation from '@/components/common/photo-navigation/keyboard-navigation'
 import Image from 'next/image'
-import { Eye, Calendar, Camera, Ruler, MapPin, Tag } from 'lucide-react'
+import Link from 'next/link'
+import { MapPin, Tag, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PhotoDetailPageProps {
   params: {
     gid: string
+  }
+  searchParams: {
+    category?: string
   }
 }
 
@@ -52,14 +56,17 @@ function formatFileSize (bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps) {
+export default async function PhotoDetailPage ({ params, searchParams }: PhotoDetailPageProps) {
   const gid = parseInt(params.gid)
 
   if (isNaN(gid)) {
     notFound()
   }
 
-  const photo = await getGalleryById(gid)
+  const [photo, adjacentPhotos] = await Promise.all([
+    getGalleryById(gid),
+    getAdjacentPhotos(gid, searchParams.category)
+  ])
 
   if (!photo) {
     notFound()
@@ -74,7 +81,13 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
   const tags = photo.tags ? JSON.parse(photo.tags) : []
 
   return (
-    <div className="w-full mx-auto px-4 pb-10 pt-3">
+    <div className="w-full mx-auto px-4 pb-10 pt-3 relative">
+      {/* 键盘导航 */}
+      <KeyboardNavigation
+        previousUrl={adjacentPhotos.previous ? `/gallery/photo/${adjacentPhotos.previous.gid}${photo.category ? `?category=${photo.category}` : ''}` : undefined}
+        nextUrl={adjacentPhotos.next ? `/gallery/photo/${adjacentPhotos.next.gid}${photo.category ? `?category=${photo.category}` : ''}` : undefined}
+      />
+{/*
       <Breadcrumb
         className="text-left"
         items={[
@@ -82,13 +95,13 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
           ...(photo.category ? [{ name: photo.category, href: `/gallery/${photo.category}` }] : []),
           { name: photo.title ?? '照片详情', href: `/gallery/photo/${photo.gid}` }
         ]}
-      />
+      /> */}
 
       <div className="space-y-8 mt-6">
         {/* 图片展示区域 */}
         <div className="w-full">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-            <div className="relative w-full h-[60vh] min-h-[400px] max-h-[800px] ">
+          <div className=" rounded-lg  overflow-hidden">
+            <div className="relative w-full   h-[85vh]  ">
               <Image
                 src={photo.thumbnailPath ?? photo.imagePath}
                 alt={photo.title ?? '照片'}
@@ -128,24 +141,37 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
           </div>
         </div>
 
+        {/* 左右导航按钮 */}
+        {adjacentPhotos.previous && (
+          <Link
+            href={`/gallery/photo/${adjacentPhotos.previous.gid}${photo.category ? `?category=${photo.category}` : ''}`}
+            className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 transform z-20 bg-black/30 hover:bg-black/60 text-white px-2 py-8 sm:px-3 sm:py-12 rounded transition-all duration-200 opacity-50 hover:opacity-80 shadow-md backdrop-blur-sm dark:bg-gray-800"
+            title="上一张 (←)"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          </Link>
+        )}
+
+        {adjacentPhotos.next && (
+          <Link
+            href={`/gallery/photo/${adjacentPhotos.next.gid}${photo.category ? `?category=${photo.category}` : ''}`}
+            className="fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 transform z-20 bg-black/30 hover:bg-black/60 text-white px-2 py-8 sm:px-3 sm:py-12 rounded transition-all duration-200 opacity-50 hover:opacity-80 shadow-md backdrop-blur-sm dark:bg-gray-800"
+            title="下一张 (→)"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          </Link>
+        )}
+
         {/* 信息展示区域 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          <div className="border-b border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
-              <Eye className="w-6 h-6 mr-3" />
-              照片信息
-            </h2>
-          </div>
+        <div className=" rounded-lg overflow-hidden">
+
           <div className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* 左侧：基本信息和位置 */}
               <div className="space-y-6">
                 {/* 基本信息表格 */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-blue-500" />
-                    基本信息
-                  </h3>
+
                   <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
                     <dl className="space-y-3">
                       {photo.takenAt && (
@@ -237,10 +263,7 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
               {(photo.camera ?? photo.lens ?? photo.aperture ?? photo.shutterSpeed ?? photo.iso ?? photo.focalLength) && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
-                      <Camera className="w-5 h-5 mr-2 text-purple-500" />
-                      拍摄设备
-                    </h3>
+
                     <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
                       <dl className="space-y-3">
                         {photo.camera && (
@@ -265,10 +288,6 @@ export default async function PhotoDetailPage ({ params }: PhotoDetailPageProps)
 
                   {(photo.aperture ?? photo.shutterSpeed ?? photo.iso ?? photo.focalLength) && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
-                        <Ruler className="w-5 h-5 mr-2 text-orange-500" />
-                        拍摄参数
-                      </h3>
                       <div className="grid grid-cols-2 gap-4">
                         {photo.aperture && (
                           <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
