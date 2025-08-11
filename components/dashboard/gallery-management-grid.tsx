@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import type { gallery } from '@prisma/client'
 import Image from 'next/image'
 import CustomImage from '@/components/common/image'
@@ -32,15 +32,15 @@ interface GalleryManagementItemProps {
   onImageClick: (item: gallery) => void
 }
 
-// 单个相册管理项组件
-const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
+// 单个相册管理项组件（避免不必要的重渲染）
+const GalleryManagementItem = React.memo(function GalleryManagementItemComponent({
   item,
   onEdit,
   onDelete,
   onToggleVisibility,
   onViewDetail,
   onImageClick
-}) => {
+}: GalleryManagementItemProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -60,7 +60,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
               src={item.thumbnailPath ?? item.imagePath}
               alt={item.title ?? '相册图片'}
               fill
-              className={`object-cover transition-all duration-300 ${
+              className={`object-cover transition-opacity duration-300 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               onLoad={() => { setImageLoaded(true) }}
@@ -216,7 +216,7 @@ const GalleryManagementItem: React.FC<GalleryManagementItemProps> = ({
       </div>
     </div>
   )
-}
+})
 
 // 相册管理网格组件
 const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
@@ -235,39 +235,39 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
   const [previewIndex, setPreviewIndex] = useState<number>(0)
 
   // 处理编辑
-  const handleEdit = (item: gallery) => {
+  const handleEdit = useCallback((item: gallery) => {
     setEditingItem(item)
-  }
+  }, [])
 
   // 处理删除
-  const handleDelete = (item: gallery) => {
+  const handleDelete = useCallback((item: gallery) => {
     setDeletingItem(item)
-  }
+  }, [])
 
   // 处理查看详情
-  const handleViewDetail = (item: gallery) => {
+  const handleViewDetail = useCallback((item: gallery) => {
     const index = items.findIndex(i => i.gid === item.gid)
     setDetailItem(item)
     setDetailIndex(index)
-  }
+  }, [items])
 
   // 处理导航
-  const handleNavigate = (index: number) => {
+  const handleNavigate = useCallback((index: number) => {
     if (index >= 0 && index < items.length) {
       setDetailItem(items[index])
       setDetailIndex(index)
     }
-  }
+  }, [items])
 
   // 处理图片点击 - 打开大图预览
-  const handleImageClick = (item: gallery) => {
+  const handleImageClick = useCallback((item: gallery) => {
     const index = items.findIndex(i => i.gid === item.gid)
     setPreviewIndex(index)
     setShowImagePreview(true)
-  }
+  }, [items])
 
   // 处理可见性切换
-  const handleToggleVisibility = async (item: gallery) => {
+  const handleToggleVisibility = useCallback(async (item: gallery) => {
     try {
       const response = await fetch(`/api/gallery/${item.gid}`, {
         method: 'PATCH',
@@ -287,7 +287,7 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
     } catch (error) {
       console.error('更新可见性失败:', error)
     }
-  }
+  }, [router])
 
   return (
     <>
@@ -351,7 +351,7 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
 
       {/* 图片预览组件 */}
       <CustomImage.PreviewGroup
-        items={items.map(item => item.imagePath)}
+        items={useMemo(() => items.map(item => item.imagePath), [items])}
         preview={{
           icons: defaultIcons,
           visible: showImagePreview,

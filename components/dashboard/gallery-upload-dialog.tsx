@@ -151,7 +151,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
 
     const result = await response.json()
 
-
     return {
       url: result.data.url,
       exif: result.data.exif || {}
@@ -169,7 +168,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
 
-    
         // 创建相册项
         const response = await fetch('/api/gallery', {
           method: 'POST',

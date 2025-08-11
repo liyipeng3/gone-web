@@ -90,18 +90,10 @@ export async function POST (request: NextRequest) {
     // 提取 EXIF 信息
     let exifData = null
     try {
-      console.log('开始提取 EXIF 信息，文件类型:', file.type, '文件大小:', file.size)
-
       // EXIF 信息主要存在于 JPEG 格式中，部分 TIFF 和 RAW 格式也支持
 
       // 解析所有 EXIF/元数据信息，包括 GPS 数据
       exifData = await exifr.parse(buffer, true)
-      console.log('提取到的元数据:', exifData ? '✓ 有数据' : '✗ 无数据')
-      if (exifData?.latitude && exifData?.longitude) {
-        console.log('发现 GPS 坐标:', exifData.latitude, exifData.longitude)
-      } else if (exifData?.GPS) {
-        console.log('发现 GPS 原始数据:', exifData.GPS)
-      }
     } catch (error) {
       console.error('EXIF 提取失败:', error)
       // EXIF 提取失败不影响上传流程
@@ -124,7 +116,6 @@ export async function POST (request: NextRequest) {
     let latitude = null
     let longitude = null
 
-    console.log('exifData', exifData)
 
     // 尝试多种方式获取 GPS 坐标
     if (exifData) {
@@ -144,7 +135,6 @@ export async function POST (request: NextRequest) {
     }
 
     if (latitude && longitude) {
-      console.log('发现 GPS 坐标:', latitude, longitude)
       try {
         // 使用免费的反向地理编码服务
         const geocodeResponse = await fetch(
@@ -160,7 +150,6 @@ export async function POST (request: NextRequest) {
           if (geocodeData.locality) locationParts.push(geocodeData.locality)
 
           locationInfo = locationParts.length > 0 ? locationParts.join(', ') : `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
-          console.log('地理位置解析结果:', locationInfo)
         }
       } catch (error) {
         console.warn('地理位置解析失败:', error)
