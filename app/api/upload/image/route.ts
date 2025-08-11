@@ -116,7 +116,6 @@ export async function POST (request: NextRequest) {
     let latitude = null
     let longitude = null
 
-
     // 尝试多种方式获取 GPS 坐标
     if (exifData) {
       // 方式1: 直接从根级别获取

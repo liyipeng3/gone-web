@@ -33,7 +33,7 @@ interface GalleryManagementItemProps {
 }
 
 // 单个相册管理项组件（避免不必要的重渲染）
-const GalleryManagementItem = React.memo(function GalleryManagementItemComponent({
+const GalleryManagementItem = React.memo(function GalleryManagementItemComponent ({
   item,
   onEdit,
   onDelete,
@@ -231,8 +231,7 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
   const [deletingItem, setDeletingItem] = useState<gallery | null>(null)
   const [detailItem, setDetailItem] = useState<gallery | null>(null)
   const [detailIndex, setDetailIndex] = useState<number>(0)
-  const [showImagePreview, setShowImagePreview] = useState(false)
-  const [previewIndex, setPreviewIndex] = useState<number>(0)
+  const [previewState, setPreviewState] = useState<{ open: boolean, index: number }>({ open: false, index: 0 })
 
   // 处理编辑
   const handleEdit = useCallback((item: gallery) => {
@@ -262,8 +261,7 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
   // 处理图片点击 - 打开大图预览
   const handleImageClick = useCallback((item: gallery) => {
     const index = items.findIndex(i => i.gid === item.gid)
-    setPreviewIndex(index)
-    setShowImagePreview(true)
+    setPreviewState({ open: true, index })
   }, [items])
 
   // 处理可见性切换
@@ -354,13 +352,13 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
         items={useMemo(() => items.map(item => item.imagePath), [items])}
         preview={{
           icons: defaultIcons,
-          visible: showImagePreview,
+          visible: previewState.open,
           onVisibleChange: (visible) => {
-            setShowImagePreview(visible)
+            setPreviewState(state => ({ ...state, open: visible }))
           },
-          current: previewIndex,
-          onChange: (current, prev) => {
-            setPreviewIndex(current)
+          current: previewState.index,
+          onChange: (current) => {
+            setPreviewState(state => ({ ...state, index: current }))
           }
         }}
       >
