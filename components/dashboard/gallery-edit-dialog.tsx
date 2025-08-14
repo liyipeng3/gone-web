@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { getCountries, getProvinces, getCities } from '@/lib/regions'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 
@@ -30,7 +32,10 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     category: '',
     tags: '',
     location: '',
-    isPublic: true
+    isPublic: true,
+    country: '',
+    province: '',
+    city: ''
   })
 
   // 初始化表单数据
@@ -43,7 +48,10 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
         category: item.category ?? '',
         tags: tags.join(', '),
         location: item.location ?? '',
-        isPublic: item.isPublic
+        isPublic: item.isPublic,
+        country: '',
+        province: '',
+        city: ''
       })
     }
   }, [item])
@@ -72,7 +80,8 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
           description: formData.description || undefined,
           category: formData.category || undefined,
           tags: parseTags(formData.tags),
-          location: formData.location || undefined,
+          // 组合位置优先：选择的省市 > 输入框
+          location: [formData.country, formData.province, formData.city].filter(Boolean).join(' · ') || formData.location || undefined,
           isPublic: formData.isPublic
         })
       })
@@ -93,12 +102,12 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>编辑照片</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <Label htmlFor="title">标题</Label>
             <Input
@@ -109,7 +118,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="description">描述</Label>
             <Textarea
               id="description"
@@ -120,7 +129,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="category">分类</Label>
             <Input
               id="category"
@@ -130,7 +139,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="tags">标签</Label>
             <Input
               id="tags"
@@ -141,13 +150,72 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
             <p className="text-xs text-gray-500 mt-1">用逗号分隔多个标签</p>
           </div>
 
-          <div>
-            <Label htmlFor="location">位置</Label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="space-y-2">
+              <Label>国家</Label>
+              <Select
+                value={formData.country}
+                onValueChange={(val) => {
+                  setFormData(prev => ({ ...prev, country: val, province: '', city: '' }))
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择国家" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getCountries().map(c => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>省/州</Label>
+              <Select
+                value={formData.province}
+                onValueChange={(val) => {
+                  setFormData(prev => ({ ...prev, province: val, city: '' }))
+                }}
+                disabled={!formData.country}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择省/州" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getProvinces(formData.country).map(p => (
+                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>市/地区</Label>
+              <Select
+                value={formData.city}
+                onValueChange={(val) => {
+                  setFormData(prev => ({ ...prev, city: val }))
+                }}
+                disabled={!formData.country || !formData.province}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="选择市/地区" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getCities(formData.country, formData.province).map(city => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location">位置补充（可选）</Label>
             <Input
               id="location"
               value={formData.location}
               onChange={(e) => { setFormData(prev => ({ ...prev, location: e.target.value })) }}
-              placeholder="拍摄地点"
+              placeholder="例如：具体地标/道路等"
             />
           </div>
 

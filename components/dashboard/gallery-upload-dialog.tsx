@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { getCountries, getProvinces, getCities } from '@/lib/regions'
 import { useRouter } from 'next/navigation'
 import { Upload, X, Loader2 } from 'lucide-react'
 import Image from 'next/image'
@@ -25,6 +27,9 @@ interface FilePreview {
   tags: string[]
   location: string
   isPublic: boolean
+  country?: string
+  province?: string
+  city?: string
 }
 
 const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
@@ -53,7 +58,10 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           category: '',
           tags: [],
           location: '',
-          isPublic: true
+          isPublic: true,
+          country: undefined,
+          province: undefined,
+          city: undefined
         })
       }
     })
@@ -168,6 +176,11 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
 
+        // 如果选择了国家/省/市，拼装位置字符串
+        const selectedLocation = [filePreview.country, filePreview.province, filePreview.city]
+          .filter(Boolean)
+          .join(' · ')
+
         // 创建相册项
         const response = await fetch('/api/gallery', {
           method: 'POST',
@@ -180,13 +193,13 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             imagePath: uploadResult.url,
             category: filePreview.category || undefined,
             tags: filePreview.tags,
-            // 优先使用用户手动输入的地点，否则使用 EXIF 中的地点
-            location: filePreview.location || uploadResult.exif.location || undefined,
             isPublic: filePreview.isPublic,
             mimeType: filePreview.file.type,
             fileSize: filePreview.file.size,
-            // 添加 EXIF 信息
-            ...uploadResult.exif
+            // 先展开 EXIF，再用下方 location 覆盖
+            ...uploadResult.exif,
+            // 优先级：国家省市选择 > 手动输入 > EXIF
+            location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined
           })
         })
 
@@ -253,8 +266,8 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                 className="hidden"
                 id="file-upload"
               />
-              <label htmlFor="file-upload">
-                <Button variant="outline" className="cursor-pointer" asChild>
+              <label htmlFor="file-upload" >
+                <Button variant="outline" className="cursor-pointer mt-4" asChild>
                   <span>选择文件</span>
                 </Button>
               </label>
@@ -271,25 +284,28 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                   <div key={index} className="border rounded-lg p-4 space-y-4">
                     <div className="flex items-start gap-4">
                       {/* 图片预览 */}
-                      <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 shrink-0">
-                        <Image
-                          src={filePreview.preview}
-                          alt={filePreview.title}
-                          fill
-                          className="object-cover"
-                        />
+                      <div className="relative w-24 h-24 shrink-0">
+                        <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                          <Image
+                            src={filePreview.preview}
+                            alt={filePreview.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                         <button
                           onClick={() => { removeFile(index) }}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow"
+                          aria-label="移除"
                         >
                           <X className="h-3 w-3" />
                         </button>
                       </div>
 
                       {/* 文件信息编辑 */}
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div>
+                      <div className="flex-1 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
                             <Label htmlFor={`title-${index}`}>标题</Label>
                             <Input
                               id={`title-${index}`}
@@ -298,7 +314,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                               placeholder="照片标题"
                             />
                           </div>
-                          <div>
+                          <div className="space-y-2">
                             <Label htmlFor={`category-${index}`}>分类</Label>
                             <Input
                               id={`category-${index}`}
@@ -309,7 +325,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                           </div>
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
                           <Label htmlFor={`description-${index}`}>描述</Label>
                           <Textarea
                             id={`description-${index}`}
@@ -320,8 +336,8 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
                             <Label htmlFor={`tags-${index}`}>标签</Label>
                             <Input
                               id={`tags-${index}`}
@@ -330,15 +346,74 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                               placeholder="标签1, 标签2, 标签3"
                             />
                           </div>
-                          <div>
-                            <Label htmlFor={`location-${index}`}>位置</Label>
-                            <Input
-                              id={`location-${index}`}
-                              value={filePreview.location}
-                              onChange={(e) => { updateFile(index, { location: e.target.value }) }}
-                              placeholder="拍摄地点"
-                            />
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
+                            <div className="space-y-2">
+                              <Label>国家</Label>
+                              <Select
+                                value={filePreview.country || ''}
+                                onValueChange={(val) => {
+                                  updateFile(index, { country: val || undefined, province: undefined, city: undefined })
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="选择国家" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getCountries().map((c) => (
+                                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>省/州</Label>
+                              <Select
+                                value={filePreview.province || ''}
+                                onValueChange={(val) => {
+                                  updateFile(index, { province: val || undefined, city: undefined })
+                                }}
+                                disabled={!filePreview.country}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="选择省/州" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getProvinces(filePreview.country).map((p) => (
+                                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>市/地区</Label>
+                              <Select
+                                value={filePreview.city || ''}
+                                onValueChange={(val) => {
+                                  updateFile(index, { city: val || undefined })
+                                }}
+                                disabled={!filePreview.country || !filePreview.province}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="选择市/地区" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getCities(filePreview.country, filePreview.province).map((city) => (
+                                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
+                        </div>
+
+                        <div className="pt-1 space-y-2">
+                          <Label htmlFor={`location-${index}`}>位置补充（可选）</Label>
+                          <Input
+                            id={`location-${index}`}
+                            value={filePreview.location}
+                            onChange={(e) => { updateFile(index, { location: e.target.value }) }}
+                            placeholder="例如：具体地标/道路等"
+                          />
                         </div>
 
                         <div className="flex items-center space-x-2">

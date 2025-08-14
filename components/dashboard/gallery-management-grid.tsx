@@ -98,11 +98,11 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => { onEdit(item) }}>
+              <DropdownMenuItem onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(item) }}>
                 <Edit2 className="mr-2 h-4 w-4" />
                 编辑
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { onToggleVisibility(item) }}>
+              <DropdownMenuItem onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleVisibility(item) }}>
                 {item.isPublic
                   ? (
                   <>
@@ -118,7 +118,7 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
                     )}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => { onDelete(item) }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(item) }}
                 className="text-red-600 dark:text-red-400"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
