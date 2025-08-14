@@ -33,7 +33,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     tags: '',
     location: '',
     isPublic: true,
-    country: '',
+    country: '中国',
     province: '',
     city: ''
   })
@@ -49,7 +49,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
         tags: tags.join(', '),
         location: item.location ?? '',
         isPublic: item.isPublic,
-        country: '',
+        country: '中国',
         province: '',
         city: ''
       })
@@ -207,16 +207,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="location">位置补充（可选）</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => { setFormData(prev => ({ ...prev, location: e.target.value })) }}
-              placeholder="例如：具体地标/道路等"
-            />
           </div>
 
           <div className="flex items-center space-x-2">

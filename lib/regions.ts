@@ -1,4 +1,4 @@
-'use client'
+import pcaRaw from '@/public/lib/pca.json'
 
 export interface RegionCity {
   name: string
@@ -15,26 +15,58 @@ export interface RegionCountry {
   provinces: RegionProvince[]
 }
 
-// 精简示例数据，可按需扩充
+type PCAMap = Record<string, Record<string, string[]>>
+
+const MUNICIPALITIES = new Set(['北京市', '上海市', '天津市', '重庆市'])
+const SPECIAL_BUCKET_KEYS = new Set([
+  '市辖区',
+  '县',
+  '省直辖县级行政区划',
+  '自治区直辖县级行政区划'
+])
+
+function buildCNProvincesFromPCA (pca: PCAMap): RegionProvince[] {
+  const provinces: RegionProvince[] = []
+
+  Object.entries(pca).forEach(([provinceName, sub]) => {
+    const cities: string[] = []
+
+    if (MUNICIPALITIES.has(provinceName)) {
+      // 直辖市：合并所有子键下的区县列表
+      for (const list of Object.values(sub)) {
+        cities.push(...list)
+      }
+    } else {
+      // 普通省份：优先使用地级市名（键名）
+      for (const [subKey, list] of Object.entries(sub)) {
+        if (SPECIAL_BUCKET_KEYS.has(subKey)) {
+          // 对于“直辖/市辖区/县”等桶，将其子项并入城市列表
+          cities.push(...list)
+        } else {
+          cities.push(subKey)
+        }
+      }
+    }
+
+    // 去重并保持顺序
+    const uniqueCities = Array.from(new Set(cities))
+
+    provinces.push({
+      name: provinceName,
+      cities: uniqueCities
+    })
+  })
+
+  return provinces
+}
+
+const cnProvinces = buildCNProvincesFromPCA(pcaRaw as unknown as PCAMap)
+
 export const regionsData: RegionCountry[] = [
   {
     code: 'CN',
     name: '中国',
-    provinces: [
-      { name: '北京', cities: ['东城区', '西城区', '朝阳区', '海淀区', '丰台区'] },
-      { name: '上海', cities: ['黄浦区', '徐汇区', '浦东新区', '静安区'] },
-      { name: '广东', cities: ['广州', '深圳', '珠海', '佛山', '东莞'] },
-      { name: '江苏', cities: ['南京', '苏州', '无锡', '常州'] },
-      { name: '浙江', cities: ['杭州', '宁波', '温州', '绍兴'] }
-    ]
-  },
-  {
-    code: 'US',
-    name: 'United States',
-    provinces: [
-      { name: 'California', cities: ['Los Angeles', 'San Francisco', 'San Diego'] },
-      { name: 'New York', cities: ['New York City', 'Buffalo', 'Rochester'] }
-    ]
+    provinces: cnProvinces
   }
 ]
 
@@ -55,5 +87,3 @@ export function getCities (countryName?: string, provinceName?: string): string[
   const province = country.provinces.find(p => p.name === provinceName)
   return province ? province.cities : []
 }
-
-

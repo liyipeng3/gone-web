@@ -59,7 +59,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           tags: [],
           location: '',
           isPublic: true,
-          country: undefined,
+          country: '中国',
           province: undefined,
           city: undefined
         })
@@ -277,8 +277,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           {/* 文件预览和编辑 */}
           {files.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">照片详情 ({files.length} 张)</h3>
-
               <div className="space-y-6">
                 {files.map((filePreview, index) => (
                   <div key={index} className="border rounded-lg p-4 space-y-4">
@@ -350,7 +348,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                             <div className="space-y-2">
                               <Label>国家</Label>
                               <Select
-                                value={filePreview.country || ''}
+                                value={filePreview.country ?? ''}
                                 onValueChange={(val) => {
                                   updateFile(index, { country: val || undefined, province: undefined, city: undefined })
                                 }}
@@ -359,16 +357,16 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择国家" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getCountries().map((c) => (
+                                  {getCountries().then(countries => countries.map(c => (
                                     <SelectItem key={c} value={c}>{c}</SelectItem>
-                                  ))}
+                                  )))}
                                 </SelectContent>
                               </Select>
                             </div>
                             <div className="space-y-2">
                               <Label>省/州</Label>
                               <Select
-                                value={filePreview.province || ''}
+                                value={filePreview.province ?? ''}
                                 onValueChange={(val) => {
                                   updateFile(index, { province: val || undefined, city: undefined })
                                 }}
@@ -378,16 +376,16 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择省/州" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getProvinces(filePreview.country).map((p) => (
+                                  {getProvinces(filePreview.country).then(provinces => provinces.map(p => (
                                     <SelectItem key={p} value={p}>{p}</SelectItem>
-                                  ))}
+                                  )))}
                                 </SelectContent>
                               </Select>
                             </div>
                             <div className="space-y-2">
                               <Label>市/地区</Label>
                               <Select
-                                value={filePreview.city || ''}
+                                value={filePreview.city ?? ''}
                                 onValueChange={(val) => {
                                   updateFile(index, { city: val || undefined })
                                 }}
@@ -397,23 +395,13 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择市/地区" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getCities(filePreview.country, filePreview.province).map((city) => (
+                                  {getCities(filePreview.country, filePreview.province).then(cities => cities.map(city => (
                                     <SelectItem key={city} value={city}>{city}</SelectItem>
-                                  ))}
+                                  )))}
                                 </SelectContent>
                               </Select>
                             </div>
                           </div>
-                        </div>
-
-                        <div className="pt-1 space-y-2">
-                          <Label htmlFor={`location-${index}`}>位置补充（可选）</Label>
-                          <Input
-                            id={`location-${index}`}
-                            value={filePreview.location}
-                            onChange={(e) => { updateFile(index, { location: e.target.value }) }}
-                            placeholder="例如：具体地标/道路等"
-                          />
                         </div>
 
                         <div className="flex items-center space-x-2">
