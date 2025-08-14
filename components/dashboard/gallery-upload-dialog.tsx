@@ -357,9 +357,9 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择国家" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getCountries().then(countries => countries.map(c => (
+                                  {getCountries().map(c => (
                                     <SelectItem key={c} value={c}>{c}</SelectItem>
-                                  )))}
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
@@ -376,9 +376,9 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择省/州" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getProvinces(filePreview.country).then(provinces => provinces.map(p => (
+                                  {getProvinces(filePreview.country).map(p => (
                                     <SelectItem key={p} value={p}>{p}</SelectItem>
-                                  )))}
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
@@ -395,9 +395,9 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   <SelectValue placeholder="选择市/地区" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getCities(filePreview.country, filePreview.province).then(cities => cities.map(city => (
+                                  {getCities(filePreview.country, filePreview.province).map(city => (
                                     <SelectItem key={city} value={city}>{city}</SelectItem>
-                                  )))}
+                                  ))}
                                 </SelectContent>
                               </Select>
                             </div>
