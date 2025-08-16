@@ -5,7 +5,7 @@ import { getGalleryById, getAdjacentPhotos } from '@/models/gallery'
 import KeyboardNavigation from '@/components/common/photo-navigation/keyboard-navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, Tag, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Tag, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PhotoDetailPageProps {
   params: {
@@ -47,15 +47,6 @@ function formatDateTime (timestamp: number): string {
   })
 }
 
-// 格式化文件大小
-function formatFileSize (bytes: number): string {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-}
-
 export default async function PhotoDetailPage ({ params, searchParams }: PhotoDetailPageProps) {
   const gid = parseInt(params.gid)
 
@@ -87,7 +78,7 @@ export default async function PhotoDetailPage ({ params, searchParams }: PhotoDe
         previousUrl={adjacentPhotos.previous ? `/gallery/photo/${adjacentPhotos.previous.gid}${photo.category ? `?category=${photo.category}` : ''}` : undefined}
         nextUrl={adjacentPhotos.next ? `/gallery/photo/${adjacentPhotos.next.gid}${photo.category ? `?category=${photo.category}` : ''}` : undefined}
       />
-{/*
+      {/*
       <Breadcrumb
         className="text-left"
         items={[
@@ -182,14 +173,7 @@ export default async function PhotoDetailPage ({ params, searchParams }: PhotoDe
                           </dd>
                         </div>
                       )}
-                      {photo.createdAt && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">上传时间</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {formatDateTime(photo.createdAt)}
-                          </dd>
-                        </div>
-                      )}
+
                       {photo.category && (
                         <div className="flex justify-between items-start">
                           <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">分类</dt>
@@ -208,19 +192,20 @@ export default async function PhotoDetailPage ({ params, searchParams }: PhotoDe
                           </dd>
                         </div>
                       )}
-                      {photo.fileSize && (
+
+                      {photo.location && (
                         <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">文件大小</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {formatFileSize(photo.fileSize)}
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">拍摄地点</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-xs">
+                            {photo.location}
                           </dd>
                         </div>
                       )}
-                      {photo.mimeType && (
+                      {photo.latitude && photo.longitude && (
                         <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">文件类型</dt>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">GPS坐标</dt>
                           <dd className="text-sm text-gray-900 dark:text-gray-100 text-right font-mono">
-                            {photo.mimeType}
+                            {Number(photo.latitude).toFixed(6)}, {Number(photo.longitude).toFixed(6)}
                           </dd>
                         </div>
                       )}
@@ -228,35 +213,6 @@ export default async function PhotoDetailPage ({ params, searchParams }: PhotoDe
                   </div>
                 </div>
 
-                {/* 位置信息 */}
-                {(photo.location ?? (photo.latitude && photo.longitude)) && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
-                      <MapPin className="w-5 h-5 mr-2 text-green-500" />
-                      位置信息
-                    </h3>
-                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                      <dl className="space-y-3">
-                        {photo.location && (
-                          <div className="flex justify-between items-start">
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">拍摄地点</dt>
-                            <dd className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-xs">
-                              {photo.location}
-                            </dd>
-                          </div>
-                        )}
-                        {photo.latitude && photo.longitude && (
-                          <div className="flex justify-between items-start">
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">GPS坐标</dt>
-                            <dd className="text-sm text-gray-900 dark:text-gray-100 text-right font-mono">
-                              {Number(photo.latitude).toFixed(6)}, {Number(photo.longitude).toFixed(6)}
-                            </dd>
-                          </div>
-                        )}
-                      </dl>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* 右侧：拍摄设备信息 */}
