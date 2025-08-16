@@ -5,7 +5,8 @@ import { getGalleryById, getAdjacentPhotos } from '@/models/gallery'
 import KeyboardNavigation from '@/components/common/photo-navigation/keyboard-navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Tag, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Tag, ChevronLeft, ChevronRight, Camera } from 'lucide-react'
+import { getCameraBrand, formatCameraModel } from '@/lib/camera-brands'
 
 interface PhotoDetailPageProps {
   params: {
@@ -153,129 +154,63 @@ export default async function PhotoDetailPage ({ params, searchParams }: PhotoDe
           </Link>
         )}
 
-        {/* 信息展示区域 */}
-        <div className=" rounded-lg overflow-hidden">
+        <div className="flex flex-wrap items-center justify-center gap-6 px-4 py-8 text-sm text-gray-600 dark:text-gray-400">
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* 左侧：基本信息和位置 */}
-              <div className="space-y-6">
-                {/* 基本信息表格 */}
-                <div>
-
-                  <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                    <dl className="space-y-3">
-                      {photo.takenAt && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">拍摄时间</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {formatDateTime(photo.takenAt)}
-                          </dd>
-                        </div>
-                      )}
-
-                      {photo.category && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">分类</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                              {photo.category}
-                            </span>
-                          </dd>
-                        </div>
-                      )}
-                      {(photo.width && photo.height) && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">图片尺寸</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {photo.width} × {photo.height}px
-                          </dd>
-                        </div>
-                      )}
-
-                      {photo.location && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">拍摄地点</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-xs">
-                            {photo.location}
-                          </dd>
-                        </div>
-                      )}
-                      {photo.latitude && photo.longitude && (
-                        <div className="flex justify-between items-start">
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">GPS坐标</dt>
-                          <dd className="text-sm text-gray-900 dark:text-gray-100 text-right font-mono">
-                            {Number(photo.latitude).toFixed(6)}, {Number(photo.longitude).toFixed(6)}
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* 右侧：拍摄设备信息 */}
-              {(photo.camera ?? photo.lens ?? photo.aperture ?? photo.shutterSpeed ?? photo.iso ?? photo.focalLength) && (
-                <div className="space-y-6">
-                  <div>
-
-                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-                      <dl className="space-y-3">
-                        {photo.camera && (
-                          <div className="flex justify-between items-start">
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">相机</dt>
-                            <dd className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-xs">
-                              {photo.camera}
-                            </dd>
-                          </div>
-                        )}
-                        {photo.lens && (
-                          <div className="flex justify-between items-start">
-                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">镜头</dt>
-                            <dd className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-xs">
-                              {photo.lens}
-                            </dd>
-                          </div>
-                        )}
-                      </dl>
-                    </div>
-                  </div>
-
-                  {(photo.aperture ?? photo.shutterSpeed ?? photo.iso ?? photo.focalLength) && (
-                    <div>
-                      <div className="grid grid-cols-2 gap-4">
-                        {photo.aperture && (
-                          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">光圈</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{photo.aperture}</div>
-                          </div>
-                        )}
-                        {photo.shutterSpeed && (
-                          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">快门</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{photo.shutterSpeed}</div>
-                          </div>
-                        )}
-                        {photo.iso && (
-                          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">ISO</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{photo.iso}</div>
-                          </div>
-                        )}
-                        {photo.focalLength && (
-                          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 text-center">
-                            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">焦距</div>
-                            <div className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-1">{photo.focalLength}</div>
-                          </div>
-                        )}
+          {photo.camera && (() => {
+            const brand = getCameraBrand(photo.camera)
+            return (
+              <div className="flex items-center gap-2">
+                {brand
+                  ? (
+                    <>
+                      <div className="w-24 h-10 relative">
+                        <Image
+                          src={brand.logo}
+                          alt={brand.name}
+                          fill
+                          className="object-contain"
+                        />
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+                      <span className="font-medium">{formatCameraModel(photo.camera)}</span>
+                    </>
+                    )
+                  : (
+                    <>
+                      <Camera className="w-5 h-5" />
+                      <span className="font-medium">{photo.camera}</span>
+                    </>
+                    )}
+              </div>
+            )
+          })()}
+
+          {photo.takenAt && (
+            <span>{formatDateTime(photo.takenAt)}</span>
+          )}
+
+          {photo.lens && (
+            <span>{photo.lens}</span>
+          )}
+
+          {photo.focalLength && <span className="font-mono">{photo.focalLength}</span>}
+          {photo.aperture && <span className="font-mono">{photo.aperture}</span>}
+          {photo.shutterSpeed && <span className="font-mono">{photo.shutterSpeed}</span>}
+          {photo.iso && <span className="font-mono">ISO{photo.iso}</span>}
+
+          {photo.location && (
+            <span>{photo.location}</span>
+          )}
+
+          {photo.category && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+              {photo.category}
+            </span>
+          )}
+
+          {/* 图片尺寸 */}
+          {(photo.width && photo.height) && (
+            <span className="font-mono">{photo.width} × {photo.height}</span>
+          )}
         </div>
       </div>
     </div>
