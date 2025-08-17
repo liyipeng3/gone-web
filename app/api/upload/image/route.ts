@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/session'
 import { uploadToOSS, generateFileName } from '@/lib/oss'
 import exifr from 'exifr'
+import sharp from 'sharp'
 
 // 支持的图片类型
 const SUPPORTED_IMAGE_TYPES = [
@@ -99,6 +100,32 @@ export async function POST (request: NextRequest) {
       // EXIF 提取失败不影响上传流程
     }
 
+    // 检查 EXIF 中是否有宽高信息
+    let exifWidth = null
+    let exifHeight = null
+    if (exifData) {
+      exifWidth = exifData.ExifImageWidth || exifData.ImageWidth || exifData.PixelXDimension || null
+      exifHeight = exifData.ExifImageHeight || exifData.ImageHeight || exifData.PixelYDimension || null
+    }
+
+    // 只有当 EXIF 中没有宽高信息时，才使用 sharp 获取
+    let imageWidth = exifWidth
+    let imageHeight = exifHeight
+
+    if (!imageWidth || !imageHeight) {
+      try {
+        const metadata = await sharp(buffer).metadata()
+        imageWidth = imageWidth || metadata.width || null
+        imageHeight = imageHeight || metadata.height || null
+        console.log('Sharp 获取图片尺寸:', { width: metadata.width, height: metadata.height, final: { width: imageWidth, height: imageHeight } })
+      } catch (error) {
+        console.error('Sharp 获取图片尺寸失败:', error)
+        // Sharp 失败时保持 EXIF 的值（可能为 null）
+      }
+    } else {
+      console.log('使用 EXIF 中的图片尺寸:', { width: imageWidth, height: imageHeight })
+    }
+
     // 生成文件名
     const fileName = generateFileName(file.name, 'img')
 
@@ -186,8 +213,8 @@ export async function POST (request: NextRequest) {
                 : formatShutterSpeed(exifData.ExposureTime))
             : null,
           iso: exifData.ISO || exifData.ISOSpeedRatings || exifData.PhotographicSensitivity || exifData.StandardOutputSensitivity || null,
-          width: exifData.ExifImageWidth || exifData.ImageWidth || exifData.PixelXDimension || null,
-          height: exifData.ExifImageHeight || exifData.ImageHeight || exifData.PixelYDimension || null,
+          width: imageWidth,
+          height: imageHeight,
           location: locationInfo,
           latitude,
           longitude,
@@ -195,7 +222,11 @@ export async function POST (request: NextRequest) {
             ? Math.floor(new Date(exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated).getTime() / 1000)
             : null
         }
-      : {}
+      : {
+          // 当没有 EXIF 数据时，至少保存 sharp 获取的宽高
+          width: imageWidth,
+          height: imageHeight
+        }
 
     // 返回成功结果
     return NextResponse.json({
