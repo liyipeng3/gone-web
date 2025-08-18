@@ -24,36 +24,28 @@ interface GalleryItemProps {
   index: number
 }
 
-// 单个相册项组件
 const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => {
   const router = useRouter()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
   const handleClick = useCallback(() => {
-    // 点击跳转到详情页面
     router.push(`/gallery/photo/${item.gid}`)
   }, [router, item.gid])
 
   const handlePreviewClick = useCallback((e: React.MouseEvent) => {
-    // 阻止事件冒泡，只在预览按钮上触发预览
     e.stopPropagation()
     onPreview(item.imagePath, index)
   }, [item.imagePath, index, onPreview])
 
-  // 解析标签
-  const tags = item.tags ? JSON.parse(item.tags) : []
-
   return (
     <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
-      {/* 图片容器 */}
       <div
         className="relative aspect-square bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
         onClick={handleClick}
       >
         {!imageError && (
           <>
-            {/* 缩略图或原图 */}
             <Image
               src={item.thumbnailPath ?? item.imagePath}
               alt={item.title ?? '相册图片'}
@@ -66,14 +58,12 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
 
-            {/* 加载骨架屏 */}
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
             )}
           </>
         )}
 
-        {/* 图片加载失败 */}
         {imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
             <div className="text-center">
@@ -83,7 +73,6 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
           </div>
         )}
 
-        {/* 悬浮信息层 */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end">
           <div className="w-full p-3 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-end justify-between">
@@ -108,7 +97,6 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
         </div>
       </div>
 
-      {/* 图片信息 */}
       <div className="p-3">
         {item.title && (
           <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1 line-clamp-1">
@@ -122,32 +110,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
           </p>
         )}
 
-        {/* 标签 */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {tags.slice(0, 3).map((tag: string, index: number) => (
-              <span
-                key={index}
-                className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded"
-              >
-                {tag}
-              </span>
-            ))}
-            {tags.length > 3 && (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                +{tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* 元数据 */}
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>
-            {item.width && item.height && `${item.width}×${item.height}`}
-          </span>
           {item.location && (
-            <span className="truncate ml-2">📍 {item.location}</span>
+            <span className="truncate ml-2">{item.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>
           )}
         </div>
       </div>
@@ -167,18 +132,15 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewCurrent, setPreviewCurrent] = useState(0)
 
-  // 处理图片预览
   const handlePreview = useCallback((src: string, index: number) => {
     setPreviewCurrent(index)
     setPreviewVisible(true)
   }, [])
 
-  // 准备预览图片列表
   const previewImages = items.map(item => item.imagePath)
 
   return (
     <>
-      {/* 相册网格 */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {items.map((item, index) => (
           <GalleryItem
@@ -190,7 +152,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
         ))}
       </div>
 
-      {/* 分页 */}
       {totalPages > 1 && (
         <Pagination
           pages={totalPages}
@@ -199,7 +160,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
         />
       )}
 
-      {/* 图片预览 */}
       <ImagePreview.PreviewGroup
         items={previewImages}
         preview={{
@@ -213,7 +173,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
             return (
               <div className="flex flex-col items-center">
                 {originalNode}
-                {/* EXIF 信息展示 */}
                 {currentItem && (
                   <div className="mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-white text-sm max-w-md">
                     <h3 className="font-medium mb-2">{currentItem.title ?? '未命名'}</h3>
@@ -246,7 +205,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
                         <div className="col-span-2"><span className="text-gray-400">位置:</span> {currentItem.location}</div>
                       )}
                     </div>
-                    {/* 标签 */}
                     {currentItem.tags && JSON.parse(currentItem.tags).length > 0 && (
                       <div className="mt-2">
                         <span className="text-gray-400">标签: </span>

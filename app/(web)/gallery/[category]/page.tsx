@@ -65,7 +65,7 @@ export default async function CategoryGalleryPage ({ params, searchParams }: Cat
       <div className="md:mb-6 mt-4">
         <h1 className="dark:text-white text-2xl font-bold mb-2">{category}</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          {category} 分类下共 {total} 张照片
+          分类下共 {total} 张照片
         </p>
       </div>
 

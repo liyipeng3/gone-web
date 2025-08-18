@@ -68,11 +68,6 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
     updateSearchParams('tag', tag)
   }
 
-  // 清除所有过滤器
-  const clearFilters = () => {
-    router.push('/gallery')
-  }
-
   return (
     <div className="mb-6 space-y-4">
       {/* 分类过滤器 */}
@@ -131,19 +126,6 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
         </div>
       )}
 
-      {/* 清除过滤器 */}
-      {(currentCategory ?? currentTag) && (
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            清除所有过滤器
-          </Button>
-        </div>
-      )}
     </div>
   )
 }

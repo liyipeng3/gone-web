@@ -1,9 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import Breadcrumb from '@/components/common/breadcrumb'
-import { getGalleryList, getGalleryCategories } from '@/models/gallery'
+import { getGalleryList } from '@/models/gallery'
 import GalleryGrid from '@/components/common/gallery'
-import GalleryFilter from '@/components/common/gallery/filter'
 
 export const metadata: Metadata = {
   title: '相册 - 定格当下',
@@ -25,7 +23,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
   const offset = (page - 1) * pageSize
 
   // 并行获取数据
-  const [galleryData, categories] = await Promise.all([
+  const [galleryData] = await Promise.all([
     getGalleryList({
       category: searchParams.category,
       tag: searchParams.tag,
@@ -34,8 +32,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
       orderBy: 'takenAt',
       orderDirection: 'desc',
       isPublic: true
-    }),
-    getGalleryCategories()
+    })
   ])
 
   const { items, total } = galleryData
@@ -43,27 +40,26 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
 
   return (
     <div className="md:max-w-6xl max-w-full text-left flex-1 w-screen lg:w-[72rem] md:w-[48rem] mx-auto px-4 pb-10 pt-3">
-      <Breadcrumb
+      {/* <Breadcrumb
         items={[
           { name: '相册', href: '/gallery' }
         ]}
-      />
-
+      /> */}
+{/*
       <div className="md:mb-6 mt-4">
         <h1 className="dark:text-white text-2xl font-bold mb-2">相册</h1>
         <p className="text-gray-600 dark:text-gray-400">
           共 {total} 张照片
         </p>
-      </div>
+      </div> */}
 
-      {/* 过滤器 */}
-      <GalleryFilter
+      {/* <GalleryFilter
         categories={categories}
         currentCategory={searchParams.category}
         currentTag={searchParams.tag}
-      />
+      /> */}
+      <div className='h-8'></div>
 
-      {/* 相册网格 */}
       <GalleryGrid
         items={items}
         total={total}
