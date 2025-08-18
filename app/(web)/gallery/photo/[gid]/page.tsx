@@ -99,7 +99,7 @@ export default async function PhotoDetailPage ({
             <Image
               src={photo.thumbnailPath ?? photo.imagePath}
               alt={photo.title ?? '照片'}
-              wrapperClassName="object-contain w-full h-full"
+              wrapperClassName="object-contain w-full h-full cursor-pointer"
               className='object-contain w-full h-full'
               preview={
                 {

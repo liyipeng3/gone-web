@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
+
 import { getGalleryList } from '@/models/gallery'
 import GalleryGrid from '@/components/common/gallery'
 
@@ -68,6 +69,8 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
         pageSize={pageSize}
         basePath="/gallery"
       />
+
+
 
       {items.length === 0 && (
         <div className="text-center py-16">
