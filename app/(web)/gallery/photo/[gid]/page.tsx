@@ -6,6 +6,9 @@ import KeyboardNavigation from '@/components/common/photo-navigation/keyboard-na
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Camera } from 'lucide-react'
 import { getCameraBrand, formatCameraModel } from '@/lib/camera-brands'
+import dayjs from 'dayjs'
+import Image from '@/components/common/image'
+import { defaultIcons } from '@/components/common/prose/lightbox'
 
 interface PhotoDetailPageProps {
   params: {
@@ -38,16 +41,6 @@ export async function generateMetadata ({
   }
 }
 
-function formatDateTime (timestamp: number): string {
-  const date = new Date(timestamp * 1000)
-  const yyyy = date.getFullYear()
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  const hh = String(date.getHours()).padStart(2, '0')
-  const min = String(date.getMinutes()).padStart(2, '0')
-  const ss = String(date.getSeconds()).padStart(2, '0')
-  return `${yyyy}.${mm}.${dd} ${hh}:${min}:${ss}`
-}
 
 export default async function PhotoDetailPage ({
   params,
@@ -104,10 +97,16 @@ export default async function PhotoDetailPage ({
         <div className="w-full h-max">
           <div className="relative h-max md:h-[85vh]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={photo.thumbnailPath ?? photo.imagePath}
               alt={photo.title ?? '照片'}
-              className="object-contain w-full h-full"
+              wrapperClassName="object-contain w-full h-full"
+              className='object-contain w-full h-full'
+              preview={
+                {
+                  icons: defaultIcons
+                }
+              }
             />
           </div>
           <div className="md:hidden flex justify-center w-full ">
@@ -144,7 +143,7 @@ export default async function PhotoDetailPage ({
                 <div className="text-gray-600 text-sm flex">{photo.lens}</div>
               )}
               {photo.takenAt && (
-                <span className='text-gray-600 text-sm flex'>{formatDateTime(photo.takenAt)}</span>
+                <span className='text-gray-600 text-sm flex'>{dayjs(photo.takenAt * 1000).format('YYYY-MM-DD HH:mm:ss')}</span>
               )}
               {photo.location && (
                 <div className='flex'>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</div>
@@ -183,7 +182,7 @@ export default async function PhotoDetailPage ({
                   })()}
 
                 {photo.takenAt && (
-                  <span className='text-gray-600 text-sm'>{formatDateTime(photo.takenAt)}</span>
+                  <span className='text-gray-600 text-sm'>{dayjs(photo.takenAt * 1000).format('YYYY.MM.DD HH:mm:ss')}</span>
                 )}
               </div>
               {photo.location && <span>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>}
@@ -316,6 +315,7 @@ export default async function PhotoDetailPage ({
           <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </Link>
       )}
+      
     </div>
   )
 }

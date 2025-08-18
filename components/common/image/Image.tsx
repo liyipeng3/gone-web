@@ -1,3 +1,5 @@
+'use client'
+
 import cn from 'classnames'
 import type { IDialogPropTypes } from 'rc-dialog/lib/IDialogPropTypes'
 import useMergedState from 'rc-util/lib/hooks/useMergedState'
@@ -110,7 +112,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
     value: previewVisible,
     onChange: onPreviewVisibleChange
   })
-  const [srcAndOnload, status] = useStatus({
+  const [, srcAndOnload, status] = useStatus({
     src: imgSrc ?? '',
     isCustomPlaceholder: !!isCustomPlaceholder,
     fallback
@@ -142,22 +144,24 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
 
   // ========================== Preview ===========================
   const onPreview: React.MouseEventHandler<HTMLDivElement> = e => {
-    const {
-      left,
-      top
-    } = getOffset(e.target as HTMLImageElement)
+    const imgEl = e.target as HTMLImageElement
+    const { left, top } = getOffset(imgEl)
+    const rect = imgEl.getBoundingClientRect()
+    const centerX = left + rect.width / 2
+    const centerY = top + rect.height / 2
     if (groupContext) {
-      groupContext.onPreview(imageId, left, top)
+      groupContext.onPreview(imageId, centerX, centerY)
     } else {
       setMousePosition({
-        x: left,
-        y: top
+        x: centerX,
+        y: centerY
       })
       setShowPreview(true)
     }
 
     onClick?.(e)
   }
+  
 
   // =========================== Render ===========================
   return (

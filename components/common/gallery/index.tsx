@@ -147,61 +147,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
           onVisibleChange: setPreviewVisible,
           current: previewCurrent,
           onChange: (current: number) => { setPreviewCurrent(current) },
-          toolbarRender: (originalNode, { current: currentIndex }) => {
-            const currentItem = items[currentIndex]
-            return (
-              <div className="flex flex-col items-center">
-                {originalNode}
-                {currentItem && (
-                  <div className="mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-white text-sm max-w-md">
-                    <h3 className="font-medium mb-2">{currentItem.title ?? '未命名'}</h3>
-                    {currentItem.description && (
-                      <p className="text-gray-300 mb-2">{currentItem.description}</p>
-                    )}
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      {currentItem.camera && (
-                        <div><span className="text-gray-400">相机:</span> {currentItem.camera}</div>
-                      )}
-                      {currentItem.lens && (
-                        <div><span className="text-gray-400">镜头:</span> {currentItem.lens}</div>
-                      )}
-                      {currentItem.focalLength && (
-                        <div><span className="text-gray-400">焦距:</span> {currentItem.focalLength}</div>
-                      )}
-                      {currentItem.aperture && (
-                        <div><span className="text-gray-400">光圈:</span> {currentItem.aperture}</div>
-                      )}
-                      {currentItem.shutterSpeed && (
-                        <div><span className="text-gray-400">快门:</span> {currentItem.shutterSpeed}</div>
-                      )}
-                      {currentItem.iso && (
-                        <div><span className="text-gray-400">ISO:</span> {currentItem.iso}</div>
-                      )}
-                      {currentItem.width && currentItem.height && (
-                        <div><span className="text-gray-400">尺寸:</span> {currentItem.width}×{currentItem.height}</div>
-                      )}
-                      {currentItem.location && (
-                        <div className="col-span-2"><span className="text-gray-400">位置:</span> {currentItem.location}</div>
-                      )}
-                    </div>
-                    {currentItem.tags && JSON.parse(currentItem.tags).length > 0 && (
-                      <div className="mt-2">
-                        <span className="text-gray-400">标签: </span>
-                        {JSON.parse(currentItem.tags).map((tag: string, index: number) => (
-                          <span
-                            key={index}
-                            className="inline-block bg-blue-600 bg-opacity-50 px-2 py-1 rounded-full mr-1 text-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          }
         }}
       />
     </>
