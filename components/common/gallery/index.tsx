@@ -39,9 +39,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
   }, [item.imagePath, index, onPreview])
 
   return (
-    <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+    <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-4 [break-inside:avoid]">
       <div
-        className="relative aspect-square bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
+        className="relative bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
         onClick={handleClick}
       >
         {!imageError && (
@@ -49,8 +49,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
             <Image
               src={item.thumbnailPath ?? item.imagePath}
               alt={item.title ?? '相册图片'}
-              fill
-              className={`object-cover transition-all duration-300 group-hover:scale-105 ${
+              width={item.width ?? 1200}
+              height={item.height ?? 800}
+              className={`w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02] ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               onLoad={() => { setImageLoaded(true) }}
@@ -73,7 +74,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end">
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end pointer-events-none">
           <div className="w-full p-3 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-end justify-between">
               <div className="flex-1 min-w-0">
@@ -86,7 +87,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
               </div>
               <button
                 onClick={handlePreviewClick}
-                className="ml-2 px-2 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded text-xs transition-all duration-200 backdrop-blur-sm flex-shrink-0"
+                className="ml-2 px-2 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded text-xs transition-all duration-200 backdrop-blur-sm flex-shrink-0 pointer-events-auto"
               >
                 🔍 预览
               </button>
@@ -119,7 +120,7 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+      <div className="columns-2 md:columns-3 lg:columns-4 mb-8 [column-fill:_balance] [column-gap:1rem]">
         {items.map((item, index) => (
           <GalleryItem
             key={item.gid}
