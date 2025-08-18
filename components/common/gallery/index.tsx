@@ -5,9 +5,9 @@ import type { gallery } from '@prisma/client'
 import Image from 'next/image'
 import Pagination from '@/components/common/pagination'
 import ImagePreview from '@/components/common/image'
-import { formatDate } from '@/lib/utils'
 import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -77,12 +77,10 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
           <div className="w-full p-3 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-end justify-between">
               <div className="flex-1 min-w-0">
-                {item.camera && (
-                  <p className="text-white text-xs truncate">📸 {item.camera}</p>
-                )}
+
                 {item.takenAt && (
                   <p className="text-white text-xs mt-1">
-                    📅 {formatDate(item.takenAt * 1000)}
+                    {dayjs(item.takenAt * 1000).format('YYYY-MM-DD')}
                   </p>
                 )}
               </div>
@@ -94,26 +92,6 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="p-3">
-        {item.title && (
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1 line-clamp-1">
-            {item.title}
-          </h3>
-        )}
-
-        {item.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-            {item.description}
-          </p>
-        )}
-
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          {item.location && (
-            <span className="truncate ml-2">{item.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>
-          )}
         </div>
       </div>
     </div>
