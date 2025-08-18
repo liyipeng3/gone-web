@@ -125,14 +125,7 @@ export default async function PhotoDetailPage ({
                         {brand
                           ? (
                             <div className='flex items-center gap-2 justify-between'>
-                              <div className="w-auto h-3 relative">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={brand.logo}
-                                  alt={brand.name}
-                                  className='w-full h-full'
-                                />
-                              </div>
+
                               <span className=" font-bold">
                                 {formatCameraModel(photo.camera)}
                               </span>
@@ -151,19 +144,44 @@ export default async function PhotoDetailPage ({
                   })()}
 
                 {photo.takenAt && (
-                  <span>{formatDateTime(photo.takenAt)}</span>
+                  <span className='text-gray-600 dark:text-gray-400'>{formatDateTime(photo.takenAt)}</span>
                 )}
               </div>
               {photo.location && <span>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>}
+              <div className='flex flex-row gap-4 items-center'>
+              {photo.camera &&
+                  (() => {
+                    const brand = getCameraBrand(photo.camera)
+                    return (
+                      <div className="flex items-center gap-2">
+                        {brand
+                          ? (
+                            <div className='flex items-center gap-2 justify-between'>
+                              <div className="w-auto h-4 relative">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={brand.logo}
+                                  alt={brand.name}
+                                  className='w-full h-full'
+                                />
+                              </div>
 
+                            </div>
+                            )
+                          : (
+                            <>
+                              <Camera className="w-5 h-5" />
+                              <span className="font-medium">
+                                {photo.camera}
+                              </span>
+                            </>
+                            )}
+                      </div>
+                    )
+                  })()}
+                  <div className='w-[1px] h-8 bg-gray-200 dark:bg-gray-600'></div>
               <div className="flex flex-col h-full justify-between">
-                <div className="flex flex-row">
-                  {photo.lens && <span>{photo.lens}</span>}
-                </div>
-                <div className="flex flex-row gap-2">
-                  {/* {(photo.width && photo.height) && (
-<span className="font-mono">{photo.width} × {photo.height}</span>
-)} */}
+              <div className="flex flex-row gap-2">
                   {photo.focalLength && (
                     <span className="font-mono">{photo.focalLength}</span>
                   )}
@@ -177,6 +195,11 @@ export default async function PhotoDetailPage ({
                     <span className="font-mono">ISO{photo.iso}</span>
                   )}
                 </div>
+                <div className="flex flex-row">
+                  {photo.lens && <span>{photo.lens}</span>}
+                </div>
+
+              </div>
               </div>
             </div>
             </div>
