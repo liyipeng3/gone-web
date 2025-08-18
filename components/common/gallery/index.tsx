@@ -146,7 +146,7 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
           visible: previewVisible,
           onVisibleChange: setPreviewVisible,
           current: previewCurrent,
-          onChange: (current: number) => { setPreviewCurrent(current) },
+          onChange: (current: number) => { setPreviewCurrent(current) }
         }}
       />
     </>

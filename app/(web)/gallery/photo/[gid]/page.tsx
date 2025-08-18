@@ -41,7 +41,6 @@ export async function generateMetadata ({
   }
 }
 
-
 export default async function PhotoDetailPage ({
   params,
   searchParams
@@ -315,7 +314,7 @@ export default async function PhotoDetailPage ({
           <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </Link>
       )}
-      
+
     </div>
   )
 }

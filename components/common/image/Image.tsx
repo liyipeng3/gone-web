@@ -161,7 +161,6 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
 
     onClick?.(e)
   }
-  
 
   // =========================== Render ===========================
   return (
