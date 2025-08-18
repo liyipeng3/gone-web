@@ -6,6 +6,7 @@ interface AvatarProps {
 }
 
 const Avatar = ({ email, author }: AvatarProps) => (
+  // eslint-disable-next-line @next/next/no-img-element
   <img className="w-10 h-10 rounded-full" src={getAvatarUrl(email)} alt={author} />
 )
 

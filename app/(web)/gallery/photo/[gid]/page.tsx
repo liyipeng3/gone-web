@@ -17,7 +17,7 @@ interface PhotoDetailPageProps {
 }
 
 // 动态生成页面元数据
-export async function generateMetadata({
+export async function generateMetadata ({
   params
 }: PhotoDetailPageProps): Promise<Metadata> {
   const gid = parseInt(params.gid)
@@ -38,7 +38,7 @@ export async function generateMetadata({
   }
 }
 
-function formatDateTime(timestamp: number): string {
+function formatDateTime (timestamp: number): string {
   const date = new Date(timestamp * 1000)
   const yyyy = date.getFullYear()
   const mm = String(date.getMonth() + 1).padStart(2, '0')
@@ -49,7 +49,7 @@ function formatDateTime(timestamp: number): string {
   return `${yyyy}.${mm}.${dd} ${hh}:${min}:${ss}`
 }
 
-export default async function PhotoDetailPage({
+export default async function PhotoDetailPage ({
   params,
   searchParams
 }: PhotoDetailPageProps) {
@@ -103,6 +103,7 @@ export default async function PhotoDetailPage({
       <div className="space-y-8 mt-8 h-max">
         <div className="w-full h-max">
           <div className="relative h-max md:h-[85vh]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photo.thumbnailPath ?? photo.imagePath}
               alt={photo.title ?? '照片'}
@@ -168,7 +169,7 @@ export default async function PhotoDetailPage({
                                 {formatCameraModel(photo.camera)}
                               </span>
                             </div>
-                          )
+                            )
                           : (
                             <>
                               <Camera className="w-5 h-5" />
@@ -176,7 +177,7 @@ export default async function PhotoDetailPage({
                                 {photo.camera}
                               </span>
                             </>
-                          )}
+                            )}
                       </div>
                     )
                   })()}
@@ -205,7 +206,7 @@ export default async function PhotoDetailPage({
                               </div>
 
                             </div>
-                          )
+                            )
                           : (
                             <>
                               <Camera className="w-5 h-5" />
@@ -213,7 +214,7 @@ export default async function PhotoDetailPage({
                                 {photo.camera}
                               </span>
                             </>
-                          )}
+                            )}
                       </div>
                     )
                   })()}
