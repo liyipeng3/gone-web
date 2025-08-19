@@ -12,6 +12,7 @@ import { getCountries, getProvinces, getCities } from '@/lib/regions'
 import { useRouter } from 'next/navigation'
 import { Upload, X, Loader2 } from 'lucide-react'
 import Image from 'next/image'
+import { DateTimePicker } from '@/components/ui/date-time-picker'
 
 interface GalleryUploadDialogProps {
   open: boolean
@@ -30,6 +31,14 @@ interface FilePreview {
   country?: string
   province?: string
   city?: string
+  takenAt?: Date | null
+  errors?: {
+    title?: boolean
+    country?: boolean
+    province?: boolean
+    city?: boolean
+    takenAt?: boolean
+  }
 }
 
 const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
@@ -41,15 +50,37 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
 
+  // 读取EXIF信息（不上传文件）
+  const readExifData = async (file: File) => {
+    try {
+      // 使用exifr库直接读取EXIF
+      const exifr = (await import('exifr')).default
+      const buffer = await file.arrayBuffer()
+      const exifData = await exifr.parse(buffer, true)
+
+      if (exifData && (exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized)) {
+        const takenAtTimestamp = exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized
+        return new Date(takenAtTimestamp)
+      }
+    } catch (error) {
+      console.error('读取EXIF信息失败:', error)
+    }
+    return null
+  }
+
   // 处理文件选择
-  const handleFileSelect = useCallback((selectedFiles: FileList | null) => {
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => {
     if (!selectedFiles) return
 
     const newFiles: FilePreview[] = []
 
-    Array.from(selectedFiles).forEach((file) => {
+    for (const file of Array.from(selectedFiles)) {
       if (file.type.startsWith('image/')) {
         const preview = URL.createObjectURL(file)
+
+        // 自动获取EXIF信息
+        const takenAt = await readExifData(file)
+
         newFiles.push({
           file,
           preview,
@@ -61,10 +92,12 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           isPublic: true,
           country: '中国',
           province: undefined,
-          city: undefined
+          city: undefined,
+          takenAt,
+          errors: {}
         })
       }
-    })
+    }
 
     setFiles(prev => [...prev, ...newFiles])
   }, [])
@@ -83,7 +116,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
-    handleFileSelect(e.dataTransfer.files)
+    void handleFileSelect(e.dataTransfer.files)
   }, [handleFileSelect])
 
   // 移除文件
@@ -165,14 +198,65 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     }
   }
 
+  // 表单验证
+  const validateFiles = (): boolean => {
+    let hasErrors = false
+
+    const updatedFiles = files.map((filePreview) => {
+      const errors: FilePreview['errors'] = {}
+
+      // 验证标题
+      if (!filePreview.title?.trim()) {
+        errors.title = true
+        hasErrors = true
+      }
+
+      // 验证地区信息
+      if (!filePreview.country) {
+        errors.country = true
+        hasErrors = true
+      }
+      if (!filePreview.province) {
+        errors.province = true
+        hasErrors = true
+      }
+      if (!filePreview.city) {
+        errors.city = true
+        hasErrors = true
+      }
+
+      // 验证拍摄时间
+      if (!filePreview.takenAt) {
+        errors.takenAt = true
+        hasErrors = true
+      }
+
+      return {
+        ...filePreview,
+        errors
+      }
+    })
+
+    setFiles(updatedFiles)
+    return !hasErrors
+  }
+
   // 处理上传
   const handleUpload = async () => {
     if (files.length === 0) return
 
+    // 表单验证
+    const isValid = validateFiles()
+    if (!isValid) {
+      return
+    }
+
     setUploading(true)
 
     try {
-      for (const filePreview of files) {
+      for (let i = 0; i < files.length; i++) {
+        const filePreview = files[i]
+
         // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
 
@@ -180,6 +264,11 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         const selectedLocation = [filePreview.country, filePreview.province, filePreview.city]
           .filter(Boolean)
           .join(' · ')
+
+        // 使用用户填写的拍摄时间
+        const finalTakenAt = filePreview.takenAt
+          ? Math.floor(filePreview.takenAt.getTime() / 1000)
+          : uploadResult.exif.takenAt
 
         // 创建相册项
         const response = await fetch('/api/gallery', {
@@ -196,10 +285,12 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             isPublic: filePreview.isPublic,
             mimeType: filePreview.file.type,
             fileSize: filePreview.file.size,
-            // 先展开 EXIF，再用下方 location 覆盖
+            // 先展开 EXIF，再用下方字段覆盖
             ...uploadResult.exif,
             // 优先级：国家省市选择 > 手动输入 > EXIF
-            location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined
+            location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined,
+            // 使用最终确定的拍摄时间
+            takenAt: finalTakenAt
           })
         })
 
@@ -262,7 +353,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                 type="file"
                 multiple
                 accept="image/*"
-                onChange={(e) => { handleFileSelect(e.target.files) }}
+                onChange={(e) => { void handleFileSelect(e.target.files) }}
                 className="hidden"
                 id="file-upload"
               />
@@ -304,13 +395,26 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                       <div className="flex-1 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor={`title-${index}`}>标题</Label>
+                            <Label htmlFor={`title-${index}`}>标题 *</Label>
                             <Input
                               id={`title-${index}`}
                               value={filePreview.title}
-                              onChange={(e) => { updateFile(index, { title: e.target.value }) }}
+                              onChange={(e) => {
+                                updateFile(index, {
+                                  title: e.target.value,
+                                  errors: {
+                                    ...filePreview.errors,
+                                    title: false
+                                  }
+                                })
+                              }}
                               placeholder="照片标题"
+                              className={filePreview.errors?.title ? 'border-red-500 focus:border-red-500' : ''}
+                              required
                             />
+                            {filePreview.errors?.title && (
+                              <p className="text-sm text-red-500">请填写照片标题</p>
+                            )}
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor={`category-${index}`}>分类</Label>
@@ -344,16 +448,51 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                               placeholder="标签1, 标签2, 标签3"
                             />
                           </div>
+                          <div className="space-y-2">
+                            <DateTimePicker
+                              label="拍摄时间"
+                              value={filePreview.takenAt}
+                              onChange={(date) => {
+                                updateFile(index, {
+                                  takenAt: date,
+                                  errors: {
+                                    ...filePreview.errors,
+                                    takenAt: false
+                                  }
+                                })
+                              }}
+                              placeholder="选择拍摄日期和时间"
+                              error={filePreview.errors?.takenAt}
+                              required
+                            />
+                            {filePreview.errors?.takenAt && (
+                              <p className="text-sm text-red-500">请填写拍摄时间</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
                             <div className="space-y-2">
-                              <Label>国家</Label>
+                              <Label>国家  <span className="text-red-500">*</span></Label>
                               <Select
                                 value={filePreview.country ?? ''}
                                 onValueChange={(val) => {
-                                  updateFile(index, { country: val || undefined, province: undefined, city: undefined })
+                                  updateFile(index, {
+                                    country: val || undefined,
+                                    province: undefined,
+                                    city: undefined,
+                                    errors: {
+                                      ...filePreview.errors,
+                                      country: false,
+                                      province: false,
+                                      city: false
+                                    }
+                                  })
                                 }}
+                                required
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className={filePreview.errors?.country ? 'border-red-500 focus:border-red-500' : ''}>
                                   <SelectValue placeholder="选择国家" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -362,17 +501,29 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   ))}
                                 </SelectContent>
                               </Select>
+                              {filePreview.errors?.country && (
+                                <p className="text-sm text-red-500">请选择国家</p>
+                              )}
                             </div>
                             <div className="space-y-2">
-                              <Label>省/州</Label>
+                              <Label>省/州  <span className="text-red-500">*</span></Label>
                               <Select
                                 value={filePreview.province ?? ''}
                                 onValueChange={(val) => {
-                                  updateFile(index, { province: val || undefined, city: undefined })
+                                  updateFile(index, {
+                                    province: val || undefined,
+                                    city: undefined,
+                                    errors: {
+                                      ...filePreview.errors,
+                                      province: false,
+                                      city: false
+                                    }
+                                  })
                                 }}
                                 disabled={!filePreview.country}
+                                required
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className={filePreview.errors?.province ? 'border-red-500 focus:border-red-500' : ''}>
                                   <SelectValue placeholder="选择省/州" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -381,17 +532,27 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   ))}
                                 </SelectContent>
                               </Select>
+                              {filePreview.errors?.province && (
+                                <p className="text-sm text-red-500">请选择省/州</p>
+                              )}
                             </div>
                             <div className="space-y-2">
-                              <Label>市/地区</Label>
+                              <Label>市/地区  <span className="text-red-500">*</span></Label>
                               <Select
                                 value={filePreview.city ?? ''}
                                 onValueChange={(val) => {
-                                  updateFile(index, { city: val || undefined })
+                                  updateFile(index, {
+                                    city: val || undefined,
+                                    errors: {
+                                      ...filePreview.errors,
+                                      city: false
+                                    }
+                                  })
                                 }}
                                 disabled={!filePreview.country || !filePreview.province}
+                                required
                               >
-                                <SelectTrigger>
+                                <SelectTrigger className={filePreview.errors?.city ? 'border-red-500 focus:border-red-500' : ''}>
                                   <SelectValue placeholder="选择市/地区" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -400,6 +561,9 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                                   ))}
                                 </SelectContent>
                               </Select>
+                              {filePreview.errors?.city && (
+                                <p className="text-sm text-red-500">请选择市/地区</p>
+                              )}
                             </div>
                           </div>
                         </div>
