@@ -85,7 +85,6 @@ export async function POST (request: NextRequest) {
       exifData = await exifr.parse(buffer, true)
     } catch (error) {
       console.error('EXIF 提取失败:', error)
-
     }
 
     let exifWidth = null
@@ -106,7 +105,6 @@ export async function POST (request: NextRequest) {
         console.log('Sharp 获取图片尺寸:', { width: metadata.width, height: metadata.height, final: { width: imageWidth, height: imageHeight } })
       } catch (error) {
         console.error('Sharp 获取图片尺寸失败:', error)
-
       }
     } else {
       console.log('使用 EXIF 中的图片尺寸:', { width: imageWidth, height: imageHeight })

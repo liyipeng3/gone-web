@@ -25,7 +25,6 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [
     <div id="sidebar"
          className={cn('sticky h-fit py-4 md:block hidden', sticky ? 'bottom-0 self-end' : 'top-0 self-start')}>
       <div className="text-left max-w-[18rem] space-y-8">
-        {/* 热门文章 */}
         <div>
           <div className="text-lg font-bold">热门文章</div>
           <div className="text-sm space-y-2 mt-3 text-gray-600 dark:text-gray-300">
@@ -38,7 +37,6 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [
             ))}
           </div>
         </div>
-        {/* 最近回复 */}
         {recentComments.length > 0 && (
           <div>
             <div className="text-lg font-bold">最近回复</div>
@@ -53,7 +51,6 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [
             </div>
           </div>
         )}
-        {/* 标签 */}
         {tags.length > 0 && (
           <div>
             <div className="text-lg font-bold">标签</div>
@@ -70,7 +67,6 @@ const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [
             </div>
           </div>
         )}
-        {/* 邻居 */}
         {links.length > 0 && (
           <div>
             <div className="text-lg font-bold">邻居</div>
