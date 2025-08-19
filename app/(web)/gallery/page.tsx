@@ -40,7 +40,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
   const totalPages = Math.ceil(total / pageSize)
 
   return (
-    <div className="md:max-w-6xl max-w-full text-left flex-1 w-screen lg:w-[72rem] md:w-[48rem] mx-auto px-4 pb-10 pt-3">
+    <div className=" max-w-full text-left flex-1 w-screen mx-auto md:px-12 px-4 pb-10 pt-3">
       {/* <Breadcrumb
         items={[
           { name: '相册', href: '/gallery' }
@@ -59,7 +59,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
         currentCategory={searchParams.category}
         currentTag={searchParams.tag}
       /> */}
-      <div className='h-8'></div>
+      <div className='md:h-8'></div>
 
       <GalleryGrid
         items={items}
@@ -69,8 +69,6 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
         pageSize={pageSize}
         basePath="/gallery"
       />
-
-
 
       {items.length === 0 && (
         <div className="text-center py-16">

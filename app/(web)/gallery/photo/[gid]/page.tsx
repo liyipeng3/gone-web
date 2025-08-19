@@ -94,7 +94,7 @@ export default async function PhotoDetailPage ({
 
       <div className="space-y-8 mt-8 h-max">
         <div className="w-full h-max">
-          <div className="relative h-max md:h-[85vh]">
+          <div className="relative h-max md:h-[85vh] flex flex-col justify-end">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
               src={photo.thumbnailPath ?? photo.imagePath}

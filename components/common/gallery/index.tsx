@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import type { gallery } from '@prisma/client'
 import Image from 'next/image'
 import Pagination from '@/components/common/pagination'
@@ -22,9 +22,10 @@ interface GalleryItemProps {
   item: gallery
   onPreview: (src: string, index: number) => void
   index: number
+  style?: React.CSSProperties
 }
 
-const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => {
+const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style }) => {
   const router = useRouter()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -39,7 +40,10 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index }) => 
   }, [item.imagePath, index, onPreview])
 
   return (
-    <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-4 [break-inside:avoid]">
+    <div
+      className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-4"
+      style={style}
+    >
       <div
         className="relative bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
         onClick={handleClick}
@@ -110,6 +114,66 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
 }) => {
   const [previewVisible, setPreviewVisible] = useState(false)
   const [previewCurrent, setPreviewCurrent] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [itemPositions, setItemPositions] = useState<Array<{ left: number, top: number }>>([])
+  const [containerHeight, setContainerHeight] = useState(0)
+
+  // 获取列数
+  const getColumnCount = useCallback(() => {
+    if (!containerRef.current) return 3
+    const width = containerRef.current.offsetWidth
+    if (width < 768) return 2 // md以下：2列
+    if (width < 1280) return 3 // xl以下：3列
+    if (width < 1536) return 4 // 2xl以下：3列
+    return 5 // 超宽屏：4列
+  }, [])
+
+  // 计算瀑布流布局
+  const calculateLayout = useCallback(() => {
+    if (!containerRef.current || items.length === 0) return
+
+    const columnCount = getColumnCount()
+    const containerWidth = containerRef.current.offsetWidth
+    // 根据屏幕宽度动态调整间距
+    const gap = containerWidth > 1280 ? 24 : containerWidth > 768 ? 20 : 16
+    const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount
+
+    const heights = new Array(columnCount).fill(0)
+    const positions: Array<{ left: number, top: number }> = []
+
+    items.forEach((item) => {
+      // 找到最短的列
+      const minHeightIndex = heights.indexOf(Math.min(...heights))
+
+      // 计算图片高度（保持原始比例）
+      const aspectRatio = (item.height && item.width) ? item.height / item.width : 0.75
+      const imageHeight = columnWidth * aspectRatio
+      const cardHeight = imageHeight // 加上padding等额外高度
+
+      // 设置位置
+      positions.push({
+        left: minHeightIndex * (columnWidth + gap),
+        top: heights[minHeightIndex]
+      })
+
+      // 更新列高度
+      heights[minHeightIndex] += cardHeight + gap
+    })
+
+    setItemPositions(positions)
+    setContainerHeight(Math.max(...heights))
+  }, [items, getColumnCount])
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      calculateLayout()
+    }
+
+    calculateLayout()
+    window.addEventListener('resize', handleResize)
+    return () => { window.removeEventListener('resize', handleResize) }
+  }, [calculateLayout])
 
   const handlePreview = useCallback((src: string, index: number) => {
     setPreviewCurrent(index)
@@ -120,15 +184,36 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
 
   return (
     <>
-      <div className="columns-2 md:columns-3 lg:columns-4 mb-8 [column-fill:_balance] [column-gap:1rem]">
-        {items.map((item, index) => (
-          <GalleryItem
-            key={item.gid}
-            item={item}
-            onPreview={handlePreview}
-            index={index}
-          />
-        ))}
+      <div
+        ref={containerRef}
+        className="relative mb-8"
+        style={{ height: containerHeight }}
+      >
+        {items.map((item, index) => {
+          const position = itemPositions[index]
+          if (!position) return null
+
+          const columnCount = getColumnCount()
+          const containerWidth = containerRef.current?.offsetWidth ?? 1200
+          const gap = containerWidth > 1280 ? 24 : containerWidth > 768 ? 20 : 16
+          const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount
+
+          return (
+            <GalleryItem
+              key={item.gid}
+              item={item}
+              onPreview={handlePreview}
+              index={index}
+              style={{
+                position: 'absolute',
+                left: position.left,
+                top: position.top,
+                width: columnWidth,
+                transition: 'all 0.3s ease'
+              }}
+            />
+          )
+        })}
       </div>
 
       {totalPages > 1 && (
