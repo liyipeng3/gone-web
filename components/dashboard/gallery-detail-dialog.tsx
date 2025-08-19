@@ -24,10 +24,8 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
   currentIndex = 0,
   onNavigate
 }) => {
-  // 键盘事件处理
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // 只在详情弹窗打开时处理键盘事件
       if (!open) return
 
       if (allItems.length > 1 && onNavigate) {
@@ -52,7 +50,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
 
   if (!item) return null
 
-  // 解析标签
   const tags = item.tags ? JSON.parse(item.tags) : []
 
   return (
@@ -84,7 +81,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
           </DialogHeader>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 图片预览 */}
             <div className="space-y-4">
               <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
                 <Image
@@ -96,7 +92,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 />
               </div>
 
-              {/* 导航按钮 */}
               {allItems.length > 1 && onNavigate && (
                 <div className="flex gap-3">
                   <button
@@ -128,7 +123,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 </div>
               )}
 
-              {/* 基本信息 */}
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold">{item.title ?? '未命名'}</h3>
                 {item.description && (
@@ -138,7 +132,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 )}
               </div>
 
-              {/* 分类和标签 */}
               <div className="space-y-3">
                 {item.category && (
                   <div>
@@ -166,9 +159,7 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
               </div>
             </div>
 
-            {/* 详细信息 */}
             <div className="space-y-6">
-              {/* 文件信息 */}
               <div className="space-y-3">
                 <h4 className="text-base font-semibold flex items-center gap-2">
                   <Info className="h-4 w-4" />
@@ -196,7 +187,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 </div>
               </div>
 
-              {/* 时间信息 */}
               <div className="space-y-3">
                 <h4 className="text-base font-semibold flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
@@ -268,7 +258,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 </div>
               )}
 
-              {/* 位置信息 */}
               {(item.location ?? item.latitude) && (
                 <div className="space-y-3">
                   <h4 className="text-base font-semibold flex items-center gap-2">

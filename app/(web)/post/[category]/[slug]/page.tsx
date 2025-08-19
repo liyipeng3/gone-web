@@ -38,11 +38,9 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     tags
   } = await getPagePostInfo({ slug: params.slug })
 
-  // 获取评论数量
   const comments = cid ? await getCommentsByCid(cid) : []
   const commentsNum = comments.length
 
-  // 计算预计阅读时间和字数
   const readingTime = calculateReadingTime(content)
   const wordCount = getWordCount(content)
 
@@ -74,7 +72,6 @@ const Content: React.FC<{ params: { slug: string } }> = async (
           <Prose content={content}/>
         </article>
 
-        {/* 文章标签 */}
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6 mb-4">
             <span className="text-sm text-gray-600 dark:text-gray-300">标签：</span>

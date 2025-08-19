@@ -103,7 +103,6 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
   )
 }
 
-// 相册网格组件
 const GalleryGrid: React.FC<GalleryGridProps> = ({
   items,
   total,
@@ -118,23 +117,20 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
   const [itemPositions, setItemPositions] = useState<Array<{ left: number, top: number }>>([])
   const [containerHeight, setContainerHeight] = useState(0)
 
-  // 获取列数
   const getColumnCount = useCallback(() => {
     if (!containerRef.current) return 3
     const width = containerRef.current.offsetWidth
     if (width < 768) return 2 // md以下：2列
-    if (width < 1280) return 3 // xl以下：3列
-    if (width < 1536) return 4 // 2xl以下：3列
-    return 5 // 超宽屏：4列
+    if (width < 1280) return 3
+    if (width < 1536) return 4
+    return 5
   }, [])
 
-  // 计算瀑布流布局
   const calculateLayout = useCallback(() => {
     if (!containerRef.current || items.length === 0) return
 
     const columnCount = getColumnCount()
     const containerWidth = containerRef.current.offsetWidth
-    // 根据屏幕宽度动态调整间距
     const gap = containerWidth > 1280 ? 24 : containerWidth > 768 ? 20 : 16
     const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount
 
@@ -142,21 +138,17 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
     const positions: Array<{ left: number, top: number }> = []
 
     items.forEach((item) => {
-      // 找到最短的列
       const minHeightIndex = heights.indexOf(Math.min(...heights))
 
-      // 计算图片高度（保持原始比例）
       const aspectRatio = (item.height && item.width) ? item.height / item.width : 0.75
       const imageHeight = columnWidth * aspectRatio
-      const cardHeight = imageHeight // 加上padding等额外高度
+      const cardHeight = imageHeight
 
-      // 设置位置
       positions.push({
         left: minHeightIndex * (columnWidth + gap),
         top: heights[minHeightIndex]
       })
 
-      // 更新列高度
       heights[minHeightIndex] += cardHeight + gap
     })
 
@@ -164,7 +156,6 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
     setContainerHeight(Math.max(...heights))
   }, [items, getColumnCount])
 
-  // 监听窗口大小变化
   useEffect(() => {
     const handleResize = () => {
       calculateLayout()

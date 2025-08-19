@@ -66,7 +66,7 @@ export default function AboutPage () {
           text: content,
           type: 'page',
           status: 'publish',
-          slug: 'about', 
+          slug: 'about',
           category: post.category ?? 'default',
           tags: post.tags ?? []
         })

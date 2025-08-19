@@ -20,7 +20,6 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
   const searchParams = useSearchParams()
   const [tags, setTags] = useState<string[]>([])
 
-  // 获取所有标签
   useEffect(() => {
     const fetchTags = async () => {
       try {
@@ -37,7 +36,6 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
     void fetchTags()
   }, [])
 
-  // 更新URL参数
   const updateSearchParams = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -47,14 +45,12 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
       params.delete(key)
     }
 
-    // 重置页码
     params.delete('page')
 
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
     router.push(newUrl)
   }
 
-  // 分类过滤
   const handleCategoryFilter = (category: string | null) => {
     if (category) {
       router.push(`/gallery/${category}`)
@@ -63,14 +59,12 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
     }
   }
 
-  // 标签过滤
   const handleTagFilter = (tag: string | null) => {
     updateSearchParams('tag', tag)
   }
 
   return (
     <div className="mb-6 space-y-4">
-      {/* 分类过滤器 */}
       {categories.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -98,7 +92,6 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
         </div>
       )}
 
-      {/* 标签过滤器 */}
       {tags.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

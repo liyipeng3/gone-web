@@ -17,13 +17,11 @@ interface GalleryPageProps {
   }
 }
 
-// 使用 SSR 渲染相册页面
 export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
   const page = parseInt(searchParams.page ?? '1')
   const pageSize = 24
   const offset = (page - 1) * pageSize
 
-  // 并行获取数据
   const [galleryData] = await Promise.all([
     getGalleryList({
       category: searchParams.category,

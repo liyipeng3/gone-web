@@ -22,7 +22,6 @@ const GalleryDeleteDialog: React.FC<GalleryDeleteDialogProps> = ({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  // 处理删除
   const handleDelete = async () => {
     setLoading(true)
 
@@ -59,7 +58,6 @@ const GalleryDeleteDialog: React.FC<GalleryDeleteDialogProps> = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* 照片预览 */}
           <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0">
               <Image
@@ -84,7 +82,6 @@ const GalleryDeleteDialog: React.FC<GalleryDeleteDialogProps> = ({
             </div>
           </div>
 
-          {/* 操作按钮 */}
           <div className="flex justify-end space-x-2">
             <Button
               variant="outline"

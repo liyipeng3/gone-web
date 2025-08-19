@@ -86,7 +86,6 @@ export function getCameraBrand (cameraModel: string): CameraBrand | null {
 export function formatCameraModel (cameraModel: string): string {
   if (!cameraModel) return ''
 
-  // 移除常见的前缀，保持简洁
   return cameraModel
     .replace(/^(Canon|Sony|Nikon|Fujifilm|Panasonic|Samsung|Huawei|Xiaomi|Apple)\s*/i, '')
     .trim()

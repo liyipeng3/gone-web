@@ -50,10 +50,8 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
 
-  // 读取EXIF信息（不上传文件）
   const readExifData = async (file: File) => {
     try {
-      // 使用exifr库直接读取EXIF
       const exifr = (await import('exifr')).default
       const buffer = await file.arrayBuffer()
       const exifData = await exifr.parse(buffer, true)
@@ -68,7 +66,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     return null
   }
 
-  // 处理文件选择
   const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => {
     if (!selectedFiles) return
 
@@ -78,13 +75,12 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       if (file.type.startsWith('image/')) {
         const preview = URL.createObjectURL(file)
 
-        // 自动获取EXIF信息
         const takenAt = await readExifData(file)
 
         newFiles.push({
           file,
           preview,
-          title: file.name.replace(/\.[^/.]+$/, ''), // 移除文件扩展名
+          title: file.name.replace(/\.[^/.]+$/, ''),
           description: '',
           category: '',
           tags: [],
@@ -102,7 +98,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     setFiles(prev => [...prev, ...newFiles])
   }, [])
 
-  // 处理拖拽
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(true)
@@ -119,7 +114,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     void handleFileSelect(e.dataTransfer.files)
   }, [handleFileSelect])
 
-  // 移除文件
   const removeFile = (index: number) => {
     setFiles(prev => {
       const newFiles = [...prev]
@@ -129,7 +123,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     })
   }
 
-  // 更新文件信息
   const updateFile = (index: number, updates: Partial<FilePreview>) => {
     setFiles(prev => {
       const newFiles = [...prev]
@@ -138,7 +131,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     })
   }
 
-  // 解析标签字符串
   const parseTags = (tagsString: string): string[] => {
     return tagsString
       .split(/[,，\s]+/)
@@ -146,7 +138,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       .filter(tag => tag.length > 0)
   }
 
-  // 上传文件到OSS
   const uploadFileToServer = async (file: File): Promise<{ url: string, exif: any }> => {
     const formData = new FormData()
     formData.append('file', file)
@@ -169,13 +160,11 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
           errorMessage = errorData.message
         }
 
-        // 如果有调试信息，也打印出来
         if (errorData.debug) {
           console.error('调试信息:', errorData.debug)
         }
       } catch (parseError) {
         console.error('无法解析错误响应:', parseError)
-        // 尝试获取原始文本
         try {
           const errorText = await response.text()
           console.error('错误响应文本:', errorText)
@@ -198,20 +187,17 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     }
   }
 
-  // 表单验证
   const validateFiles = (): boolean => {
     let hasErrors = false
 
     const updatedFiles = files.map((filePreview) => {
       const errors: FilePreview['errors'] = {}
 
-      // 验证标题
       if (!filePreview.title?.trim()) {
         errors.title = true
         hasErrors = true
       }
 
-      // 验证地区信息
       if (!filePreview.country) {
         errors.country = true
         hasErrors = true
@@ -225,7 +211,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         hasErrors = true
       }
 
-      // 验证拍摄时间
       if (!filePreview.takenAt) {
         errors.takenAt = true
         hasErrors = true
@@ -241,11 +226,9 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     return !hasErrors
   }
 
-  // 处理上传
   const handleUpload = async () => {
     if (files.length === 0) return
 
-    // 表单验证
     const isValid = validateFiles()
     if (!isValid) {
       return
@@ -257,20 +240,16 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       for (let i = 0; i < files.length; i++) {
         const filePreview = files[i]
 
-        // 上传文件
         const uploadResult = await uploadFileToServer(filePreview.file)
 
-        // 如果选择了国家/省/市，拼装位置字符串
         const selectedLocation = [filePreview.country, filePreview.province, filePreview.city]
           .filter(Boolean)
           .join(' · ')
 
-        // 使用用户填写的拍摄时间
         const finalTakenAt = filePreview.takenAt
           ? Math.floor(filePreview.takenAt.getTime() / 1000)
           : uploadResult.exif.takenAt
 
-        // 创建相册项
         const response = await fetch('/api/gallery', {
           method: 'POST',
           headers: {
@@ -363,7 +342,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                 {files.map((filePreview, index) => (
                   <div key={index} className="border rounded-lg p-4 space-y-4">
                     <div className="flex items-start gap-4">
-                      {/* 图片预览 */}
                       <div className="relative w-24 h-24 shrink-0">
                         <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                           <Image
@@ -382,7 +360,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                         </button>
                       </div>
 
-                      {/* 文件信息编辑 */}
                       <div className="flex-1 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
@@ -575,7 +552,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             </div>
           )}
 
-          {/* 操作按钮 */}
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={handleClose} disabled={uploading}>
               取消

@@ -38,7 +38,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     city: ''
   })
 
-  // 解析位置字符串，提取国家、省份、城市信息
   const parseLocationString = (location: string | null): {
     country: string
     province: string
@@ -48,45 +47,36 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
       return { country: '中国', province: '', city: '' }
     }
 
-    // 解析形如 "中国 · 北京市 · 北京市" 或 "北京市 · 北京市" 的格式
     const parts = location.split('·').map(part => part.trim()).filter(Boolean)
     if (parts.length === 0) {
       return { country: '中国', province: '', city: '' }
     }
 
     if (parts.length === 1) {
-      // 只有一个部分，可能是省份或城市
       const singlePart = parts[0]
-      // 检查是否是已知的国家
       const countries = getCountries()
       if (countries.includes(singlePart)) {
         return { country: singlePart, province: '', city: '' }
       }
-      // 否则假设是省份，默认国家为中国
       return { country: '中国', province: singlePart, city: '' }
     }
 
     if (parts.length === 2) {
-      // 两个部分，可能是 "国家 · 省份" 或 "省份 · 城市"
       const countries = getCountries()
       if (countries.includes(parts[0])) {
-        // 第一部分是国家
         return { country: parts[0], province: parts[1], city: '' }
       } else {
-        // 假设是 "省份 · 城市"，默认国家为中国
         return { country: '中国', province: parts[0], city: parts[1] }
       }
     }
 
     if (parts.length >= 3) {
-      // 三个或更多部分，取前三个：国家、省份、城市
       return { country: parts[0], province: parts[1], city: parts[2] }
     }
 
     return { country: '中国', province: '', city: '' }
   }
 
-  // 初始化表单数据
   useEffect(() => {
     if (item) {
       const tags = item.tags ? JSON.parse(item.tags) : []
@@ -105,7 +95,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     }
   }, [item])
 
-  // 解析标签字符串
   const parseTags = (tagsString: string): string[] => {
     return tagsString
       .split(/[,，\s]+/)
@@ -113,7 +102,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
       .filter(tag => tag.length > 0)
   }
 
-  // 处理表单提交
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -129,7 +117,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
           description: formData.description || undefined,
           category: formData.category || undefined,
           tags: parseTags(formData.tags),
-          // 组合位置优先：选择的省市 > 输入框
           location: [formData.country, formData.province, formData.city].filter(Boolean).join(' · ') || formData.location || undefined,
           isPublic: formData.isPublic
         })

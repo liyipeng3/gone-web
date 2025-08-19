@@ -4,7 +4,6 @@ import { uploadToOSS, generateFileName } from '@/lib/oss'
 import exifr from 'exifr'
 import sharp from 'sharp'
 
-// 支持的图片类型
 const SUPPORTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
@@ -13,10 +12,8 @@ const SUPPORTED_IMAGE_TYPES = [
   'image/gif'
 ]
 
-// 最大文件大小 (50MB)
 const MAX_FILE_SIZE = 50 * 1024 * 1024
 
-// 格式化快门速度
 function formatShutterSpeed (exposureTime: number): string {
   if (exposureTime >= 1) {
     return `${exposureTime}s`
@@ -28,7 +25,6 @@ function formatShutterSpeed (exposureTime: number): string {
 
 export async function POST (request: NextRequest) {
   try {
-    // 验证用户权限
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json(
@@ -37,7 +33,6 @@ export async function POST (request: NextRequest) {
       )
     }
 
-    // 获取上传的文件
     const formData = await request.formData()
     const file = formData.get('file') as File
 
@@ -54,7 +49,6 @@ export async function POST (request: NextRequest) {
       )
     }
 
-    // 验证文件类型
     if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
       return NextResponse.json(
         {
@@ -69,7 +63,6 @@ export async function POST (request: NextRequest) {
       )
     }
 
-    // 验证文件大小
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         {
@@ -84,23 +77,17 @@ export async function POST (request: NextRequest) {
       )
     }
 
-    // 读取文件数据
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // 提取 EXIF 信息
     let exifData = null
     try {
-      // EXIF 信息主要存在于 JPEG 格式中，部分 TIFF 和 RAW 格式也支持
-
-      // 解析所有 EXIF/元数据信息，包括 GPS 数据
       exifData = await exifr.parse(buffer, true)
     } catch (error) {
       console.error('EXIF 提取失败:', error)
-      // EXIF 提取失败不影响上传流程
+
     }
 
-    // 检查 EXIF 中是否有宽高信息
     let exifWidth = null
     let exifHeight = null
     if (exifData) {
@@ -108,7 +95,6 @@ export async function POST (request: NextRequest) {
       exifHeight = exifData.ExifImageHeight || exifData.ImageHeight || exifData.PixelYDimension || null
     }
 
-    // 只有当 EXIF 中没有宽高信息时，才使用 sharp 获取
     let imageWidth = exifWidth
     let imageHeight = exifHeight
 
@@ -120,22 +106,19 @@ export async function POST (request: NextRequest) {
         console.log('Sharp 获取图片尺寸:', { width: metadata.width, height: metadata.height, final: { width: imageWidth, height: imageHeight } })
       } catch (error) {
         console.error('Sharp 获取图片尺寸失败:', error)
-        // Sharp 失败时保持 EXIF 的值（可能为 null）
+
       }
     } else {
       console.log('使用 EXIF 中的图片尺寸:', { width: imageWidth, height: imageHeight })
     }
 
-    // 生成文件名
     const fileName = generateFileName(file.name, 'img')
 
-    // 设置上传头部信息
     const headers = {
       'Content-Type': file.type,
-      'Cache-Control': 'public, max-age=31536000' // 1年缓存
+      'Cache-Control': 'public, max-age=31536000'
     }
 
-    // 上传到OSS
     const result = await uploadToOSS(buffer, fileName, { headers })
 
     // 处理 GPS 地理位置信息

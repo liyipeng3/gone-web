@@ -32,7 +32,6 @@ interface GalleryManagementItemProps {
   onImageClick: (item: gallery) => void
 }
 
-// 单个相册管理项组件（避免不必要的重渲染）
 const GalleryManagementItem = React.memo(function GalleryManagementItemComponent ({
   item,
   onEdit,
