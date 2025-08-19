@@ -93,7 +93,7 @@ export default async function PhotoDetailPage ({
       /> */}
 
       <div className="space-y-8 mt-8 h-max">
-        <div className="w-full h-max">
+        <div className="w-full h-max drop-shadow-lg">
           <div className="relative h-max md:h-[85vh] flex flex-col justify-end">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
@@ -151,8 +151,8 @@ export default async function PhotoDetailPage ({
             </div>
           </div>
           <div className="hidden md:flex justify-center w-full ">
-            <div className="flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 shadow-lg bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
-              style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 85vw))` }}>
+            <div className="flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
+              style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
               <div className="flex flex-col items-start justify-between h-full">
                 {photo.camera &&
                   (() => {
@@ -266,7 +266,7 @@ export default async function PhotoDetailPage ({
               <div className="hidden md:flex justify-center w-full mt-8">
                 <div
                   className="flex flex-wrap items-center justify-center gap-4"
-                  style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 85vw))` }}
+                  style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}
                 >
                   {photo.description && (
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -297,10 +297,10 @@ export default async function PhotoDetailPage ({
         <Link
           href={`/gallery/photo/${adjacentPhotos.previous.gid}${searchParams.category ? `?category=${searchParams.category}` : ''
             }`}
-          className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 transform z-20 bg-black/30 hover:bg-black/60 text-white px-2 py-8 sm:px-3 sm:py-12 rounded transition-all duration-200 opacity-50 hover:opacity-80 shadow-md backdrop-blur-sm dark:bg-gray-800"
+          className="group fixed left-3 sm:left-6 top-1/2 -translate-y-1/2 transform z-20 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 hover:bg-white dark:bg-gray-900/90 dark:hover:bg-gray-900 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-full transition-all duration-300 opacity-60 hover:opacity-100 shadow-lg hover:shadow-xl backdrop-blur-sm border border-white/20 hover:scale-110 active:scale-95 flex items-center justify-center"
           title="上一张 (←)"
         >
-          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:-translate-x-0.5" />
         </Link>
       )}
 
@@ -308,10 +308,10 @@ export default async function PhotoDetailPage ({
         <Link
           href={`/gallery/photo/${adjacentPhotos.next.gid}${searchParams.category ? `?category=${searchParams.category}` : ''
             }`}
-          className="fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 transform z-20 bg-black/30 hover:bg-black/60 text-white px-2 py-8 sm:px-3 sm:py-12 rounded transition-all duration-200 opacity-50 hover:opacity-80 shadow-md backdrop-blur-sm dark:bg-gray-800"
+          className="group fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 transform z-20 w-12 h-12 sm:w-14 sm:h-14 bg-white/90 hover:bg-white dark:bg-gray-900/90 dark:hover:bg-gray-900 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-full transition-all duration-300 opacity-60 hover:opacity-100 shadow-lg hover:shadow-xl backdrop-blur-sm border border-white/20 hover:scale-110 active:scale-95 flex items-center justify-center"
           title="下一张 (→)"
         >
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}
 

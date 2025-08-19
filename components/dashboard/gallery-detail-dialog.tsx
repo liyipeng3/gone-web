@@ -98,32 +98,32 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
 
               {/* 导航按钮 */}
               {allItems.length > 1 && onNavigate && (
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={() => {
                       const prevIndex = currentIndex > 0 ? currentIndex - 1 : allItems.length - 1
                       onNavigate(prevIndex)
                     }}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="group flex-1 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                     title="上一张"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
-                    上一张
+                    <span className="font-medium text-sm">上一张</span>
                   </button>
                   <button
                     onClick={() => {
                       const nextIndex = currentIndex < allItems.length - 1 ? currentIndex + 1 : 0
                       onNavigate(nextIndex)
                     }}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="group flex-1 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                     title="下一张"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className="font-medium text-sm">下一张</span>
+                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                    下一张
                   </button>
                 </div>
               )}
