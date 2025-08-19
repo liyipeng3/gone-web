@@ -16,7 +16,6 @@ interface CategoryGalleryPageProps {
   }
 }
 
-// 动态生成页面元数据
 export async function generateMetadata ({ params }: CategoryGalleryPageProps): Promise<Metadata> {
   const category = decodeURIComponent(params.category)
 
@@ -26,20 +25,17 @@ export async function generateMetadata ({ params }: CategoryGalleryPageProps): P
   }
 }
 
-// 使用 SSR 渲染分类相册页面
 export default async function CategoryGalleryPage ({ params, searchParams }: CategoryGalleryPageProps) {
   const category = decodeURIComponent(params.category)
   const page = parseInt(searchParams.page ?? '1')
   const pageSize = 24
   const offset = (page - 1) * pageSize
 
-  // 验证分类是否存在
   const categories = await getGalleryCategories()
   if (!categories.includes(category)) {
     redirect('/gallery')
   }
 
-  // 并行获取数据
   const galleryData = await getGalleryList({
     category,
     tag: searchParams.tag,
@@ -69,14 +65,12 @@ export default async function CategoryGalleryPage ({ params, searchParams }: Cat
         </p>
       </div>
 
-      {/* 过滤器 */}
       <GalleryFilter
         categories={categories}
         currentCategory={category}
         currentTag={searchParams.tag}
       />
 
-      {/* 相册网格 */}
       <GalleryGrid
         items={items}
         total={total}

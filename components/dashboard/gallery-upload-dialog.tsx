@@ -285,11 +285,8 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             isPublic: filePreview.isPublic,
             mimeType: filePreview.file.type,
             fileSize: filePreview.file.size,
-            // 先展开 EXIF，再用下方字段覆盖
             ...uploadResult.exif,
-            // 优先级：国家省市选择 > 手动输入 > EXIF
             location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined,
-            // 使用最终确定的拍摄时间
             takenAt: finalTakenAt
           })
         })
@@ -299,17 +296,14 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         }
       }
 
-      // 清理预览URL
       files.forEach(file => { URL.revokeObjectURL(file.preview) })
       setFiles([])
 
-      // 关闭对话框并刷新页面
       onOpenChange(false)
       router.refresh()
     } catch (error) {
       console.error('上传失败:', error)
 
-      // 显示详细的错误信息
       const errorMessage = error instanceof Error ? error.message : '上传失败，请重试'
       alert(`上传失败: ${errorMessage}`)
     } finally {
@@ -317,7 +311,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
     }
   }
 
-  // 关闭对话框时清理资源
   const handleClose = () => {
     if (!uploading) {
       files.forEach(file => { URL.revokeObjectURL(file.preview) })
@@ -334,7 +327,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* 文件选择区域 */}
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               dragOver
@@ -365,7 +357,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             </div>
           </div>
 
-          {/* 文件预览和编辑 */}
           {files.length > 0 && (
             <div className="space-y-4">
               <div className="space-y-6">

@@ -25,12 +25,10 @@ export default async function DashboardPage ({
     return notFound()
   }
 
-  // 分页参数
   const page = Number(searchParams.page) || 1
   const pageSize = 10
   const skip = (page - 1) * pageSize
 
-  // 获取总数量
   const totalPosts = await prisma.posts.count({
     where: {
       uid: parseInt(user.id),

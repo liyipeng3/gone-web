@@ -10,7 +10,6 @@ import http from '@/lib/http'
 import { useRequest } from 'ahooks'
 import { Icons } from '@/components/common/icons'
 
-// 定义 Post 类型接口
 interface Post {
   cid: number
   title: string
@@ -26,7 +25,6 @@ export default function AboutPage () {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
-  // 获取 about 页面数据
   const fetchAboutPage = async () => {
     try {
       const response = await http.get('/api/post/about')
@@ -44,7 +42,6 @@ export default function AboutPage () {
     }
   }
 
-  // 保存 about 页面
   const { run: saveAboutPage, loading: saveLoading } = useRequest(
     async () => {
       if (!title.trim()) {
@@ -69,11 +66,10 @@ export default function AboutPage () {
           text: content,
           type: 'page',
           status: 'publish',
-          slug: 'about', // 确保 slug 保持为 about
+          slug: 'about', 
           category: post.category ?? 'default',
           tags: post.tags ?? []
         })
-        // 强制清除缓存并重新获取数据
         await http.get('/api/post/about?forceRefresh=true')
         await fetchAboutPage()
 

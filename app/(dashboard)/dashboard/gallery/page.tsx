@@ -25,7 +25,6 @@ export default async function GalleryManagementPage ({ searchParams }: GalleryMa
   const pageSize = 12
   const offset = (page - 1) * pageSize
 
-  // 获取相册列表（包括私有的）
   const { items, total } = await getGalleryList({
     category: searchParams.category,
     tag: searchParams.tag,
@@ -33,7 +32,7 @@ export default async function GalleryManagementPage ({ searchParams }: GalleryMa
     offset,
     orderBy: 'createdAt',
     orderDirection: 'desc',
-    isPublic: undefined // 显示所有图片，包括私有的
+    isPublic: undefined
   })
 
   const totalPages = Math.ceil(total / pageSize)

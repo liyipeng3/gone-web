@@ -16,17 +16,14 @@ export default async function CommentsPage ({
 }) {
   const filter = searchParams.filter as string || 'approved'
 
-  // 分页参数
   const page = Number(searchParams.page) || 1
   const pageSize = 10
   const skip = (page - 1) * pageSize
 
-  // 查询条件
   const whereCondition = filter === 'all'
     ? {}
     : { status: filter }
 
-  // 获取总评论数
   const totalComments = await prisma.comments.count({
     where: whereCondition
   })

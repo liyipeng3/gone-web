@@ -19,7 +19,6 @@ interface PhotoDetailPageProps {
   }
 }
 
-// 动态生成页面元数据
 export async function generateMetadata ({
   params
 }: PhotoDetailPageProps): Promise<Metadata> {
@@ -108,7 +107,7 @@ export default async function PhotoDetailPage ({
               }
             />
           </div>
-          <div className="md:hidden flex justify-center w-full ">
+          <div className="md:hidden flex justify-center w-full select-none">
             <div className="flex flex-col gap-3 px-4 py-4 text-sm text-gray-600 dark:text-gray-800 shadow-lg bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md w-full">
               {photo.camera && (() => {
                 const brand = getCameraBrand(photo.camera)
@@ -150,7 +149,7 @@ export default async function PhotoDetailPage ({
 
             </div>
           </div>
-          <div className="hidden md:flex justify-center w-full ">
+          <div className="hidden md:flex justify-center w-full select-none">
             <div className="flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
               style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
               <div className="flex flex-col items-start justify-between h-full">
