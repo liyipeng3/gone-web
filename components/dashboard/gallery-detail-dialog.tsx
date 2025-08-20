@@ -5,7 +5,7 @@ import type { gallery } from '@prisma/client'
 import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { formatDate } from '@/lib/utils'
-import { Calendar, Camera, MapPin, Info, Eye, EyeOff } from 'lucide-react'
+import { Calendar, Camera, MapPin, Info, Eye, EyeOff, Tag } from 'lucide-react'
 
 interface GalleryDetailDialogProps {
   item: gallery | null
@@ -132,31 +132,6 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 )}
               </div>
 
-              <div className="space-y-3">
-                {item.category && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">分类</label>
-                    <div className="mt-1">
-                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">
-                        {item.category}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {tags.length > 0 && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">标签</label>
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {tags.map((tag: string, index: number) => (
-                        <span key={index} className="inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-full">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
 
             <div className="space-y-6">
@@ -186,6 +161,30 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* 分类和标签信息 */}
+              {(item.category ?? tags.length > 0) && (
+                <div className="space-y-3">
+                  <h4 className="text-base font-semibold flex items-center gap-2">
+                    <Tag className="h-4 w-4" />
+                    分类标签
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    {item.category && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500 dark:text-gray-400">分类</span>
+                        <span>{item.category}</span>
+                      </div>
+                    )}
+                    {tags.length > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500 dark:text-gray-400">标签</span>
+                        <span className="text-right">{tags.join(', ')}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-3">
                 <h4 className="text-base font-semibold flex items-center gap-2">

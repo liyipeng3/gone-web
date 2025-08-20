@@ -43,7 +43,7 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
-  const tags = item.tags ? JSON.parse(item.tags) : []
+  // const tags = item.tags ? JSON.parse(item.tags) : []
 
   return (
     <div className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
@@ -57,7 +57,7 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
               src={item.thumbnailPath ?? item.imagePath}
               alt={item.title ?? '相册图片'}
               fill
-              className={`object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+              className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
               onLoad={() => { setImageLoaded(true) }}
               onError={() => { setImageError(true) }}
@@ -164,7 +164,7 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
         </div>
 
         <div className="space-y-1 pt-1">
-          {item.category && (
+          {/* {item.category && (
             <div className="flex items-center">
               <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">分类:</span>
               <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
@@ -193,12 +193,12 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
                 )}
               </div>
             </div>
-          )}
-          {item.description && (
+          )} */}
+          {/* {item.description && (
             <p className="text-sm text-gray-600 dark:text-gray-400  line-clamp-2 leading-relaxed">
               {item.description}
             </p>
-          )}
+          )} */}
         </div>
       </div>
     </div>
