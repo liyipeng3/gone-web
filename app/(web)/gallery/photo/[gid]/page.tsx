@@ -143,11 +143,8 @@ export default async function PhotoDetailPage ({
               )}
               <div className='flex flex-row justify-between'>
               <span className='text-gray-600 text-sm flex'>{photo?.takenAt ? dayjs(photo?.takenAt * 1000).format('YYYY-MM-DD HH:mm:ss') : '--'}</span>
-
                 <div className='flex'>{getSimpleLocation(photo?.location ?? '')}</div>
-
               </div>
-
             </div>
           </div>
           <div className="hidden md:flex justify-center w-full select-none">
@@ -162,7 +159,6 @@ export default async function PhotoDetailPage ({
                         {brand
                           ? (
                             <div className='flex items-center gap-2 justify-between'>
-
                               <span className=" font-bold">
                                 {formatCameraModel(photo.camera)}
                               </span>

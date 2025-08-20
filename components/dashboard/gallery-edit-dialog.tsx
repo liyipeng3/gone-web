@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { getCountries, getProvinces, getCities } from '@/lib/regions'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
+import { DateTimePicker } from '@/components/ui/date-time-picker'
 
 interface GalleryEditDialogProps {
   item: gallery
@@ -33,9 +34,17 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     tags: '',
     location: '',
     isPublic: true,
-    country: '中国',
-    province: '',
-    city: ''
+    country: '中国' as string | undefined,
+    province: '' as string | undefined,
+    city: '' as string | undefined,
+    takenAt: null as Date | null,
+    errors: {
+      title: false,
+      country: false,
+      province: false,
+      city: false,
+      takenAt: false
+    }
   })
 
   const parseLocationString = (location: string | null): {
@@ -88,9 +97,17 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
         tags: tags.join(', '),
         location: item.location ?? '',
         isPublic: item.isPublic,
-        country: parsedLocation.country,
-        province: parsedLocation.province,
-        city: parsedLocation.city
+        country: parsedLocation.country || undefined,
+        province: parsedLocation.province || undefined,
+        city: parsedLocation.city || undefined,
+        takenAt: item.takenAt ? new Date(item.takenAt * 1000) : null,
+        errors: {
+          title: false,
+          country: false,
+          province: false,
+          city: false,
+          takenAt: false
+        }
       })
     }
   }, [item])
@@ -102,11 +119,34 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
       .filter(tag => tag.length > 0)
   }
 
+  const validateForm = (): boolean => {
+    const errors = {
+      title: !formData.title?.trim(),
+      country: !formData.country,
+      province: !formData.province,
+      city: !formData.city,
+      takenAt: !formData.takenAt
+    }
+
+    setFormData(prev => ({ ...prev, errors }))
+    return !Object.values(errors).some(error => error)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const isValid = validateForm()
+    if (!isValid) {
+      return
+    }
+
     setLoading(true)
 
     try {
+      const finalTakenAt = formData.takenAt
+        ? Math.floor(formData.takenAt.getTime() / 1000)
+        : undefined
+
       const response = await fetch(`/api/gallery/${item.gid}`, {
         method: 'PATCH',
         headers: {
@@ -118,7 +158,8 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
           category: formData.category || undefined,
           tags: parseTags(formData.tags),
           location: [formData.country, formData.province, formData.city].filter(Boolean).join(' · ') || formData.location || undefined,
-          isPublic: formData.isPublic
+          isPublic: formData.isPublic,
+          takenAt: finalTakenAt
         })
       })
 
@@ -138,20 +179,42 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>编辑照片</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <Label htmlFor="title">标题</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => { setFormData(prev => ({ ...prev, title: e.target.value })) }}
-              placeholder="照片标题"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">标题 <span className="text-red-500">*</span></Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    title: e.target.value,
+                    errors: { ...prev.errors, title: false }
+                  }))
+                }}
+                placeholder="照片标题"
+                className={formData.errors?.title ? 'border-red-500 focus:border-red-500' : ''}
+                required
+              />
+              {formData.errors?.title && (
+                <p className="text-sm text-red-500">请填写照片标题</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="category">分类</Label>
+              <Input
+                id="category"
+                value={formData.category}
+                onChange={(e) => { setFormData(prev => ({ ...prev, category: e.target.value })) }}
+                placeholder="如：旅行、生活、摄影"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -161,87 +224,138 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
               value={formData.description}
               onChange={(e) => { setFormData(prev => ({ ...prev, description: e.target.value })) }}
               placeholder="照片描述..."
-              rows={3}
+              rows={2}
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tags">标签</Label>
+              <Input
+                id="tags"
+                value={formData.tags}
+                onChange={(e) => { setFormData(prev => ({ ...prev, tags: e.target.value })) }}
+                placeholder="标签1, 标签2, 标签3"
+              />
+            </div>
+            <div className="space-y-2">
+              <DateTimePicker
+                label="拍摄时间"
+                value={formData.takenAt}
+                onChange={(date) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    takenAt: date,
+                    errors: { ...prev.errors, takenAt: false }
+                  }))
+                }}
+                placeholder="选择拍摄日期和时间"
+                error={formData.errors?.takenAt}
+                required
+              />
+              {formData.errors?.takenAt && (
+                <p className="text-sm text-red-500">请填写拍摄时间</p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">分类</Label>
-            <Input
-              id="category"
-              value={formData.category}
-              onChange={(e) => { setFormData(prev => ({ ...prev, category: e.target.value })) }}
-              placeholder="如：旅行、生活、摄影"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tags">标签</Label>
-            <Input
-              id="tags"
-              value={formData.tags}
-              onChange={(e) => { setFormData(prev => ({ ...prev, tags: e.target.value })) }}
-              placeholder="标签1, 标签2, 标签3"
-            />
-            <p className="text-xs text-gray-500 mt-1">用逗号分隔多个标签</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="space-y-2">
-              <Label>国家</Label>
-              <Select
-                value={formData.country}
-                onValueChange={(val) => {
-                  setFormData(prev => ({ ...prev, country: val, province: '', city: '' }))
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="选择国家" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getCountries().map(c => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>省/州</Label>
-              <Select
-                value={formData.province}
-                onValueChange={(val) => {
-                  setFormData(prev => ({ ...prev, province: val, city: '' }))
-                }}
-                disabled={!formData.country}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="选择省/州" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getProvinces(formData.country).map(p => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>市/地区</Label>
-              <Select
-                value={formData.city}
-                onValueChange={(val) => {
-                  setFormData(prev => ({ ...prev, city: val }))
-                }}
-                disabled={!formData.country || !formData.province}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="选择市/地区" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getCities(formData.country, formData.province).map(city => (
-                    <SelectItem key={city} value={city}>{city}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
+              <div className="space-y-2">
+                <Label>国家 <span className="text-red-500">*</span></Label>
+                <Select
+                  value={formData.country ?? ''}
+                  onValueChange={(val) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      country: val || undefined,
+                      province: undefined,
+                      city: undefined,
+                      errors: {
+                        ...prev.errors,
+                        country: false,
+                        province: false,
+                        city: false
+                      }
+                    }))
+                  }}
+                  required
+                >
+                  <SelectTrigger className={formData.errors?.country ? 'border-red-500 focus:border-red-500' : ''}>
+                    <SelectValue placeholder="选择国家" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getCountries().map(c => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.errors?.country && (
+                  <p className="text-sm text-red-500">请选择国家</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>省/州 <span className="text-red-500">*</span></Label>
+                <Select
+                  value={formData.province ?? ''}
+                  onValueChange={(val) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      province: val || undefined,
+                      city: undefined,
+                      errors: {
+                        ...prev.errors,
+                        province: false,
+                        city: false
+                      }
+                    }))
+                  }}
+                  disabled={!formData.country}
+                  required
+                >
+                  <SelectTrigger className={formData.errors?.province ? 'border-red-500 focus:border-red-500' : ''}>
+                    <SelectValue placeholder="选择省/州" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getProvinces(formData.country).map(p => (
+                      <SelectItem key={p} value={p}>{p}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.errors?.province && (
+                  <p className="text-sm text-red-500">请选择省/州</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>市/地区 <span className="text-red-500">*</span></Label>
+                <Select
+                  value={formData.city ?? ''}
+                  onValueChange={(val) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      city: val || undefined,
+                      errors: {
+                        ...prev.errors,
+                        city: false
+                      }
+                    }))
+                  }}
+                  disabled={!formData.country || !formData.province}
+                  required
+                >
+                  <SelectTrigger className={formData.errors?.city ? 'border-red-500 focus:border-red-500' : ''}>
+                    <SelectValue placeholder="选择市/地区" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getCities(formData.country, formData.province).map(city => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formData.errors?.city && (
+                  <p className="text-sm text-red-500">请选择市/地区</p>
+                )}
+              </div>
             </div>
           </div>
 
