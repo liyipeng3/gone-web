@@ -87,3 +87,7 @@ export function getCities (countryName?: string, provinceName?: string): string[
   const province = country.provinces.find(p => p.name === provinceName)
   return province ? province.cities : []
 }
+
+export function getSimpleLocation (location: string): string {
+  return location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')
+}

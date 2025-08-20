@@ -94,7 +94,7 @@ export function DateTimePicker ({
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {value ? dayjs(value).format('yyyy-MM-dd') : placeholder}
+              {value ? dayjs(value).format('YYYY-MM-DD') : placeholder}
               <ChevronDownIcon className="ml-auto h-4 w-4" />
             </Button>
           </PopoverTrigger>

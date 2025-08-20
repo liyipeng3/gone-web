@@ -157,12 +157,10 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
             <span>创建时间</span>
             <span>{formatDate(item.createdAt * 1000)}</span>
           </div>
-          {item.takenAt && (
             <div className="flex justify-between">
               <span>拍摄时间</span>
-              <span>{formatDate(item.takenAt * 1000)}</span>
+              <span>{item.takenAt ? formatDate(item.takenAt * 1000) : '--'}</span>
             </div>
-          )}
         </div>
 
         <div className="space-y-1 pt-1">

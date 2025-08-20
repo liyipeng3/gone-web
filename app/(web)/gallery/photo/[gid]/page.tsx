@@ -9,6 +9,7 @@ import { getCameraBrand, formatCameraModel } from '@/lib/camera-brands'
 import dayjs from 'dayjs'
 import Image from '@/components/common/image'
 import { defaultIcons } from '@/components/common/prose/lightbox'
+import { getSimpleLocation } from '@/lib/regions'
 
 interface PhotoDetailPageProps {
   params: {
@@ -140,12 +141,13 @@ export default async function PhotoDetailPage ({
               {photo.lens && (
                 <div className="text-gray-600 text-sm flex">{photo.lens}</div>
               )}
-              {photo.takenAt && (
-                <span className='text-gray-600 text-sm flex'>{dayjs(photo.takenAt * 1000).format('YYYY-MM-DD HH:mm:ss')}</span>
-              )}
-              {photo.location && (
-                <div className='flex'>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</div>
-              )}
+              <div className='flex flex-row justify-between'>
+              <span className='text-gray-600 text-sm flex'>{photo?.takenAt ? dayjs(photo?.takenAt * 1000).format('YYYY-MM-DD HH:mm:ss') : '--'}</span>
+             
+                <div className='flex'>{getSimpleLocation(photo?.location ?? '')}</div>
+            
+              </div>
+     
 
             </div>
           </div>
@@ -239,7 +241,9 @@ export default async function PhotoDetailPage ({
               </div>
             </div>
           </div>
-          {(photo.description ?? tags.length > 0) && (
+       
+        </div>
+        {(photo.description ?? tags.length > 0) && (
             <>
               <div className="md:hidden w-full mt-6">
                 <div className="flex flex-col gap-3 px-4">
@@ -289,7 +293,6 @@ export default async function PhotoDetailPage ({
               </div>
             </>
           )}
-        </div>
       </div>
 
       {adjacentPhotos.previous && (
