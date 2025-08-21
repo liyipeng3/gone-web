@@ -142,7 +142,7 @@ export default async function CommentsPage ({
                           : comment.status === 'waiting' ? 'bg-yellow-500' : 'bg-red-500'
                         }`}></div>
                       </div>
-                      <div className="min-w-0 h-full flex flex-col justify-center items-start gap-2">
+                      <div className="min-w-0 h-full flex flex-col justify-center items-start">
                         <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                           {comment.author}
                         </div>
@@ -160,7 +160,7 @@ export default async function CommentsPage ({
                     </div>
                   </td>
                   <td className="px-4 py-5">
-                    <div className="space-y-2.5">
+                    <div className="space-y-1">
                       <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-wrap">
                         <time className="font-medium whitespace-nowrap">
                           {dayjs((comment.created ?? 0) * 1000).format('YYYY-MM-DD HH:mm')}
