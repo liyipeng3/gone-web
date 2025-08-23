@@ -85,7 +85,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
 
                 {item.takenAt && (
                   <p className="text-white text-xs mt-1">
-                    {dayjs(item.takenAt * 1000).format('YYYY-MM-DD')}
+                    {dayjs(item.takenAt).format('YYYY-MM-DD')}
                   </p>
                 )}
               </div>

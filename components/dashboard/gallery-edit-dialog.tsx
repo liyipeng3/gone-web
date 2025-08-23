@@ -100,7 +100,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
         country: parsedLocation.country || undefined,
         province: parsedLocation.province || undefined,
         city: parsedLocation.city || undefined,
-        takenAt: item.takenAt ? new Date(item.takenAt * 1000) : null,
+        takenAt: item.takenAt ?? null,
         errors: {
           title: false,
           country: false,
