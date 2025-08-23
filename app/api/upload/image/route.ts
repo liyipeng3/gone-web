@@ -200,7 +200,7 @@ export async function POST (request: NextRequest) {
           latitude,
           longitude,
           takenAt: (exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated)
-            ? Math.floor(new Date(exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated).getTime() / 1000)
+            ? new Date(exifData.DateTimeOriginal || exifData.DateTime || exifData.DateTimeDigitized || exifData.DateCreated)
             : null
         }
       : {

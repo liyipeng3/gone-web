@@ -194,16 +194,16 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">创建时间</span>
-                    <span>{formatDate(item.createdAt * 1000)}</span>
+                    <span>{item.createdAt ? formatDate(item.createdAt.toISOString()) : '--'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-gray-400">更新时间</span>
-                    <span>{formatDate(item.updatedAt * 1000)}</span>
+                    <span>{item.updatedAt ? formatDate(item.updatedAt.toISOString()) : '--'}</span>
                   </div>
                   {item.takenAt && (
                     <div className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">拍摄时间</span>
-                      <span>{formatDate(item.takenAt * 1000)}</span>
+                      <span>{item.takenAt ? formatDate(item.takenAt.toISOString()) : '--'}</span>
                     </div>
                   )}
                 </div>

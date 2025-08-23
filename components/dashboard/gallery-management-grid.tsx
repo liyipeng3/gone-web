@@ -155,11 +155,11 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <div className="flex justify-between">
             <span>创建时间</span>
-            <span>{formatDate(item.createdAt * 1000)}</span>
+            <span>{item.createdAt ? formatDate(item.createdAt.toISOString()) : '--'}</span>
           </div>
             <div className="flex justify-between">
               <span>拍摄时间</span>
-              <span>{item.takenAt ? formatDate(item.takenAt * 1000) : '--'}</span>
+              <span>{item.takenAt ? formatDate(item.takenAt.toISOString()) : '--'}</span>
             </div>
         </div>
 

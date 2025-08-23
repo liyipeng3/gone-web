@@ -362,7 +362,7 @@ export const publishPost = async (cid: number) => {
           type: 'post',
           parent: 0,
           slug: String(draft?.slug).slice(1),
-          created: post.created,
+          createdAt: post.createdAt,
           commentsNum: post.commentsNum,
           viewsNum: post.viewsNum,
           likesNum: post.likesNum

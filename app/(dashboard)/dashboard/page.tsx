@@ -50,12 +50,12 @@ export default async function DashboardPage ({
     select: {
       cid: true,
       title: true,
-      created: true,
-      modified: true,
+      createdAt: true,
+      updatedAt: true,
       status: true
     },
     orderBy: {
-      modified: 'desc'
+      updatedAt: 'desc'
     },
     skip,
     take: pageSize

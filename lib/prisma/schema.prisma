@@ -8,25 +8,25 @@ datasource db {
 }
 
 model comments {
-  coid     Int     @id @default(autoincrement()) @db.UnsignedInt
-  cid      Int?    @default(0) @db.UnsignedInt
-  created  Int?    @default(0) @db.UnsignedInt
-  author   String? @db.VarChar(200)
-  authorId Int?    @default(0) @db.UnsignedInt
-  ownerId  Int?    @default(0) @db.UnsignedInt
-  email    String? @db.VarChar(200)
-  url      String? @db.VarChar(200)
-  ip       String? @db.VarChar(64)
-  agent    String? @db.VarChar(200)
-  text     String? @db.Text
-  type     String? @default("comment") @db.VarChar(16)
-  status   String? @default("approved") @db.VarChar(16)
-  parent   Int?    @default(0) @db.UnsignedInt
-  reply    Int?    @db.UnsignedInt
-  posts    posts?  @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
+  coid      Int       @id @default(autoincrement()) @db.UnsignedInt
+  cid       Int?      @default(0) @db.UnsignedInt
+  author    String?   @db.VarChar(200)
+  authorId  Int?      @default(0) @db.UnsignedInt
+  ownerId   Int?      @default(0) @db.UnsignedInt
+  email     String?   @db.VarChar(200)
+  url       String?   @db.VarChar(200)
+  ip        String?   @db.VarChar(64)
+  agent     String?   @db.VarChar(200)
+  text      String?   @db.Text
+  type      String?   @default("comment") @db.VarChar(16)
+  status    String?   @default("approved") @db.VarChar(16)
+  parent    Int?      @default(0) @db.UnsignedInt
+  reply     Int?      @db.UnsignedInt
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  posts     posts?    @relation(fields: [cid], references: [cid], onDelete: Restrict, onUpdate: Restrict, map: "comments_posts_cid_fk")
 
   @@index([cid], map: "cid")
-  @@index([created], map: "created")
+  @@index([createdAt], map: "idx_comments_created_at")
 }
 
 model fields {
@@ -39,35 +39,35 @@ model fields {
 
 /// 相册模型 - 用于存储照片信息
 model gallery {
-  gid           Int      @id @default(autoincrement()) @db.UnsignedInt
-  description   String?  @db.Text
-  order         Int?     @default(0) @db.UnsignedInt
-  aperture      String?  @db.VarChar(50)
-  camera        String?  @db.VarChar(200)
-  category      String?  @db.VarChar(100)
-  createdAt     Int      @default(0) @db.UnsignedInt
-  fileSize      Int?     @db.UnsignedInt
-  focalLength   String?  @db.VarChar(50)
-  height        Int?     @db.UnsignedInt
-  imagePath     String   @db.VarChar(500)
-  isPublic      Boolean  @default(true)
-  iso           Int?     @db.UnsignedInt
-  lens          String?  @db.VarChar(200)
-  location      String?  @db.VarChar(200)
-  mimeType      String?  @db.VarChar(100)
-  shutterSpeed  String?  @db.VarChar(50)
-  tags          String?  @db.Text
-  takenAt       Int?     @db.UnsignedInt
-  thumbnailPath String?  @db.VarChar(500)
-  title         String?  @db.VarChar(200)
-  updatedAt     Int      @default(0) @db.UnsignedInt
-  width         Int?     @db.UnsignedInt
-  latitude      Decimal? @db.Decimal(10, 8)
-  longitude     Decimal? @db.Decimal(11, 8)
+  gid           Int       @id @default(autoincrement()) @db.UnsignedInt
+  description   String?   @db.Text
+  order         Int?      @default(0) @db.UnsignedInt
+  aperture      String?   @db.VarChar(50)
+  camera        String?   @db.VarChar(200)
+  category      String?   @db.VarChar(100)
+  fileSize      Int?      @db.UnsignedInt
+  focalLength   String?   @db.VarChar(50)
+  height        Int?      @db.UnsignedInt
+  imagePath     String    @db.VarChar(500)
+  isPublic      Boolean   @default(true)
+  iso           Int?      @db.UnsignedInt
+  lens          String?   @db.VarChar(200)
+  location      String?   @db.VarChar(200)
+  mimeType      String?   @db.VarChar(100)
+  shutterSpeed  String?   @db.VarChar(50)
+  tags          String?   @db.Text
+  thumbnailPath String?   @db.VarChar(500)
+  title         String?   @db.VarChar(200)
+  width         Int?      @db.UnsignedInt
+  latitude      Decimal?  @db.Decimal(10, 8)
+  longitude     Decimal?  @db.Decimal(11, 8)
+  createdAt     DateTime? @default(now()) @db.DateTime(0)
+  updatedAt     DateTime? @default(now()) @updatedAt @db.DateTime(0)
+  takenAt       DateTime? @db.DateTime(0)
 
   @@index([category])
-  @@index([createdAt], map: "gallery_created_idx")
-  @@index([takenAt], map: "gallery_taken_idx")
+  @@index([createdAt], map: "idx_gallery_created_at")
+  @@index([takenAt], map: "idx_gallery_taken_at")
   @@index([isPublic], map: "gallery_public_idx")
 }
 
@@ -108,8 +108,6 @@ model posts {
   uid           Int?            @default(1) @db.UnsignedInt
   title         String?         @db.VarChar(200)
   slug          String?         @unique(map: "slug") @db.VarChar(200)
-  created       Int?            @default(0) @db.UnsignedInt
-  modified      Int?            @default(0) @db.UnsignedInt
   text          String?         @db.LongText
   order         Int?            @default(0) @db.UnsignedInt
   type          String?         @default("post") @db.VarChar(16)
@@ -120,11 +118,14 @@ model posts {
   parent        Int?            @default(0) @db.UnsignedInt
   viewsNum      Int?            @default(0)
   likesNum      Int?            @default(0)
+  createdAt     DateTime?       @default(now()) @db.DateTime(0)
+  updatedAt     DateTime?       @default(now()) @updatedAt @db.DateTime(0)
   comments      comments[]
   users         users?          @relation(fields: [uid], references: [uid], onDelete: Restrict, onUpdate: Restrict, map: "posts_users_uid_fk")
   relationships relationships[]
 
-  @@index([created], map: "created")
+  @@index([createdAt], map: "idx_posts_created_at")
+  @@index([updatedAt], map: "idx_posts_updated_at")
   @@index([uid], map: "posts_users_uid_fk")
 }
 
@@ -140,16 +141,19 @@ model relationships {
 }
 
 model users {
-  uid       Int     @id @default(autoincrement()) @db.UnsignedInt
-  username  String? @unique(map: "name") @db.VarChar(32)
-  password  String? @db.VarChar(64)
-  email     String? @unique(map: "mail") @db.VarChar(200)
-  url       String? @db.VarChar(200)
-  nickname  String? @db.VarChar(32)
-  created   Int?    @default(0) @db.UnsignedInt
-  activated Int?    @default(0) @db.UnsignedInt
-  logged    Int?    @default(0) @db.UnsignedInt
-  group     String? @default("visitor") @db.VarChar(16)
-  authCode  String? @db.VarChar(64)
-  posts     posts[]
+  uid         Int       @id @default(autoincrement()) @db.UnsignedInt
+  username    String?   @unique(map: "name") @db.VarChar(32)
+  password    String?   @db.VarChar(64)
+  email       String?   @unique(map: "mail") @db.VarChar(200)
+  url         String?   @db.VarChar(200)
+  nickname    String?   @db.VarChar(32)
+  group       String?   @default("visitor") @db.VarChar(16)
+  authCode    String?   @db.VarChar(64)
+  createdAt   DateTime? @default(now()) @db.DateTime(0)
+  activatedAt DateTime? @db.DateTime(0)
+  lastLoginAt DateTime? @db.DateTime(0)
+  posts       posts[]
+
+  @@index([createdAt], map: "idx_users_created_at")
+  @@index([lastLoginAt], map: "idx_users_last_login_at")
 }

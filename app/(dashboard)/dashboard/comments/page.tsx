@@ -33,7 +33,7 @@ export default async function CommentsPage ({
     select: {
       coid: true,
       cid: true,
-      created: true,
+      createdAt: true,
       author: true,
       email: true,
       ip: true,
@@ -61,7 +61,7 @@ export default async function CommentsPage ({
       }
     },
     orderBy: {
-      created: 'desc'
+      createdAt: 'desc'
     },
     skip,
     take: pageSize
@@ -163,7 +163,7 @@ export default async function CommentsPage ({
                     <div className="space-y-1">
                       <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-wrap">
                         <time className="font-medium whitespace-nowrap">
-                          {dayjs((comment.created ?? 0) * 1000).format('YYYY-MM-DD HH:mm')}
+                          {dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm')}
                         </time>
                         <span className="text-gray-400">•</span>
                         <span className="text-gray-500">评论于</span>

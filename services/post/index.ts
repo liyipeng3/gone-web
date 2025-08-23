@@ -33,7 +33,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
   title: string
   content: string
   cid: number
-  created: number
+  createdAt: Date
 }> => {
   const post = await getPostBySlug(slug)
   if (post === null) {
@@ -45,7 +45,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
     title: post.title as string,
     content,
     cid: post.cid,
-    created: post.created as number
+    createdAt: post.createdAt
   }
 })
 
@@ -94,7 +94,7 @@ export const getPageCategoryPostList = cache(async ({
 export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise<{
   title: string
   content: string
-  created: number
+  createdAt: Date
   name: string
   viewsNum: number
   likesNum: number
@@ -120,7 +120,7 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   return {
     title: post.title as string,
     content,
-    created: post.created as number,
+    createdAt: post.createdAt,
     name: post.relationships[0].metas.name as string,
     category: category[0] as string,
     viewsNum: post.viewsNum as number,
@@ -162,8 +162,8 @@ export const getPageTagPostList = cache(async ({
           cid: true,
           title: true,
           slug: true,
-          created: true,
-          modified: true,
+          createdAt: true,
+          updatedAt: true,
           text: true,
           viewsNum: true,
           likesNum: true
@@ -186,7 +186,7 @@ export const getPageTagPostList = cache(async ({
     },
     orderBy: {
       posts: {
-        created: 'desc'
+        createdAt: 'desc'
       }
     },
     skip: (pageNum - 1) * pageSize,
