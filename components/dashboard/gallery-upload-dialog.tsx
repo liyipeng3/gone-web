@@ -421,7 +421,6 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
                               label="拍摄时间"
                               value={filePreview.takenAt}
                               onChange={(date) => {
-                                console.log(date)
                                 updateFile(index, {
                                   takenAt: date,
                                   errors: {

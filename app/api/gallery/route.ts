@@ -43,6 +43,19 @@ export async function POST (request: NextRequest) {
     }
 
     const body = await request.json()
+    // 确保 takenAt 是 DateTime 类型
+    let takenAt: Date | undefined
+    if (body.takenAt) {
+      // 如果传入的是数字（Unix时间戳），转换为Date
+      if (typeof body.takenAt === 'number') {
+        takenAt = new Date(body.takenAt * 1000)
+      } else if (body.takenAt instanceof Date) {
+        takenAt = body.takenAt
+      } else if (typeof body.takenAt === 'string') {
+        takenAt = new Date(body.takenAt)
+      }
+    }
+
     const data: GalleryCreateInput = {
       title: body.title,
       description: body.description,
@@ -53,7 +66,7 @@ export async function POST (request: NextRequest) {
       location: body.location,
       latitude: body.latitude,
       longitude: body.longitude,
-      takenAt: body.takenAt,
+      takenAt,
       width: body.width,
       height: body.height,
       fileSize: body.fileSize,

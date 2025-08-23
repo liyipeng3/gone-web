@@ -88,7 +88,12 @@ export const uploadToOSS = async (
 }
 
 // 删除OSS文件
-export const deleteFromOSS = async (fileName: string): Promise<void> => {
+export const deleteFromOSS = async (url: string): Promise<void> => {
+  const fileName = url.split(ossConfig.baseUrl ?? '').pop()
+  if (!fileName) {
+    throw new Error('无效的文件URL')
+  }
+
   try {
     const client = createOSSClient()
     await client.delete(fileName)

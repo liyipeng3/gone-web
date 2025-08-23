@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import type { gallery } from '@prisma/client'
+import { deleteFromOSS } from '@/lib/oss'
 
 export interface GalleryItem extends gallery {
   // 可以添加一些计算属性
@@ -15,7 +16,7 @@ export interface GalleryCreateInput {
   location?: string
   latitude?: number
   longitude?: number
-  takenAt?: number
+  takenAt?: Date
   width?: number
   height?: number
   fileSize?: number
@@ -44,15 +45,10 @@ export interface GalleryQuery {
 
 // 创建相册项
 export async function createGalleryItem (data: GalleryCreateInput): Promise<gallery> {
-  const now = Math.floor(Date.now() / 1000)
-
   return await prisma.gallery.create({
     data: {
       ...data,
-      tags: data.tags ? JSON.stringify(data.tags) : null,
-      createdAt: now,
-      updatedAt: now,
-      takenAt: data.takenAt || now
+      tags: data.tags ? JSON.stringify(data.tags) : null
     }
   })
 }
@@ -113,23 +109,51 @@ export async function getGalleryById (gid: number): Promise<gallery | null> {
 
 // 更新相册项
 export async function updateGalleryItem (gid: number, data: GalleryUpdateInput): Promise<gallery> {
-  const now = Math.floor(Date.now() / 1000)
-
   return await prisma.gallery.update({
     where: { gid },
     data: {
       ...data,
-      tags: data.tags ? JSON.stringify(data.tags) : undefined,
-      updatedAt: now
+      tags: data.tags ? JSON.stringify(data.tags) : undefined
     }
   })
 }
 
 // 删除相册项
 export async function deleteGalleryItem (gid: number): Promise<gallery> {
-  return await prisma.gallery.delete({
+  // 先获取相册项信息，以便删除OSS文件
+  const galleryItem = await prisma.gallery.findUnique({
     where: { gid }
   })
+
+  if (!galleryItem) {
+    throw new Error('相册项不存在')
+  }
+
+  // 删除数据库记录
+  const deletedItem = await prisma.gallery.delete({
+    where: { gid }
+  })
+
+  // 返回删除的项，但不等待OSS删除完成（异步处理）
+  // 这样可以避免OSS删除失败影响数据库操作
+  setImmediate(async () => {
+    try {
+      // 删除主图片
+      if (galleryItem.imagePath) {
+        await deleteFromOSS(galleryItem.imagePath)
+      }
+
+      // 删除缩略图
+      if (galleryItem.thumbnailPath) {
+        await deleteFromOSS(galleryItem.thumbnailPath)
+      }
+    } catch (error) {
+      console.error('删除OSS文件失败:', error)
+      // 这里可以选择记录日志，但不抛出错误
+    }
+  })
+
+  return deletedItem
 }
 
 // 获取所有分类
@@ -224,14 +248,14 @@ export async function getAdjacentPhotos (currentGid: number, category?: string):
   })
 
   const currentIndex = allPhotos.findIndex(photo => photo.gid === currentGid)
-  
+
   if (currentIndex === -1) {
     return { previous: null, next: null, current: 0, total: allPhotos.length }
   }
 
   // 获取前一张和后一张照片的详细信息
   const [previous, next] = await Promise.all([
-    currentIndex > 0 
+    currentIndex > 0
       ? prisma.gallery.findUnique({ where: { gid: allPhotos[currentIndex - 1].gid } })
       : null,
     currentIndex < allPhotos.length - 1

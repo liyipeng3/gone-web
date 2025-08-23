@@ -77,7 +77,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
           <p className="text-gray-500 dark:text-gray-400">
             {searchParams.category ?? searchParams.tag
               ? '当前筛选条件下没有找到照片'
-              : '还没有上传任何照片'}
+              : '还没照片嘞'}
           </p>
         </div>
       )}
