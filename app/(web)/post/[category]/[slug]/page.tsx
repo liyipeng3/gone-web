@@ -65,9 +65,9 @@ const Content: React.FC<{ params: { slug: string } }> = async (
             {likesNum > 0 && <span>•</span>}
             {likesNum > 0 && <span>{likesNum}人喜欢</span>}
             <span>•</span>
-            <span>约 {wordCount} 字</span>
+            <span>共 {wordCount} 字</span>
             <span>•</span>
-            <span>阅读时间 {readingTime} 分钟</span>
+            <span>阅读时间约 {readingTime} 分钟</span>
           </div>
           <Prose content={content}/>
         </article>
