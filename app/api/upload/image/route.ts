@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/session'
-import { uploadToOSS, generateFileName } from '@/lib/oss'
+import { uploadToOSS, generateFileName, generateThumbnail, generateThumbnailFileName } from '@/lib/oss'
 import exifr from 'exifr'
 import sharp from 'sharp'
 
@@ -119,6 +119,37 @@ export async function POST (request: NextRequest) {
 
     const result = await uploadToOSS(buffer, fileName, { headers })
 
+    // 生成并上传缩略图
+    let thumbnailResult = null
+    try {
+      const thumbnailBuffer = await generateThumbnail(buffer, {
+        maxWidth: 300,
+        maxHeight: 300,
+        originalWidth: imageWidth,
+        originalHeight: imageHeight,
+        quality: 80,
+        format: file.type.includes('jpeg') || file.type.includes('jpg')
+          ? 'jpeg'
+          : file.type.includes('png')
+            ? 'png'
+            : file.type.includes('webp')
+              ? 'webp'
+              : 'jpeg'
+      })
+
+      const thumbnailFileName = generateThumbnailFileName(fileName)
+      const thumbnailHeaders = {
+        'Content-Type': file.type,
+        'Cache-Control': 'public, max-age=31536000'
+      }
+
+      thumbnailResult = await uploadToOSS(thumbnailBuffer, thumbnailFileName, { headers: thumbnailHeaders })
+      console.log('缩略图生成并上传成功:', thumbnailResult.fileName)
+    } catch (error) {
+      console.error('缩略图生成或上传失败:', error)
+      // 缩略图失败不影响主图片上传
+    }
+
     // 处理 GPS 地理位置信息
     let locationInfo = null
     let latitude = null
@@ -215,6 +246,8 @@ export async function POST (request: NextRequest) {
       data: {
         fileName: result.fileName,
         url: result.url,
+        thumbnailFileName: thumbnailResult?.fileName ?? null,
+        thumbnailUrl: thumbnailResult?.url ?? null,
         originalName: file.name,
         size: file.size,
         type: file.type,
@@ -224,7 +257,8 @@ export async function POST (request: NextRequest) {
           ? {
               rawExifData: exifData,
               hasExifData: !!exifData,
-              fileType: file.type
+              fileType: file.type,
+              thumbnailGenerated: !!thumbnailResult
             }
           : undefined
       }

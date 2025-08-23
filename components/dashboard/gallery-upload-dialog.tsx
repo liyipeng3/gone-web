@@ -138,7 +138,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
       .filter(tag => tag.length > 0)
   }
 
-  const uploadFileToServer = async (file: File): Promise<{ url: string, exif: any }> => {
+  const uploadFileToServer = async (file: File): Promise<{ url: string, thumbnailUrl?: string, exif: any }> => {
     const formData = new FormData()
     formData.append('file', file)
 
@@ -183,6 +183,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
 
     return {
       url: result.data.url,
+      thumbnailUrl: result.data.thumbnailUrl || undefined,
       exif: result.data.exif || {}
     }
   }
@@ -259,6 +260,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             title: filePreview.title,
             description: filePreview.description,
             imagePath: uploadResult.url,
+            thumbnailPath: uploadResult.thumbnailUrl ?? undefined,
             category: filePreview.category || undefined,
             tags: filePreview.tags,
             isPublic: filePreview.isPublic,

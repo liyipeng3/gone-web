@@ -1,4 +1,5 @@
 import OSS from 'ali-oss'
+import sharp from 'sharp'
 
 interface OSSConfig {
   region: string
@@ -103,12 +104,89 @@ export const deleteFromOSS = async (url: string): Promise<void> => {
   }
 }
 
+// 生成缩略图
+export const generateThumbnail = async (
+  imageBuffer: Buffer,
+  options: {
+    maxWidth?: number
+    maxHeight?: number
+    originalWidth?: number
+    originalHeight?: number
+    quality?: number
+    format?: 'jpeg' | 'png' | 'webp'
+  } = {}
+): Promise<Buffer> => {
+  const {
+    maxWidth = 300,
+    maxHeight = 300,
+    originalWidth = 300,
+    originalHeight = 300,
+    quality = 80,
+    format = 'jpeg'
+  } = options
+
+  try {
+    // 先获取原图信息
+
+    if (!originalWidth || !originalHeight) {
+      throw new Error('无法获取原图尺寸信息')
+    }
+
+    // 计算保持宽高比的缩略图尺寸
+    const aspectRatio = originalWidth / originalHeight
+    let thumbnailWidth = maxWidth
+    let thumbnailHeight = maxHeight
+
+    if (aspectRatio > maxWidth / maxHeight) {
+      // 原图更宽，以宽度为准
+      thumbnailHeight = Math.round(maxWidth / aspectRatio)
+    } else {
+      // 原图更高，以高度为准
+      thumbnailWidth = Math.round(maxHeight * aspectRatio)
+    }
+
+    let sharpInstance = sharp(imageBuffer)
+      .resize(thumbnailWidth, thumbnailHeight, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+
+    // 根据格式设置输出选项
+    switch (format) {
+      case 'jpeg':
+        sharpInstance = sharpInstance.jpeg({ quality })
+        break
+      case 'png':
+        sharpInstance = sharpInstance.png({ quality })
+        break
+      case 'webp':
+        sharpInstance = sharpInstance.webp({ quality })
+        break
+    }
+
+    return await sharpInstance.toBuffer()
+  } catch (error) {
+    console.error('生成缩略图失败:', error)
+    throw new Error(`缩略图生成失败: ${error instanceof Error ? error.message : '未知错误'}`)
+  }
+}
+
+// 生成缩略图文件名
+export const generateThumbnailFileName = (originalFileName: string): string => {
+  const parts = originalFileName.split('.')
+  const extension = parts.pop()
+  const baseName = parts.join('.')
+  return `${baseName}_thumb.${extension}`
+}
+
 const oss = {
   createOSSClient,
   generateFileName,
   getFileUrl,
   uploadToOSS,
-  deleteFromOSS
+  deleteFromOSS,
+  generateThumbnail,
+  generateThumbnailFileName
 }
 
 export default oss

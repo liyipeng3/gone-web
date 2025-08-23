@@ -142,7 +142,7 @@ export default async function PhotoDetailPage ({
                 <div className="text-gray-600 text-sm flex">{photo.lens}</div>
               )}
               <div className='flex flex-row justify-between'>
-              <span className='text-gray-600 text-sm flex'>{photo?.takenAt ? dayjs(photo?.takenAt * 1000).format('YYYY-MM-DD HH:mm:ss') : '--'}</span>
+              <span className='text-gray-600 text-sm flex'>{photo?.takenAt ? dayjs(photo?.takenAt).format('YYYY-MM-DD HH:mm:ss') : '--'}</span>
                 <div className='flex'>{getSimpleLocation(photo?.location ?? '')}</div>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default async function PhotoDetailPage ({
                   })()}
 
                 {photo.takenAt && (
-                  <span className='text-gray-600 text-sm'>{dayjs(photo.takenAt * 1000).format('YYYY.MM.DD HH:mm:ss')}</span>
+                  <span className='text-gray-600 text-sm'>{dayjs(photo.takenAt).format('YYYY.MM.DD HH:mm:ss')}</span>
                 )}
               </div>
               {photo.location && <span>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>}
