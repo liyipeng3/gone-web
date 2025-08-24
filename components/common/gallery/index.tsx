@@ -51,7 +51,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
         {!imageError && (
           <>
             <Image
-              src={item.thumbnailPath ?? item.imagePath}
+              src={item.imagePath}
               alt={item.title ?? '相册图片'}
               width={item.width ?? 1200}
               height={item.height ?? 800}

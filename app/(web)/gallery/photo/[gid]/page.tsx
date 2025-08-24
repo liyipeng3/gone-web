@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Camera } from 'lucide-react'
 import { getCameraBrand, formatCameraModel } from '@/lib/camera-brands'
 import dayjs from 'dayjs'
-import Image from '@/components/common/image'
+import ProgressiveImage from '@/components/common/image/ProgressiveImage'
 import { defaultIcons } from '@/components/common/prose/lightbox'
 import { getSimpleLocation } from '@/lib/regions'
 
@@ -96,8 +96,9 @@ export default async function PhotoDetailPage ({
         <div className="w-full h-max drop-shadow-lg">
           <div className="relative h-max md:h-[85vh] flex flex-col justify-end">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <Image
-              src={photo.thumbnailPath ?? photo.imagePath}
+            <ProgressiveImage
+              thumbnailSrc={photo.thumbnailPath ?? photo.imagePath}
+              src={photo.imagePath}
               alt={photo.title ?? '照片'}
               wrapperClassName="object-contain w-full h-full cursor-pointer"
               className='object-contain w-full h-full'
