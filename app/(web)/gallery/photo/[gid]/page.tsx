@@ -181,7 +181,7 @@ export default async function PhotoDetailPage ({
                   <span className='text-gray-600 text-sm'>{dayjs(photo.takenAt).format('YYYY.MM.DD HH:mm:ss')}</span>
                 )}
               </div>
-              {photo.location && <span>{photo.location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')}</span>}
+              {photo.location && <span>{getSimpleLocation(photo.location)}</span>}
               <div className='flex flex-row gap-4 items-center h-full'>
                 {photo.camera &&
                   (() => {

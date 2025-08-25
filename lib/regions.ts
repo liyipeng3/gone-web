@@ -89,5 +89,5 @@ export function getCities (countryName?: string, provinceName?: string): string[
 }
 
 export function getSimpleLocation (location: string): string {
-  return location.replaceAll(/中国 · |省|市|区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')
+  return location.replaceAll(/中国 · |省|市|区|地区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区|藏族自治区|维吾尔自治区|壮族自治区|回族自治区|蒙古族自治区|苗族自治区|彝族自治区/g, '')
 }
