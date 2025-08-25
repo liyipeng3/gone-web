@@ -155,9 +155,9 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             {(post?.draft?.cid || post.status !== 'publish') ? '草稿' : '已发布'}
           </p>
           {
-            draft.modified
+            draft.updatedAt
               ? <p className="text-sm text-muted-foreground">
-                {saveLoading ? '保存中' : `保存于 ${dayjs(draft.modified * 1000).format('YY.M.DD HH:mm')}`}
+                                  {saveLoading ? '保存中' : `保存于 ${dayjs(draft.updatedAt).format('YY.M.DD HH:mm')}`}
               </p>
               : null
           }

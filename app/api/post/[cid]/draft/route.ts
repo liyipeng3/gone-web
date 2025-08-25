@@ -29,7 +29,6 @@ export async function POST (
     res = await updatePostByCid(draftPost.cid, {
       ...newDraft,
       slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`,
-      modified: Math.floor(Date.now() / 1000),
       relationships: undefined,
       cid: undefined,
       tags: undefined,
@@ -44,8 +43,6 @@ export async function POST (
       ...newDraft,
       cid: undefined,
       slug: `@${newDraft.slug}`,
-      created: newDraft.created || Math.floor(Date.now() / 1000),
-      modified: Math.floor(Date.now() / 1000),
       category: undefined,
       tags: undefined,
       draft: undefined,

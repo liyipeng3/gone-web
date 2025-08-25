@@ -82,7 +82,6 @@ export function Pagination ({
 
   return (
     <div className="flex items-center justify-center space-x-2 py-4">
-      {/* 上一页按钮 */}
       {currentPage > 1
         ? (
         <Link
@@ -99,7 +98,6 @@ export function Pagination ({
         </span>
           )}
 
-      {/* 页码 */}
       {pages.map((page, i) => {
         if (page === '...') {
           return (
@@ -128,7 +126,6 @@ export function Pagination ({
         )
       })}
 
-      {/* 下一页按钮 */}
       {currentPage < totalPages
         ? (
         <Link

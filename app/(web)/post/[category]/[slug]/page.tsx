@@ -29,7 +29,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
   const {
     title,
     content,
-    created,
+    createdAt,
     name,
     category,
     viewsNum,
@@ -38,11 +38,9 @@ const Content: React.FC<{ params: { slug: string } }> = async (
     tags
   } = await getPagePostInfo({ slug: params.slug })
 
-  // 获取评论数量
   const comments = cid ? await getCommentsByCid(cid) : []
   const commentsNum = comments.length
 
-  // 计算预计阅读时间和字数
   const readingTime = calculateReadingTime(content)
   const wordCount = getWordCount(content)
 
@@ -56,7 +54,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
           }, { name: '正文' }]}/>
           <h2 className="md:mb-2 mt-4 dark:text-white">{title}</h2>
           <div className="text-xs mb-5 -mt-3 md:mt-3 my-3 text-gray-500 space-x-1.5 dark:text-gray-400 ">
-            <span>{dayjs(new Date(created * 1000)).format('YYYY-MM-DD HH:MM')}</span>
+            <span>{dayjs(createdAt).format('YYYY-MM-DD HH:MM')}</span>
             <span>•</span>
             <Link href={`/category/${category as string}`}
                   className="text-gray-500 dark:text-gray-400 no-underline font-normal">{name}</Link>
@@ -67,14 +65,13 @@ const Content: React.FC<{ params: { slug: string } }> = async (
             {likesNum > 0 && <span>•</span>}
             {likesNum > 0 && <span>{likesNum}人喜欢</span>}
             <span>•</span>
-            <span>约 {wordCount} 字</span>
+            <span>共 {wordCount} 字</span>
             <span>•</span>
-            <span>阅读时间 {readingTime} 分钟</span>
+            <span>阅读时间约 {readingTime} 分钟</span>
           </div>
           <Prose content={content}/>
         </article>
 
-        {/* 文章标签 */}
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6 mb-4">
             <span className="text-sm text-gray-600 dark:text-gray-300">标签：</span>

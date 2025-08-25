@@ -62,7 +62,7 @@ const List: React.FC<ListProps> = async ({
           <Link href={`/post/${item?.category as string}/${item?.slug as string}`} className='post-title'> {item.title}</Link>
         </div>
         <div className="text-xs text-gray-500 space-x-1.5 mt-2 dark:text-gray-400">
-          <span>{dayjs(new Date(item.created * 1000)).format('YYYY-MM-DD')}</span>
+          <span>{dayjs(item.createdAt).format('YYYY-MM-DD')}</span>
           <span className="text-gray-400">•</span>
           <span>{item.name}</span>
           {item.commentsNum > 0 && <span className="text-gray-400">•</span>}

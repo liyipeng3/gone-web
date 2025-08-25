@@ -62,7 +62,6 @@ const Lightbox = () => {
   }, [])
 
   return (
-    <>
       <Image.PreviewGroup items={images} preview={{
         mousePosition,
         icons: defaultIcons,
@@ -76,7 +75,6 @@ const Lightbox = () => {
         }
       }}>
       </Image.PreviewGroup>
-    </>
   )
 }
 

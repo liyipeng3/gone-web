@@ -27,7 +27,7 @@ const Archive = async () => {
               {posts.map((post: any) => (
                 <li key={post.slug} className="flex items-center list-item">
                   <span className="text-black dark:text-gray-400 text-sm">
-                    {dayjs(post.created * 1000).format('MM/DD')}:
+                    {dayjs(post.createdAt).format('MM/DD')}:
                   </span>
                   <Link
                     href={`/post/${post.category}/${post.slug}`}

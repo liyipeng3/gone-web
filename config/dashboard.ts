@@ -20,6 +20,11 @@ export const dashboardConfig: DashboardConfig = {
       icon: 'post'
     },
     {
+      title: 'Gallery',
+      href: '/dashboard/gallery',
+      icon: 'image'
+    },
+    {
       title: 'Comments',
       href: '/dashboard/comments',
       icon: 'comment'

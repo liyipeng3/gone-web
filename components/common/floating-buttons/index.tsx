@@ -258,10 +258,8 @@ const FloatingButtons: React.FC = () => {
             aria-valuemax={100}
             aria-label={`播放进度 ${formatTime(progress)}/${formatTime(duration)}`}
           >
-            {/* 灰色背景圈 */}
             <div className="absolute inset-0 rounded-full border-4 border-gray-200  dark:border-gray-900 opacity-70"></div>
 
-            {/* 灰色进度圈 */}
             <svg className="absolute inset-0 w-full h-full -rotate-90">
               <circle
                 cx="20"

@@ -53,14 +53,14 @@ export const getHotList = async (limit: number = 5): Promise<HotList> => {
   })
 
   const result: HotList = hotData.map(item => {
-    const categoryRelation = item.relationships?.[0];
-    const category = categoryRelation?.metas?.slug ?? 'uncategorized';
-    
+    const categoryRelation = item.relationships?.[0]
+    const category = categoryRelation?.metas?.slug ?? 'uncategorized'
+
     return {
       title: item.title ?? '',
       slug: item.slug ?? '',
       category
-    };
+    }
   })
 
   setHotListCache(limit, result)
@@ -120,8 +120,8 @@ export const getPostList = async ({
       cid: true,
       title: true,
       slug: true,
-      created: true,
-      modified: true,
+      createdAt: true,
+      updatedAt: true,
       text: true,
       viewsNum: true,
       likesNum: true,
@@ -138,7 +138,7 @@ export const getPostList = async ({
     },
     where,
     orderBy: {
-      created: 'desc'
+      createdAt: 'desc'
     },
     skip,
     take: pageSize
@@ -217,14 +217,14 @@ export const getArchiveList = async (): Promise<ArchiveList> => {
     select: {
       title: true,
       slug: true,
-      created: true
+      createdAt: true
     },
     where: {
       status: 'publish',
       type: 'post'
     },
     orderBy: {
-      created: 'desc'
+      createdAt: 'desc'
     }
   })
 
@@ -232,7 +232,7 @@ export const getArchiveList = async (): Promise<ArchiveList> => {
   const archiveMap = new Map()
 
   posts.forEach(post => {
-    const date = new Date((post.created ?? 0) * 1000)
+    const date = post.createdAt ? new Date(post.createdAt) : new Date()
     const time = `${date.getFullYear()} 年 ${String(date.getMonth() + 1).padStart(2, '0')} 月`
 
     if (!archiveMap.has(time)) {

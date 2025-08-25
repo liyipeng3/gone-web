@@ -29,8 +29,7 @@ export const createComment = async (cid: number, parent: number = 0, data: any) 
       ...data,
       cid,
       parent,
-      status,
-      created: Math.floor(Date.now() / 1000)
+      status
     }
   })
 
@@ -76,7 +75,7 @@ export const getRecentComments = async (limit: number = 10) => {
   // 使用 Promise.all 并行获取数据
   const comments = await prisma.comments.findMany({
     where: { status: 'approved' },
-    orderBy: { created: 'desc' },
+    orderBy: { createdAt: 'desc' },
     take: limit,
     include: {
       posts: {

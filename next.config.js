@@ -14,6 +14,12 @@ const nextConfig = {
         hostname: 'cravatar.com',
         port: '',
         pathname: '/avatar/**'
+      },
+      {
+        protocol: 'https',
+        hostname: process.env.OSS_BASE_HOST,
+        port: '',
+        pathname: '/**'
       }
     ]
   },

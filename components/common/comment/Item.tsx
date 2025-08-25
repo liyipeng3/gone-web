@@ -29,7 +29,7 @@ const CommentItem = ({ comment, nameMap }: { comment: any, nameMap: Record<numbe
               className="text-white whitespace-nowrap rounded-sm text-xs px-1.5 bg-[lightslategrey] dark:bg-[#708090]">{getUserAgent(comment.agent)}</span>
           </div>
           <p
-            className="text-sm text-gray-600 dark:text-gray-400">{dayjs(comment.created * 1000).format('YYYY-MM-DD HH:mm:ss')}</p>
+            className="text-sm text-gray-600 dark:text-gray-400">{dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm:ss')}</p>
         </div>
       </div>
       <div className="text-sm text-gray-600 dark:text-gray-400 relative">

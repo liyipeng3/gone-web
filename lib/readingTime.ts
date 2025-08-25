@@ -48,7 +48,7 @@ export function getWordCount (text: string): number {
  */
 export function formatReadingTime (minutes: number, wordCount?: number): string {
   if (wordCount !== undefined) {
-    return `约 ${wordCount} 字 阅读时间 ${minutes} 分钟`
+    return `共 ${wordCount} 字 阅读时间约 ${minutes} 分钟`
   }
-  return `预计阅读 ${minutes} 分钟`
+  return `阅读时间约 ${minutes} 分钟`
 }
