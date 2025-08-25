@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import type { gallery } from '@prisma/client'
-import Image from 'next/image'
 import Pagination from '@/components/common/pagination'
 import ImagePreview from '@/components/common/image'
 import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
+import ProgressiveNextImage from '../image/ProgressiveNextImage'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -50,8 +50,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
       >
         {!imageError && (
           <>
-            <Image
+            <ProgressiveNextImage
               src={item.imagePath}
+              thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
               width={item.width ?? 1200}
               height={item.height ?? 800}

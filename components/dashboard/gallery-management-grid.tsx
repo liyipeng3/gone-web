@@ -2,7 +2,6 @@
 
 import React, { useCallback, useMemo, useState } from 'react'
 import type { gallery } from '@prisma/client'
-import Image from 'next/image'
 import CustomImage from '@/components/common/image'
 import Pagination from '@/components/common/pagination'
 import { Button } from '@/components/ui/button'
@@ -14,6 +13,7 @@ import GalleryEditDialog from './gallery-edit-dialog'
 import GalleryDeleteDialog from './gallery-delete-dialog'
 import GalleryDetailDialog from './gallery-detail-dialog'
 import { defaultIcons } from '../common/prose/lightbox'
+import ProgressiveNextImage from '../common/image/ProgressiveNextImage'
 
 interface GalleryManagementGridProps {
   items: gallery[]
@@ -53,14 +53,14 @@ const GalleryManagementItem = React.memo(function GalleryManagementItemComponent
       >
         {!imageError && (
           <>
-            <Image
-              src={item.thumbnailPath ?? item.imagePath}
+            <ProgressiveNextImage
+              src={item.imagePath}
+              thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
               fill
-              className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-              onLoad={() => { setImageLoaded(true) }}
-              onError={() => { setImageError(true) }}
+              className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => { setImageLoaded(true) } }
+              onError={() => { setImageError(true) } }
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
 
