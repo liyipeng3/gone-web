@@ -119,7 +119,7 @@ export default async function PhotoDetailPage ({
                     {brand && (
                       <div className="w-auto h-4 relative">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={brand.logo} alt={brand.name} className='w-full h-full' />
+                        <img src={brand.logo} alt={brand.name} className='w-auto h-full' />
                       </div>
                     )}
                   </div>
@@ -196,7 +196,7 @@ export default async function PhotoDetailPage ({
                                 <img
                                   src={brand.logo}
                                   alt={brand.name}
-                                  className='w-full h-full'
+                                  className='w-auto h-full'
                                 />
                               </div>
 
