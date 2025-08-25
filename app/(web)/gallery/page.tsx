@@ -69,7 +69,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
       />
 
       {items.length === 0 && (
-        <div className="text-center py-16">
+        <div className="text-center h-[calc(100vh-300px)] flex flex-col items-center justify-center">
           <div className="text-gray-400 text-lg mb-2">📷</div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
             暂无照片
