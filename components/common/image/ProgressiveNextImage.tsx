@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import type { ImageProps } from 'next/image'
+import { getFilter } from './util'
 
 interface ProgressiveImageProps extends Omit<ImageProps, 'src'> {
   thumbnailSrc: string
@@ -50,6 +51,7 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
                 <Image
                     {...imageProps}
                     onLoad={handleLoad}
+                    alt=''
                     src={src}
                 />
                 )
@@ -58,9 +60,10 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
                     {...imageProps}
                     src={thumbnailSrc}
                     onLoad={handleLoad}
+                    alt=''
                     style={{
                       ...imageProps.style,
-                      filter: `blur(${blurIntensity}px)`
+                      filter: getFilter(blurIntensity)
                     }}
                 />
                 )}
