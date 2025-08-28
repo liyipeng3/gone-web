@@ -127,7 +127,7 @@ export async function POST (request: NextRequest) {
         maxHeight: 300,
         originalWidth: imageWidth,
         originalHeight: imageHeight,
-        quality: 80,
+        quality: 100,
         format: file.type.includes('jpeg') || file.type.includes('jpg')
           ? 'jpeg'
           : file.type.includes('png')

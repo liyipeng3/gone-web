@@ -63,7 +63,7 @@ export const uploadToOSS = async (
     const client = createOSSClient()
 
     const uploadOptions: any = {
-      timeout: 60000 * 3 // 3分钟超时
+      timeout: 60000 * 10 // 10分钟超时
     }
 
     if (options?.headers) {
