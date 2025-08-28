@@ -12,7 +12,7 @@ const SUPPORTED_IMAGE_TYPES = [
   'image/gif'
 ]
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024
+const MAX_FILE_SIZE = 150 * 1024 * 1024
 
 function formatShutterSpeed (exposureTime: number): string {
   if (exposureTime >= 1) {
@@ -66,7 +66,7 @@ export async function POST (request: NextRequest) {
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         {
-          error: '文件大小超过限制，最大支持50MB',
+          error: '文件大小超过限制，最大支持150MB',
           debug: {
             fileSize: file.size,
             maxSize: MAX_FILE_SIZE,
