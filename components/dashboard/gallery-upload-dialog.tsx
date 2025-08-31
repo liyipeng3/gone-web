@@ -321,7 +321,7 @@ const GalleryUploadDialog: React.FC<GalleryUploadDialogProps> = ({
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <div className="space-y-2">
               <p className="text-lg font-medium">拖拽照片到这里或点击选择</p>
-              <p className="text-sm text-gray-500">支持 JPG、PNG、WebP、GIF 格式，最大100MB</p>
+              <p className="text-sm text-gray-500">支持 JPG、PNG、WebP、GIF 格式，最大50MB</p>
               <input
                 type="file"
                 multiple
