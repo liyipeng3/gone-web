@@ -47,6 +47,7 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
                     alt=''
                     src={src}
                     style={{
+                      ...imageProps.style,
                       display: display ? 'block' : 'none'
                     }}
                 />

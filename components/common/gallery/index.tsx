@@ -7,7 +7,8 @@ import ImagePreview from '@/components/common/image'
 import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
-import ProgressiveNextImage from '../image/ProgressiveNextImage'
+// import ProgressiveNextImage from '../image/ProgressiveNextImage'
+import ProgressiveImage from '../image/ProgressiveImage'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -42,7 +43,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
   return (
     <div
       className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-4"
-      style={style}
+      style={{ ...style, height: Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200) }}
     >
       <div
         className="relative bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
@@ -50,18 +51,17 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
       >
         {!imageError && (
           <>
-            <ProgressiveNextImage
+            <ProgressiveImage
               src={item.imagePath}
               thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
-              width={item.width ?? 1200}
-              height={item.height ?? 800}
-              className={`w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02] ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02]  ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
               onLoad={() => { setImageLoaded(true) }}
               onError={() => { setImageError(true) }}
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              style={{
+                height: Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200)
+              }}
             />
 
             {!imageLoaded && (
