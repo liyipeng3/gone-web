@@ -39,38 +39,37 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
   const display = isSameImage || isFullImageLoaded
 
   return (
-        <>
+    <>
 
-                <Image
-                    {...imageProps}
-                    onLoad={(e) => { setIsFullImageLoaded(true); handleLoad(e) }}
-                    alt=''
-                    src={src}
-                    overrideSrc={src}
-                    style={{
-                      position: display ? 'static' : 'absolute',
-                      opacity: display ? 1 : 0
-                    }}
-                />
+      <Image
+        {...imageProps}
+        onLoad={(e) => { setIsFullImageLoaded(true); handleLoad(e) }}
+        alt=''
+        src={src}
+        overrideSrc={src}
+        loading='eager'
+        style={{
+          display: display ? 'block' : 'none'
+        }}
+      />
 
-                <Image
-                    {...imageProps}
-                    onLoad={handleLoad}
-                    src={thumbnailSrc}
-                    overrideSrc={thumbnailSrc}
-                    onError={(e) => {
-                      console.log('onError', e)
-                    }}
-                    alt=''
-                    style={{
-                      ...imageProps.style,
-                      filter: getFilter(blurIntensity),
-                      position: display ? 'absolute' : 'static',
-                      opacity: display ? 0 : 1
-                    }}
-                />
+      <Image
+        {...imageProps}
+        onLoad={handleLoad}
+        src={thumbnailSrc}
+        overrideSrc={thumbnailSrc}
+        onError={(e) => {
+          console.log('onError', e)
+        }}
+        alt=''
+        style={{
+          ...imageProps.style,
+          filter: getFilter(blurIntensity),
+          display: display ? 'none' : 'block'
+        }}
+      />
 
-        </>
+    </>
   )
 }
 
