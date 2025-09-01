@@ -29,9 +29,6 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   }, [src, thumbnailSrc, isSameImage])
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (!isFullImageLoaded) {
-      setIsFullImageLoaded(true)
-    }
     // 只在第一次加载完成时触发 onLoad 事件
     if (onLoad && !hasTriggeredLoad) {
       setHasTriggeredLoad(true)
@@ -39,16 +36,18 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
     }
   }
 
+  const display = isSameImage || isFullImageLoaded
+
   return (
         <>
 
                 <Image
                     {...imageProps}
-                    onLoad={handleLoad}
+                    onLoad={(e) => { setIsFullImageLoaded(true); handleLoad(e) }}
                     alt=''
                     src={src}
                     style={{
-                      display: isSameImage || isFullImageLoaded ? 'block' : 'none'
+                      display: display ? 'block' : 'none'
                     }}
                 />
 
@@ -60,7 +59,7 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
                     style={{
                       ...imageProps.style,
                       filter: getFilter(blurIntensity),
-                      display: isSameImage || isFullImageLoaded ? 'none' : 'block'
+                      display: display ? 'none' : 'block'
                     }}
                 />
 
