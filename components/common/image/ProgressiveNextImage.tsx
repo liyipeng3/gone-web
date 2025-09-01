@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import type { ImageProps } from 'next/image'
-import { getFilter } from './util'
 
 interface ProgressiveImageProps extends Omit<ImageProps, 'src'> {
   thumbnailSrc: string
@@ -14,7 +13,7 @@ interface ProgressiveImageProps extends Omit<ImageProps, 'src'> {
 const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
   thumbnailSrc,
   src,
-  blurIntensity = 20,
+  blurIntensity = 10,
   onLoad,
   ...imageProps
 }) => {
@@ -25,17 +24,13 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
   useEffect(() => {
     if (!src || isSameImage) {
       setIsFullImageLoaded(true)
-      return
     }
-
-    const fullImage = new window.Image()
-    fullImage.onload = () => {
-      setIsFullImageLoaded(true)
-    }
-    fullImage.src = src
   }, [src, thumbnailSrc, isSameImage])
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    if (!isFullImageLoaded) {
+      setIsFullImageLoaded(true)
+    }
     // 只在第一次加载完成时触发 onLoad 事件
     if (onLoad && !hasTriggeredLoad) {
       setHasTriggeredLoad(true)
@@ -45,28 +40,31 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
 
   return (
         <>
-            {/* 当缩略图和原图相同时，直接显示单张图片 */}
-            {isSameImage || isFullImageLoaded
-              ? (
+
                 <Image
                     {...imageProps}
                     onLoad={handleLoad}
                     alt=''
                     src={src}
+                    overrideSrc={src}
+                    style={{
+                      display: isSameImage || isFullImageLoaded ? 'block' : 'none'
+                    }}
                 />
-                )
-              : (
+
                 <Image
                     {...imageProps}
-                    src={thumbnailSrc}
                     onLoad={handleLoad}
+                    src={thumbnailSrc}
+                    overrideSrc={thumbnailSrc}
                     alt=''
                     style={{
                       ...imageProps.style,
-                      filter: getFilter(blurIntensity)
+                      filter: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='$'%3E%3CfeGaussianBlur stdDeviation='${blurIntensity}'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0,0 1 0 0 0,0 0 1 0 0,0 0 0 9 0'/%3E%3CfeComposite in2='SourceGraphic' operator='in'/%3E%3C/filter%3E%3C/svg%3E#$")`,
+                      display: isSameImage || isFullImageLoaded ? 'none' : 'block'
                     }}
                 />
-                )}
+
         </>
   )
 }

@@ -55,10 +55,7 @@ export interface ImageProps
   fallback?: string
   rootClassName?: string
   preview?: boolean | ImagePreviewType
-  /**
-   * @deprecated since version 3.2.1
-   */
-  onPreviewClose?: (value: boolean, prevValue: boolean) => void
+  onLoad?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
 }
@@ -71,7 +68,6 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
   const {
     src: imgSrc,
     alt,
-    onPreviewClose: onInitialPreviewClose,
     prefixCls = 'image-x',
     previewPrefixCls = `${prefixCls}-preview`,
     placeholder,
@@ -81,6 +77,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
     style,
     preview = true,
     className,
+    onLoad,
     onClick,
     onError,
     wrapperClassName,
@@ -94,7 +91,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
   const {
     src: previewSrc,
     visible: previewVisible = undefined,
-    onVisibleChange: onPreviewVisibleChange = onInitialPreviewClose,
+    onVisibleChange: onPreviewVisibleChange,
     getContainer: getPreviewContainer = undefined,
     mask: previewMask,
     maskClassName,
@@ -191,6 +188,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
           {...srcAndOnload}
           width={width}
           height={height}
+          onLoad={onLoad}
           onError={onError}
           alt=""
         />
