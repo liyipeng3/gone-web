@@ -94,7 +94,7 @@ export default async function PhotoDetailPage ({
 
       <div className="space-y-8 mt-8 h-max">
         <div className="w-full h-max drop-shadow-lg">
-          <div className="relative h-max md:h-[85vh] flex flex-col justify-end">
+          <div className="relative h-max md:h-[85vh] flex flex-col justify-end" >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <ProgressiveImage
               thumbnailSrc={photo.thumbnailPath ?? photo.imagePath}
@@ -109,8 +109,8 @@ export default async function PhotoDetailPage ({
               }
             />
           </div>
-          <div className="md:hidden flex justify-center w-full select-none">
-            <div className="flex flex-col gap-3 px-4 py-4 text-sm text-gray-600 dark:text-gray-800 shadow-lg bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md w-full">
+          <div className="@container justify-center w-full select-none mx-auto" style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
+            <div className="@2xl:hidden flex flex-col gap-3 px-4 py-4 text-sm text-gray-600 dark:text-gray-800 shadow-lg bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md w-full">
               {photo.camera && (() => {
                 const brand = getCameraBrand(photo.camera)
                 return (
@@ -148,9 +148,9 @@ export default async function PhotoDetailPage ({
               </div>
             </div>
           </div>
-          <div className="hidden md:flex justify-center w-full select-none">
-            <div className="flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
-              style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
+          <div className="@container  justify-center w-full select-none mx-auto" style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
+            <div className="hidden @2xl:flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
+              >
               <div className="flex flex-col items-start justify-between h-full">
                 {photo.camera &&
                   (() => {
@@ -265,7 +265,7 @@ export default async function PhotoDetailPage ({
               <div className="hidden md:flex justify-center w-full mt-8">
                 <div
                   className="flex flex-wrap items-center justify-center gap-4"
-                  style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}
+
                 >
                   {photo.description && (
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
