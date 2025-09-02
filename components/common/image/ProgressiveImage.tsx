@@ -28,6 +28,12 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
     }
   }, [src, thumbnailSrc, isSameImage])
 
+  useEffect(() => {
+    if (isFullImageLoaded) {
+      setIsFullImageLoaded(false)
+    }
+  }, [src])
+
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     // 只在第一次加载完成时触发 onLoad 事件
     if (onLoad && !hasTriggeredLoad) {
