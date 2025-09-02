@@ -28,7 +28,6 @@ interface GalleryItemProps {
 
 const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style }) => {
   const router = useRouter()
-  const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
   const handleClick = useCallback(() => {
@@ -55,18 +54,16 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
               src={item.imagePath}
               thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
-              className={`w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02]  ${imageLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-              onLoad={() => { setImageLoaded(true) }}
+              className={'w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02]'}
               onError={() => { setImageError(true) }}
               style={{
                 height: Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200)
               }}
             />
 
-            {!imageLoaded && (
+            {/* {!imageLoaded && (
               <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
-            )}
+            )} */}
           </>
         )}
 
@@ -104,7 +101,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
   )
 }
 
-const GalleryGrid: React.FC<GalleryGridProps> = ({
+const GalleryWaterfall: React.FC<GalleryGridProps> = ({
   items,
   total,
   currentPage,
@@ -230,4 +227,4 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({
   )
 }
 
-export default GalleryGrid
+export default GalleryWaterfall

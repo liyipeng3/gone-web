@@ -2,7 +2,7 @@ import React from 'react'
 import type { Metadata } from 'next'
 
 import { getGalleryList } from '@/models/gallery'
-import GalleryGrid from '@/components/common/gallery'
+import GalleryWaterfall from '@/components/common/gallery'
 
 export const metadata: Metadata = {
   title: '相册 - 定格当下',
@@ -59,7 +59,7 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
       /> */}
       <div className='md:h-8'></div>
 
-      <GalleryGrid
+      <GalleryWaterfall
         items={items}
         total={total}
         currentPage={page}

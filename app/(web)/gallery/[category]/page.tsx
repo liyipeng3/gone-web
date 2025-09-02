@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Breadcrumb from '@/components/common/breadcrumb'
 import { getGalleryList, getGalleryCategories } from '@/models/gallery'
-import GalleryGrid from '@/components/common/gallery'
+import GalleryWaterfall from '@/components/common/gallery'
 import GalleryFilter from '@/components/common/gallery/filter'
 
 interface CategoryGalleryPageProps {
@@ -71,7 +71,7 @@ export default async function CategoryGalleryPage ({ params, searchParams }: Cat
         currentTag={searchParams.tag}
       />
 
-      <GalleryGrid
+      <GalleryWaterfall
         items={items}
         total={total}
         currentPage={page}
