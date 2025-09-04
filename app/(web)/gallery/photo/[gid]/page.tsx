@@ -67,7 +67,7 @@ export default async function PhotoDetailPage ({
   const tags = photo.tags ? JSON.parse(photo.tags) : []
 
   return (
-    <div className="w-full mx-auto px-4 pb-10 pt-3 relative">
+    <div className="w-full mx-auto px-4 pb-10 pt-0 relative">
       <KeyboardNavigation
         previousUrl={
           adjacentPhotos.previous
@@ -92,9 +92,9 @@ export default async function PhotoDetailPage ({
         ]}
       /> */}
 
-      <div className="space-y-8 mt-8 h-max">
+      <div className="space-y-8 mt-4 h-max">
         <div className="w-full h-max drop-shadow-lg">
-          <div className="relative h-max md:h-[85vh] flex flex-col justify-end" >
+          <div className="relative h-max 2xl:h-[85vh] flex flex-col justify-end" >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <ProgressiveImage
               thumbnailSrc={photo.thumbnailPath ?? photo.imagePath}
