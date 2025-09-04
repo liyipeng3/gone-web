@@ -1,7 +1,7 @@
 'use client'
 import React, { Fragment, type ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import cn from 'classnames'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
@@ -122,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }
 
-  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>('search')
+  const [menuType, setMenuType] = useState<'search' | 'close' | 'menu'>('close')
 
   const [search, setSearch] = useState<string>('')
 
@@ -133,14 +133,14 @@ export const Header: React.FC<HeaderProps> = ({
         {typeof logo === 'string' ? <h1>{logo}</h1> : logo}
       </Link>
       <div
-        className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto duration-200 transition-all', menuType === 'close' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
+        className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto duration-200 transition-all', menuType === 'search' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
         <div
-          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-100 transition-[opacity]', menuType === 'close' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
+          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-100 transition-[opacity]', menuType === 'search' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
           {menus.map((menu, index) => {
             return ((menu.children?.length) != null)
               ? (
                 <Menu key={menu.name} as="div" className="relative inline-block text-center">
-                  <Menu.Button className="hover:underline">{menu.name}</Menu.Button>
+                  <MenuButton className="hover:underline">{menu.name}</MenuButton>
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"
@@ -150,37 +150,42 @@ export const Header: React.FC<HeaderProps> = ({
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute -left-8 z-10 mt-2 w-24 origin-top-right
+                    <MenuItems className="absolute -left-8 z-10 mt-2 w-24 origin-top-right
                                     rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5
                                     focus:outline-none dark:bg-dark-light dark:ring-dark-line ">
                       <div className="py-1">
                         {menu.children.map((child, index) => {
-                          return (<Menu.Item key={child.name}>
-                            {({ active }) => (
+                          return (<MenuItem key={child.name}>
+                            {({ focus }) => (
                               <Link
                                 href={child.path}
+                                onClick={() => {
+                                  setMenuType('close')
+                                }}
                                 className={cn(
-                                  active ? 'bg-gray-100 text-gray-900 dark:bg-gray-800' : 'text-gray-700',
+                                  focus ? 'bg-gray-100 text-gray-900 dark:bg-gray-800' : 'text-gray-700',
                                   'block px-4 py-2 text-sm dark:text-white'
                                 )}
                               >
                                 {child.name}
                               </Link>
                             )}
-                          </Menu.Item>)
+                          </MenuItem>)
                         })}
                       </div>
-                    </Menu.Items>
+                    </MenuItems>
                   </Transition>
                 </Menu>
                 )
-              : <Link key={menu.name}
-                      className={cn('hover:underline text', menu.disabled && 'cursor-not-allowed opacity-80')}
-                      href={menu.disabled ? '#' : menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
+              : <Link key={menu.name} onClick={() => {
+                setMenuType('close')
+              }}
+                className={cn('hover:underline text', menu.disabled && 'cursor-not-allowed opacity-80')}
+                href={menu.disabled ? '#' : menu.path ?? `/${menu.id as string}`}>{menu.name}</Link>
           })}
         </div>
         <div
-          className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'close' ? 'md:translate-y-1 opacity-100 ' : '-translate-y-4 opacity-0 md:-translate-y-3')}>
+          className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'search' ? 'md:translate-y-1 opacity-100 ' : '-translate-y-4 opacity-0 md:-translate-y-3')}>
           <input
             className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border dark:bg-transparent appearance-none outline-none"
             onKeyDown={(e) => {
@@ -207,11 +212,11 @@ export const Header: React.FC<HeaderProps> = ({
 
       </div>
       <div className="flex justify-center items-center space-x-3 md:ml-8 md:translate-y-[3%]">
-        <div className={cn(menuType, 'md:menu')} onClick={() => {
-          if (menuType === 'search') {
+        <div className={cn(menuType === 'close' ? 'search' : 'close', 'md:menu')} onClick={() => {
+          if (menuType === 'close') {
             inputRef.current?.focus()
           }
-          setMenuType(menuType === 'close' ? 'search' : 'close')
+          setMenuType(menuType === 'search' ? 'close' : 'search')
         }}>
           <button
             className="nav-icon relative translate-y-[1%]"
