@@ -94,7 +94,7 @@ export default async function PhotoDetailPage ({
 
       <div className="space-y-8 mt-4 h-max">
         <div className="w-full h-max drop-shadow-lg">
-          <div className="relative h-max 2xl:h-[85vh] flex flex-col justify-end" >
+          <div className="relative h-max xl:h-[85vh] flex flex-col justify-end" >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <ProgressiveImage
               thumbnailSrc={photo.thumbnailPath ?? photo.imagePath}
