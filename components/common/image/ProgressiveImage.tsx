@@ -45,32 +45,34 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   const display = isSameImage || isFullImageLoaded
 
   return (
-        <>
+    <>
 
-                <Image
-                    {...imageProps}
-                    onLoad={(e) => { setIsFullImageLoaded(true); handleLoad(e) }}
-                    alt=''
-                    src={src}
-                    style={{
-                      ...imageProps.style,
-                      display: display ? 'block' : 'none'
-                    }}
-                />
+      <Image
+        {...imageProps}
+        onLoad={(e) => { setIsFullImageLoaded(true); handleLoad(e) }}
+        alt=''
+        src={src}
+        style={{
+          ...imageProps.style,
+          display: display ? 'block' : 'none'
+        }}
+      />
 
-                <Image
-                    {...imageProps}
-                    src={thumbnailSrc}
-                    onLoad={handleLoad}
-                    alt=''
-                    style={{
-                      ...imageProps.style,
-                      filter: getFilter(blurIntensity),
-                      display: display ? 'none' : 'block'
-                    }}
-                />
+      {!display &&
+        <Image
+          {...imageProps}
+          src={thumbnailSrc}
+          onLoad={handleLoad}
+          preview={false}
+          alt=''
+          style={{
+            ...imageProps.style,
+            filter: getFilter(blurIntensity),
+            display: display ? 'none' : 'block'
+          }}
+        />}
 
-        </>
+    </>
   )
 }
 

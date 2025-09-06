@@ -100,8 +100,8 @@ export default async function PhotoDetailPage ({
               thumbnailSrc={photo.thumbnailPath ?? photo.imagePath}
               src={photo.imagePath}
               alt={photo.title ?? '照片'}
-              wrapperClassName="object-contain w-full h-full cursor-pointer"
-              className='object-contain w-full h-full'
+              wrapperClassName="object-contain  w-full h-full cursor-pointer"
+              className='object-contain object-bottom w-full h-full'
               preview={
                 {
                   icons: defaultIcons
