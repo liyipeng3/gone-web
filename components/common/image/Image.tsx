@@ -5,7 +5,7 @@ import type { IDialogPropTypes } from 'rc-dialog/lib/IDialogPropTypes'
 import useMergedState from 'rc-util/lib/hooks/useMergedState'
 import type { GetContainer } from 'rc-util/lib/PortalWrapper'
 import * as React from 'react'
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useMemo, useState, useRef, useEffect } from 'react'
 import { PreviewGroupContext } from './context'
 import type { TransformType } from './hooks/useImageTransform'
 import useRegisterImage from './hooks/useRegisterImage'
@@ -55,7 +55,7 @@ export interface ImageProps
   fallback?: string
   rootClassName?: string
   preview?: boolean | ImagePreviewType
-  onLoad?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
+  onLoad?: (e?: React.SyntheticEvent<HTMLImageElement, Event>) => void
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void
 }
@@ -115,6 +115,13 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
     fallback
   })
   const [mousePosition, setMousePosition] = useState<null | { x: number, y: number }>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    if (imageRef.current?.complete) {
+      onLoad?.()
+    }
+  }, [])
 
   const groupContext = useContext(PreviewGroupContext)
 
@@ -186,6 +193,7 @@ const ImageInternal: CompoundedComponent<ImageProps> = props => {
             ...style
           }}
           {...srcAndOnload}
+          ref={imageRef}
           width={width}
           height={height}
           onLoad={onLoad}
