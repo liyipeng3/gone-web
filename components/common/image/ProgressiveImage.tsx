@@ -34,7 +34,7 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
     }
   }, [src])
 
-  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event> | undefined) => {
     // 只在第一次加载完成时触发 onLoad 事件
     if (onLoad && !hasTriggeredLoad) {
       setHasTriggeredLoad(true)
