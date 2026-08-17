@@ -1,14 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { type NextRequest, NextResponse } from 'next/server'
 import {
-  checkDraftSlugUnique,
-  createPost,
   deletePostByCid,
   getDraftPostByCid,
-  getPostMids,
-  updatePostByCid,
-  updatePostCategory,
-  updatePostTags
+  saveDraftAtomic,
+  DraftSlugConflictError
 } from '@/models/posts'
 import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
 import { postDraftSchema } from '@/lib/validations/post'
@@ -31,47 +27,26 @@ export async function POST (
     return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
   }
 
-  const newDraft = parsed.data
-  const { category, tags, ...draftData } = newDraft
-  const draftPost = await getDraftPostByCid(cid)
-  let res = null
+  const { category, tags, ...draftData } = parsed.data
 
-  if (draftPost) {
-    if (!(await checkDraftSlugUnique(newDraft.slug, cid))) {
+  try {
+    // 草稿保存 + 标签/分类同步在单个事务内原子完成，仅在变化时重写关系
+    const res = await saveDraftAtomic(cid, {
+      title: draftData.title,
+      slug: draftData.slug,
+      text: draftData.text,
+      category,
+      tags
+    }, Number(auth.id))
+
+    return NextResponse.json(res)
+  } catch (error) {
+    if (error instanceof DraftSlugConflictError) {
       return new NextResponse('slug is already exist', { status: 409 })
     }
-    res = await updatePostByCid(draftPost.cid, {
-      ...draftData,
-      slug: newDraft.slug?.startsWith('@') ? newDraft.slug : `@${newDraft.slug}`,
-      type: 'post_draft',
-      status: 'hidden',
-      parent: cid
-    })
-  } else {
-    const mids = await getPostMids(cid)
-    res = await createPost({
-      ...draftData,
-      slug: `@${newDraft.slug}`,
-      relationships: { createMany: { data: mids.map(item => ({ mid: item.mid })) } },
-      users: {
-        connect: {
-          uid: Number(auth.id)
-        }
-      },
-      parent: cid,
-      type: 'post_draft',
-      status: 'hidden'
-    })
+    console.error('保存草稿失败:', error)
+    return NextResponse.json({ error: '保存草稿失败' }, { status: 500 })
   }
-
-  // 更新帖子的标签
-  await updatePostTags(res.cid, tags)
-
-  if (category) {
-    await updatePostCategory(res.cid, category)
-  }
-
-  return NextResponse.json(res)
 }
 
 export async function DELETE (

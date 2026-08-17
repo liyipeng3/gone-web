@@ -21,6 +21,7 @@ const mocks = vi.hoisted(() => ({
   checkDraftSlugUnique: vi.fn(),
   updatePostCategory: vi.fn(),
   updatePostTags: vi.fn(),
+  saveDraftAtomic: vi.fn(),
   deletePostByCid: vi.fn(),
   clearPostRelatedCaches: vi.fn()
 }))
@@ -42,7 +43,9 @@ vi.mock('@/models/posts', () => ({
   checkDraftSlugUnique: mocks.checkDraftSlugUnique,
   updatePostCategory: mocks.updatePostCategory,
   updatePostTags: mocks.updatePostTags,
-  deletePostByCid: mocks.deletePostByCid
+  saveDraftAtomic: mocks.saveDraftAtomic,
+  deletePostByCid: mocks.deletePostByCid,
+  DraftSlugConflictError: class DraftSlugConflictError extends Error {}
 }))
 
 vi.mock('@/models/posts/cache-utils', () => ({
@@ -77,6 +80,7 @@ describe('post management authorization', () => {
     mocks.checkDraftSlugUnique.mockResolvedValue(true)
     mocks.updatePostCategory.mockResolvedValue({ success: true })
     mocks.updatePostTags.mockResolvedValue({ success: true })
+    mocks.saveDraftAtomic.mockResolvedValue({ cid: 2, slug: 'draft', title: 'Draft', updatedAt: null })
     mocks.deletePostByCid.mockResolvedValue({ cid: 2 })
   })
 
