@@ -74,7 +74,7 @@ export const clearDraftSnapshot = (cid: string | number): void => {
 /**
  * 规范化标签用于比较（去空、去重、排序）
  */
-const normalizeTags = (tags?: string[]): string[] =>
+export const normalizeTags = (tags?: string[]): string[] =>
   Array.from(new Set((tags ?? []).filter(Boolean))).sort((a, b) => a.localeCompare(b))
 
 /**
