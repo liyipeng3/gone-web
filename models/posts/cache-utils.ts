@@ -25,11 +25,32 @@ export const getArchiveCacheKey = (): string => {
 
 /**
  * 清除帖子相关缓存
+ *
+ * @param listCaches 是否连带清除列表类缓存（hotList/postList/archive）。
+ *   内容变更（创建/更新/删除/发布）应传 true（默认）；
+ *   仅浏览量自增等对列表排序影响甚微的操作应传 false，避免高频击穿列表缓存。
  */
-export const clearPostRelatedCaches = ({ cid, slug }: { cid?: number, slug?: string }): void => {
+export const clearPostRelatedCaches = ({
+  cid,
+  slug,
+  slugs = [],
+  listCaches = true
+}: {
+  cid?: number
+  slug?: string
+  slugs?: Array<string | null | undefined>
+  listCaches?: boolean
+}): void => {
   // 清除特定帖子缓存
-  slug && cacheService.del(getPostCacheKey(slug))
   cid && cacheService.del(getPostCacheKey(cid))
+  const slugKeys = new Set([slug, ...slugs].filter((value): value is string => Boolean(value)))
+  slugKeys.forEach(value => {
+    cacheService.del(getPostCacheKey(value))
+  })
+
+  if (!listCaches) {
+    return
+  }
 
   // 清除可能受影响的列表缓存
   cacheService.delByPrefix(cacheKeys.hotList)

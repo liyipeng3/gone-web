@@ -26,7 +26,7 @@ export const updatePostByCid = async (cid: number, data: PostUpdateData) => {
  * 根据 cid 删除帖子
  */
 export const deletePostByCid = async (cid: number) => {
-  clearPostRelatedCaches({cid})
+  clearPostRelatedCaches({ cid })
   return await prisma.posts.delete({
     where: { cid }
   })
@@ -46,8 +46,8 @@ export const incrementViews = async (cid: number) => {
     }
   })
 
-  // 清除缓存
-  clearPostRelatedCaches({cid})
+  // 清除缓存（浏览量变更仅失效该文章详情缓存，避免击穿列表缓存）
+  clearPostRelatedCaches({ cid, listCaches: false })
 }
 
 /**
@@ -115,6 +115,15 @@ export const getPostInfoByCid = async (cid: number) => {
   }
 }
 
+export const getPostSlugByCid = async (cid: number): Promise<string | null> => {
+  const post = await prisma.posts.findUnique({
+    where: { cid },
+    select: { slug: true }
+  })
+
+  return post?.slug ?? null
+}
+
 /**
  * 根据 slug 获取帖子
  */
@@ -139,7 +148,8 @@ export const getPostBySlug = async (slug: string) => {
       }
     },
     where: {
-      slug
+      slug,
+      status: 'publish'
     }
   })
 

@@ -1,11 +1,13 @@
 import prisma from '@/lib/prisma'
+import { cache } from 'react'
 import { cacheService, cacheKeys } from '@/lib/cache'
 
-export const getCommentsByCid = async (cid: number) => {
+// 使用 React.cache 在同一请求内去重（文章页与 CommentList 会各调用一次）
+export const getCommentsByCid = cache(async (cid: number) => {
   return await prisma.comments.findMany({
     where: { cid, status: 'approved' }
   })
-}
+})
 
 export const getCommentById = async (coid: number) => {
   return await prisma.comments.findUnique({

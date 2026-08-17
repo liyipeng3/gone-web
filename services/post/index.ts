@@ -203,12 +203,12 @@ export const getPageTagPostList = cache(async ({
     }
   })
 
-  // 处理文章数据
-  const list = await Promise.all(data.map(async (item) => {
-    // 获取文章的分类信息
-    const categoryRel = await prisma.relationships.findFirst({
+  // 批量获取这些文章的分类关系，避免逐篇查询（N+1）
+  const cids = data.map((item) => item.posts.cid)
+  const categoryRels = cids.length > 0
+    ? await prisma.relationships.findMany({
       where: {
-        cid: item.posts.cid,
+        cid: { in: cids },
         metas: {
           type: 'category'
         }
@@ -222,16 +222,29 @@ export const getPageTagPostList = cache(async ({
         }
       }
     })
+    : []
+
+  // 建立 cid -> 分类 的映射
+  const cidToCategory = new Map<number, { name: string | null, slug: string | null }>()
+  categoryRels.forEach((rel) => {
+    if (!cidToCategory.has(rel.cid)) {
+      cidToCategory.set(rel.cid, { name: rel.metas.name, slug: rel.metas.slug })
+    }
+  })
+
+  // 处理文章数据
+  const list = data.map((item) => {
+    const category = cidToCategory.get(item.posts.cid)
 
     return {
       ...item.posts,
-      category: categoryRel?.metas.slug ?? '',
-      name: categoryRel?.metas.name ?? '',
+      category: category?.slug ?? '',
+      name: category?.name ?? '',
       description: (marked.parse((item.posts.text?.split('<!--more-->')[0]
         .replaceAll(/```(\n|\r|.)*?```/g, '')
         .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
     }
-  }))
+  })
 
   const description = `标签 ${tagData.name} 下的文章列表`
 

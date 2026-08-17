@@ -2,9 +2,17 @@ import { NextResponse } from 'next/server'
 import { createComment, deleteComment, getCommentsByCid, updateComment, getCommentById } from '@/models/comments'
 import { sendCommentNotification, sendReplyNotification, sendCommentApprovedNotification } from '@/lib/email'
 import { getPostInfoByCid } from '@/models/posts'
+import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
+import { commentCreateSchema } from '@/lib/validations/comment'
 
 export async function POST (request: Request, context: { params: { cid: string } }) {
-  const { author, text, parent, email, url } = await request.json()
+  const body = await request.json()
+  const parsed = commentCreateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
+  }
+
+  const { author, text, parent = 0, email, url } = parsed.data
   const agent = request.headers.get('User-Agent')
   const ip = request.headers.get('X-Forwarded-For')
   const comment = await createComment(Number(context.params.cid), Number(parent), { author, text, email, url, agent, ip })
@@ -41,6 +49,9 @@ export async function POST (request: Request, context: { params: { cid: string }
 }
 
 export async function DELETE (request: Request, context: { params: { cid: string } }) {
+  const auth = await requireAdmin()
+  if (isAuthResponse(auth)) return auth
+
   const { coid } = await request.json()
   await deleteComment(coid)
   return NextResponse.json({ success: true })
@@ -52,6 +63,9 @@ export async function GET (request: Request, context: { params: { cid: string } 
 }
 
 export async function PATCH (request: Request, context: { params: any }) {
+  const auth = await requireAdmin()
+  if (isAuthResponse(auth)) return auth
+
   const { coid, comment } = await request.json()
 
   // 获取更新前的评论信息

@@ -3,7 +3,7 @@ import React, { Fragment, type ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import cn from 'classnames'
-import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { Moon, Sun } from 'lucide-react'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 import { useRouter } from 'next/navigation'
 import { setTheme, updateTheme } from './theme'
@@ -226,8 +226,8 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
         <div className="hover:cursor-pointer flex justify-center translate-y-[1px] w-7" onClick={clickTheme}>
-          <SunIcon className="md:w-6 w-7 block dark:hidden" />
-          <MoonIcon className="md:w-5 w-6 hidden dark:block" />
+          <Sun className="md:w-6 md:h-6 w-7 h-7 block dark:hidden" />
+          <Moon className="md:w-5 md:h-5 w-6 h-6 hidden dark:block" />
         </div>
       </div>
     </header>

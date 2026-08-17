@@ -144,55 +144,66 @@ export const getPostList = async ({
     take: pageSize
   })
 
-  // 为每个帖子获取标签和分类
-  const postsWithMetadata = await Promise.all(
-    posts.map(async (post) => {
-      const relationships = await prisma.relationships.findMany({
-        where: { cid: post.cid },
-        include: {
-          metas: {
-            select: {
-              name: true,
-              slug: true,
-              type: true
-            }
+  // 批量获取所有帖子的标签和分类，避免逐篇查询（N+1）
+  const cids = posts.map((post) => post.cid)
+  const relationships = cids.length > 0
+    ? await prisma.relationships.findMany({
+      where: { cid: { in: cids } },
+      include: {
+        metas: {
+          select: {
+            name: true,
+            slug: true,
+            type: true
           }
         }
-      })
-
-      // 提取标签和分类
-      const tags = relationships
-        .filter(r => r.metas.type === 'tag')
-        .map(r => r.metas.slug ?? '')
-
-      const categoryRelation = relationships.find(r => r.metas.type === 'category')
-      const category = categoryRelation?.metas.slug ?? 'uncategorized'
-      const name = categoryRelation?.metas.name ?? '未分类'
-
-      // 提取并处理描述
-      let description = ''
-      if (post.text) {
-        const textPart = post.text.split('<!--more-->')[0]
-          .replaceAll(/```(\n|\r|.)*?```/g, '')
-          .slice(0, 150)
-
-        description = (marked.parse(textPart) as string).replaceAll(/<.*?>/g, '')
-      }
-
-      const commentsNum = post._count?.comments || 0
-
-      return {
-        ...post,
-        tags,
-        category,
-        name,
-        description,
-        commentsNum,
-        // 移除不需要的字段
-        _count: undefined
       }
     })
-  )
+    : []
+
+  // 建立 cid -> relationships 映射
+  const cidToRelationships = new Map<number, typeof relationships>()
+  relationships.forEach((rel) => {
+    const list = cidToRelationships.get(rel.cid) ?? []
+    list.push(rel)
+    cidToRelationships.set(rel.cid, list)
+  })
+
+  const postsWithMetadata = posts.map((post) => {
+    const rels = cidToRelationships.get(post.cid) ?? []
+
+    // 提取标签和分类
+    const tags = rels
+      .filter(r => r.metas.type === 'tag')
+      .map(r => r.metas.slug ?? '')
+
+    const categoryRelation = rels.find(r => r.metas.type === 'category')
+    const category = categoryRelation?.metas.slug ?? 'uncategorized'
+    const name = categoryRelation?.metas.name ?? '未分类'
+
+    // 提取并处理描述
+    let description = ''
+    if (post.text) {
+      const textPart = post.text.split('<!--more-->')[0]
+        .replaceAll(/```(\n|\r|.)*?```/g, '')
+        .slice(0, 150)
+
+      description = (marked.parse(textPart) as string).replaceAll(/<.*?>/g, '')
+    }
+
+    const commentsNum = post._count?.comments || 0
+
+    return {
+      ...post,
+      tags,
+      category,
+      name,
+      description,
+      commentsNum,
+      // 移除不需要的字段
+      _count: undefined
+    }
+  })
 
   const result = {
     list: postsWithMetadata,

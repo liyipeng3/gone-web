@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/session'
 import { uploadToOSS, generateFileName, generateThumbnail, generateThumbnailFileName } from '@/lib/oss'
 import exifr from 'exifr'
 import sharp from 'sharp'
+import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
 
 const SUPPORTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -25,13 +25,8 @@ function formatShutterSpeed (exposureTime: number): string {
 
 export async function POST (request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json(
-        { error: '未授权访问' },
-        { status: 401 }
-      )
-    }
+    const auth = await requireAdmin()
+    if (isAuthResponse(auth)) return auth
 
     const formData = await request.formData()
     const file = formData.get('file') as File

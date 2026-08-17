@@ -4,25 +4,25 @@ import { useEffect, useState } from 'react'
 import Image from '@/components/common/image'
 
 import {
-  CloseOutlined,
-  LeftOutlined,
-  RightOutlined,
-  RotateLeftOutlined,
-  RotateRightOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined
-} from '@ant-design/icons'
+  X,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  RotateCw,
+  ZoomIn,
+  ZoomOut
+} from 'lucide-react'
 import { type PreviewProps } from '@/components/common/image/Preview'
 import { getOffset } from '@/lib/utils'
 
 export const defaultIcons: PreviewProps['icons'] = {
-  rotateLeft: <RotateLeftOutlined/>,
-  rotateRight: <RotateRightOutlined/>,
-  zoomIn: <ZoomInOutlined/>,
-  zoomOut: <ZoomOutOutlined/>,
-  close: <CloseOutlined/>,
-  left: <LeftOutlined/>,
-  right: <RightOutlined/>
+  rotateLeft: <RotateCcw/>,
+  rotateRight: <RotateCw/>,
+  zoomIn: <ZoomIn/>,
+  zoomOut: <ZoomOut/>,
+  close: <X/>,
+  left: <ChevronLeft/>,
+  right: <ChevronRight/>
 }
 
 const Lightbox = () => {

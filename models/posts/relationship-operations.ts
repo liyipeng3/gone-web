@@ -1,7 +1,7 @@
 // 帖子标签和分类关系操作
 import prisma from '@/lib/prisma'
+import { cacheService, cacheKeys } from '@/lib/cache'
 import { clearPostRelatedCaches } from './cache-utils'
-import { getDraftPostByCid } from './basic-operations'
 
 /**
  * 更新帖子的标签和分类
@@ -69,6 +69,9 @@ export const updateMetas = async (cid: number, category: string, tags: string[])
         }))
       })
     }
+
+    // 标签/分类关系发生变更，失效标签云缓存
+    cacheService.delByPrefix(cacheKeys.tags)
 
     return relationshipData
   })
@@ -217,8 +220,9 @@ export const updatePostTags = async (cid: number, tags: string[]) => {
       })
     }
 
-    // 清除相关缓存
-    clearPostRelatedCaches({cid})
+    // 清除相关缓存（标签发生变更，需失效标签云缓存）
+    clearPostRelatedCaches({ cid })
+    cacheService.delByPrefix(cacheKeys.tags)
 
     return { success: true }
   })
@@ -307,7 +311,7 @@ export const updatePostCategory = async (cid: number, category: string) => {
     })
 
     // 清除相关缓存
-    clearPostRelatedCaches({cid})
+    clearPostRelatedCaches({ cid })
 
     return { success: true }
   })
@@ -317,62 +321,78 @@ export const updatePostCategory = async (cid: number, category: string) => {
  * 发布帖子
  */
 export const publishPost = async (cid: number) => {
-  // 使用事务处理所有数据库操作，确保原子性
-  return await prisma.$transaction(async (tx) => {
-    const draft = await getDraftPostByCid(cid)
+  const result = await prisma.$transaction(async (tx) => {
+    const [post, draft] = await Promise.all([
+      tx.posts.findUnique({ where: { cid } }),
+      tx.posts.findFirst({
+        where: {
+          parent: cid,
+          type: 'post_draft'
+        }
+      })
+    ])
+
+    if (!post) {
+      throw new Error(`Post with cid ${cid} not found`)
+    }
 
     if (!draft) {
-      // 如果没有草稿，直接更新状态
-      await tx.posts.update({
-        where: {
-          cid
-        },
+      const published = await tx.posts.update({
+        where: { cid },
         data: {
           status: 'publish',
           type: 'post'
         }
       })
-    } else {
-      // 如果有草稿，先获取原文章信息
-      const post = await tx.posts.findUnique({
-        where: {
-          cid
-        }
-      })
 
-      if (!post) {
-        throw new Error(`Post with cid ${cid} not found`)
+      return {
+        published,
+        oldSlug: post.slug,
+        newSlug: post.slug
       }
-
-      // 删除原文章
-      await tx.posts.delete({
-        where: {
-          cid
-        }
-      })
-
-      // 更新草稿为正式文章
-      await tx.posts.update({
-        where: {
-          cid: draft.cid
-        },
-        data: {
-          cid,
-          status: 'publish',
-          type: 'post',
-          parent: 0,
-          slug: String(draft?.slug).slice(1),
-          createdAt: post.createdAt,
-          commentsNum: post.commentsNum,
-          viewsNum: post.viewsNum,
-          likesNum: post.likesNum
-        }
-      })
     }
 
-    // 清除相关缓存
-    clearPostRelatedCaches({cid})
+    const newSlug = draft.slug?.replace(/^@/, '')
+    if (!newSlug) {
+      throw new Error(`Draft with cid ${draft.cid} has no valid slug`)
+    }
 
-    return { success: true }
+    // 原文章主键保持不变，评论外键无需迁移。
+    await tx.relationships.deleteMany({ where: { cid } })
+    await tx.relationships.updateMany({
+      where: { cid: draft.cid },
+      data: { cid }
+    })
+
+    const published = await tx.posts.update({
+      where: { cid },
+      data: {
+        title: draft.title,
+        slug: newSlug,
+        text: draft.text,
+        order: draft.order,
+        password: draft.password,
+        allowComment: draft.allowComment,
+        status: 'publish',
+        type: 'post'
+      }
+    })
+
+    await tx.posts.delete({
+      where: { cid: draft.cid }
+    })
+
+    return {
+      published,
+      oldSlug: post.slug,
+      newSlug
+    }
   })
+
+  clearPostRelatedCaches({
+    cid,
+    slugs: [result.oldSlug, result.newSlug]
+  })
+
+  return { success: true }
 }

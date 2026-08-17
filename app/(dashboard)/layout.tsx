@@ -8,6 +8,7 @@ import { UserAccountNav } from '@/components/dashboard/user-account-nav'
 import { ModeToggle } from '@/components/dashboard/mode-toggle'
 import React from 'react'
 import { authOptions } from '@/lib/auth'
+import { isAdministrator } from '@/lib/api-auth'
 
 interface DashboardLayoutProps {
   children?: React.ReactNode
@@ -20,6 +21,10 @@ export default async function DashboardLayout ({
 
   if (user == null) {
     redirect(authOptions?.pages?.signIn ?? '/login')
+  }
+
+  if (!(await isAdministrator(user))) {
+    redirect('/')
   }
 
   return (

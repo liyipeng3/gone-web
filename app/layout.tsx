@@ -11,9 +11,19 @@ import { siteConfig } from '@/config/site'
 import { ThemeProvider } from 'next-themes'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: `${siteConfig.name} - ${siteConfig.signature}`,
     template: `%s - ${siteConfig.name}`
+  },
+  description: siteConfig.description,
+  openGraph: {
+    type: 'website',
+    locale: 'zh_CN',
+    url: siteConfig.url,
+    title: `${siteConfig.name} - ${siteConfig.signature}`,
+    description: siteConfig.description,
+    siteName: siteConfig.name
   }
 }
 
@@ -35,7 +45,7 @@ export default function RootLayout ({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>

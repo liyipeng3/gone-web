@@ -1,13 +1,10 @@
 import prisma from '@/lib/prisma'
-import NodeCache from 'node-cache'
-
-// 创建缓存实例，设置默认过期时间为10分钟
-const cache = new NodeCache({ stdTTL: 600 })
+import { cacheService, cacheKeys } from '@/lib/cache'
 
 export const getTags = async (limit: number = 30) => {
-  // 使用缓存键
-  const cacheKey = `tags_${limit}`
-  const cachedData = cache.get(cacheKey)
+  // 使用全局缓存服务，key 带前缀，便于标签变更时统一失效
+  const cacheKey = `${cacheKeys.tags}:${limit}`
+  const cachedData = cacheService.get(cacheKey)
 
   // 如果缓存中有数据，直接返回
   if (cachedData) {
@@ -21,7 +18,7 @@ export const getTags = async (limit: number = 30) => {
   })
 
   // 缓存结果
-  cache.set(cacheKey, tags)
+  cacheService.set(cacheKey, tags)
 
   return tags
 }

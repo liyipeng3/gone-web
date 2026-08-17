@@ -1,13 +1,10 @@
 import prisma from '@/lib/prisma'
-import NodeCache from 'node-cache'
-
-// 创建缓存实例，设置默认过期时间为1小时
-const cache = new NodeCache({ stdTTL: 3600 })
+import { cacheService, cacheKeys } from '@/lib/cache'
 
 export const getLinks = async (limit?: number) => {
-  // 使用缓存键
-  const cacheKey = `links_${limit ?? 'all'}`
-  const cachedData = cache.get(cacheKey)
+  // 使用全局缓存服务，key 带前缀
+  const cacheKey = `${cacheKeys.links}:${limit ?? 'all'}`
+  const cachedData = cacheService.get(cacheKey)
 
   // 如果缓存中有数据，直接返回
   if (cachedData) {
@@ -30,8 +27,8 @@ export const getLinks = async (limit?: number) => {
     ...(limit ? { take: limit } : {})
   })
 
-  // 缓存结果
-  cache.set(cacheKey, links)
+  // 缓存结果（友链变化频率低，保留 1 小时 TTL）
+  cacheService.set(cacheKey, links, 3600)
 
   return links
 }

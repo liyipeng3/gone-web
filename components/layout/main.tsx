@@ -12,11 +12,13 @@ export interface MainProps {
 const Main: React.FC<MainProps> = async ({
   children
 }) => {
-  // 获取最近回复、标签和邻居数据
-  const recentComments = await getRecentComments() as any[]
-  const tags = await getTags() as any[]
-  const hotList = await getHotList() as any[]
-  const links = await getLinks(10) // 获取10个友情链接
+  // 并行获取最近回复、标签、热门文章和友链数据
+  const [recentComments, tags, hotList, links] = await Promise.all([
+    getRecentComments() as Promise<any[]>,
+    getTags() as Promise<any[]>,
+    getHotList() as Promise<any[]>,
+    getLinks(10) // 获取10个友情链接
+  ])
 
   return <div
     className="relative lg:max-w-7xl md:max-w-5xl max-w-full m-auto px-4 py-3 flex items-start mt-0 justify-between gap-x-12 lg:min-w-[64rem] md:min-w-[48rem]">

@@ -16,11 +16,23 @@ export async function generateMetadata (
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   const {
-    title
+    title,
+    content
   } = await getPagePostInfo({ slug: params.slug })
 
+  // 从正文提取纯文本摘要（去 HTML 标签，截断 150 字）
+  const description = content
+    ? content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 150)
+    : undefined
+
   return {
-    title
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article'
+    }
   }
 }
 
@@ -54,7 +66,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
           }, { name: '正文' }]}/>
           <h2 className="md:mb-2 mt-4 dark:text-white">{title}</h2>
           <div className="text-xs mb-5 -mt-3 md:mt-3 my-3 text-gray-500 space-x-1.5 dark:text-gray-400 ">
-            <span>{dayjs(createdAt).format('YYYY-MM-DD HH:MM')}</span>
+            <span>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</span>
             <span>•</span>
             <Link href={`/category/${category as string}`}
                   className="text-gray-500 dark:text-gray-400 no-underline font-normal">{name}</Link>

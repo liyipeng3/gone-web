@@ -6,7 +6,6 @@ import { PostItem } from '@/components/dashboard/post-item'
 import { DashboardShell } from '@/components/dashboard/shell'
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import { getDraftPostByCid } from '@/models/posts'
 import { type Key } from 'react'
 import { Pagination } from '@/components/ui/pagination'
 
@@ -61,12 +60,37 @@ export default async function DashboardPage ({
     take: pageSize
   })
 
-  for (let i = 0; i < posts.length; i++) {
-    const post = posts[i]
-    const draft = await getDraftPostByCid(post.cid)
-    if (draft) {
-      post.draft = draft
-    }
+  // 批量查询草稿，避免逐篇查询（N+1）
+  const cids = posts.map((post: { cid: number }) => post.cid)
+  if (cids.length > 0) {
+    const drafts = await prisma.posts.findMany({
+      where: {
+        parent: { in: cids },
+        type: 'post_draft'
+      },
+      include: {
+        relationships: {
+          include: {
+            metas: true
+          }
+        }
+      }
+    })
+
+    const draftMap = new Map<number, any>()
+    drafts.forEach((draft) => {
+      // 保留第一条，与原 getDraftPostByCid 的 findFirst 语义一致
+      if (draft.parent != null && !draftMap.has(draft.parent)) {
+        draftMap.set(draft.parent, draft)
+      }
+    })
+
+    posts.forEach((post: any) => {
+      const draft = draftMap.get(post.cid)
+      if (draft) {
+        post.draft = draft
+      }
+    })
   }
 
   return (

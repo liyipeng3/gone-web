@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import cn from 'classnames'
-import { FiCheck, FiCopy } from 'react-icons/fi'
+import { Check, Copy } from 'lucide-react'
 
 interface CopyButtonProps {
   text: string
@@ -23,7 +23,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           setCopied(false)
         }, 1000)
       }}>
-      {!copied ? <FiCopy/> : <FiCheck/>}{!copied ? '复制' : '已复制'}
+      {!copied ? <Copy className="w-3.5 h-3.5"/> : <Check className="w-3.5 h-3.5"/>}{!copied ? '复制' : '已复制'}
     </div>
   )
 }

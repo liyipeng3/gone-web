@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getGalleryById, updateGalleryItem, deleteGalleryItem } from '@/models/gallery'
-import { getCurrentUser } from '@/lib/session'
 import type { GalleryUpdateInput } from '@/models/gallery'
-import prisma from '@/lib/prisma'
+import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
 
 // 获取单个相册项
 export async function GET (
@@ -21,7 +20,7 @@ export async function GET (
 
     const gallery = await getGalleryById(gid)
 
-    if (!gallery) {
+    if (!gallery?.isPublic) {
       return NextResponse.json(
         { error: '相册项不存在' },
         { status: 404 }
@@ -44,14 +43,8 @@ export async function PATCH (
   { params }: { params: { gid: string } }
 ) {
   try {
-    const user = await getCurrentUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: '未授权访问' },
-        { status: 401 }
-      )
-    }
+    const auth = await requireAdmin()
+    if (isAuthResponse(auth)) return auth
 
     const gid = parseInt(params.gid)
 
@@ -118,33 +111,8 @@ export async function DELETE (
   { params }: { params: { gid: string } }
 ) {
   try {
-    const user = await getCurrentUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: '未授权访问' },
-        { status: 401 }
-      )
-    }
-
-    // 检查用户权限 - 需要管理员权限
-    if (!user.name) {
-      return NextResponse.json(
-        { error: '用户信息不完整' },
-        { status: 400 }
-      )
-    }
-
-    const userRecord = await prisma.users.findUnique({
-      where: { username: user.name }
-    })
-
-    if (!userRecord || userRecord.group !== 'administrator') {
-      return NextResponse.json(
-        { error: '权限不足，需要管理员权限' },
-        { status: 403 }
-      )
-    }
+    const auth = await requireAdmin()
+    if (isAuthResponse(auth)) return auth
 
     const gid = parseInt(params.gid)
 

@@ -1,21 +1,18 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getGalleryList, createGalleryItem } from '@/models/gallery'
-import { getCurrentUser } from '@/lib/session'
 import type { GalleryCreateInput, GalleryQuery } from '@/models/gallery'
+import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
+import { parseGalleryPublicQuery } from '@/lib/validations/gallery'
 
 // 获取相册列表
 export async function GET (request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
+    const publicQuery = parseGalleryPublicQuery(searchParams)
 
     const query: GalleryQuery = {
-      category: searchParams.get('category') ?? undefined,
-      tag: searchParams.get('tag') ?? undefined,
-      limit: parseInt(searchParams.get('limit') ?? '20'),
-      offset: parseInt(searchParams.get('offset') ?? '0'),
-      orderBy: (searchParams.get('orderBy') as any) || 'createdAt',
-      orderDirection: (searchParams.get('orderDirection') as any) || 'desc',
-      isPublic: searchParams.get('isPublic') !== 'false'
+      ...publicQuery,
+      isPublic: true
     }
 
     const result = await getGalleryList(query)
@@ -33,14 +30,8 @@ export async function GET (request: NextRequest) {
 // 创建相册项（需要管理员权限）
 export async function POST (request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-
-    if (!user) {
-      return NextResponse.json(
-        { error: '未授权访问' },
-        { status: 401 }
-      )
-    }
+    const auth = await requireAdmin()
+    if (isAuthResponse(auth)) return auth
 
     const body = await request.json()
     // 确保 takenAt 是 DateTime 类型

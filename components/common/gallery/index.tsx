@@ -7,8 +7,7 @@ import ImagePreview from '@/components/common/image'
 import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
-// import ProgressiveNextImage from '../image/ProgressiveNextImage'
-import ProgressiveImage from '../image/ProgressiveImage'
+import ProgressiveNextImage from '../image/ProgressiveNextImage'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -39,26 +38,28 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
     onPreview(item.imagePath, index)
   }, [item.imagePath, index, onPreview])
 
+  const cardHeight = Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200)
+
   return (
     <div
       className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-4"
-      style={{ ...style, height: Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200) }}
+      style={{ ...style, height: cardHeight }}
     >
       <div
         className="relative bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
+        style={{ height: cardHeight }}
         onClick={handleClick}
       >
         {!imageError && (
           <>
-            <ProgressiveImage
+            <ProgressiveNextImage
               src={item.imagePath}
               thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
-              className={'w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02]'}
+              fill
+              className={'object-cover transition-all duration-300 group-hover:scale-[1.02]'}
               onError={() => { setImageError(true) }}
-              style={{
-                height: Number(style?.width ?? 1200) * (item.height ?? 800) / (item.width ?? 1200)
-              }}
+              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
             />
 
             {/* {!imageLoaded && (
