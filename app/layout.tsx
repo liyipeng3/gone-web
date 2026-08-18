@@ -5,7 +5,7 @@ import Script from 'next/script'
 import { cn } from '@/lib/utils'
 import { Inter as FontSans } from 'next/font/google'
 import localFont from 'next/font/local'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Toaster } from '@/components/ui/toaster'
 import { siteConfig } from '@/config/site'
 import { ThemeProvider } from 'next-themes'
@@ -25,6 +25,17 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     siteName: siteConfig.name
   }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  // light/dark 双色声明，避免深色首屏地址栏出现白条；dark 值对齐 header 背景色
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#161b22' }
+  ]
 }
 
 const fontSans = FontSans({
@@ -47,11 +58,9 @@ export default function RootLayout ({
   return (
     <html lang="zh-CN">
     <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
       <meta name="mobile-web-app-capable" content="yes"/>
       <meta name="description" content={siteConfig.description}/>
-      <meta name="theme-color" content="#ffffff"/>
       <Script
         id="init-script"
         src='/lib/init.js'

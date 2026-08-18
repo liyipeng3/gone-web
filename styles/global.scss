@@ -87,6 +87,12 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  // 深色模式下将根元素背景对齐 header 色（dark-light），
+  // 避免 iOS 顶部安全区 / overscroll 回弹露出比 header 更暗的画布背景
+  html.dark {
+    background-color: theme('colors.dark-light');
+  }
 }
 
 .cm-comment {
