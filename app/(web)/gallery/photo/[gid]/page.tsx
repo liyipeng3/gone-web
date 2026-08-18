@@ -66,6 +66,11 @@ export default async function PhotoDetailPage ({
 
   const tags = photo.tags ? JSON.parse(photo.tags) : []
 
+  // 图片与信息栏共用同一宽度：xl 以下跟随满宽，xl 及以上按 85vh 比例，避免中间区间错位
+  const photoWidthStyle: React.CSSProperties & Record<'--photo-w', string> = {
+    '--photo-w': `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))`
+  }
+
   return (
     <div className="w-full mx-auto px-4 pb-10 pt-0 relative">
       <KeyboardNavigation
@@ -109,7 +114,7 @@ export default async function PhotoDetailPage ({
               }
             />
           </div>
-          <div className="@container justify-center w-full select-none mx-auto" style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
+          <div className="@container justify-center w-full xl:w-[var(--photo-w)] select-none mx-auto" style={photoWidthStyle}>
             <div className="@2xl:hidden flex flex-col gap-3 px-4 py-4 text-sm text-gray-600 dark:text-gray-800 shadow-lg bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md w-full">
               {photo.camera && (() => {
                 const brand = getCameraBrand(photo.camera)
@@ -148,7 +153,7 @@ export default async function PhotoDetailPage ({
               </div>
             </div>
           </div>
-          <div className="@container  justify-center w-full select-none mx-auto" style={{ width: `min(100%, min(85vh * ${photo.width}/${photo.height}, 100vw))` }}>
+          <div className="@container  justify-center w-full xl:w-[var(--photo-w)] select-none mx-auto" style={photoWidthStyle}>
             <div className="hidden @2xl:flex flex-wrap items-center justify-between gap-6 px-8 py-6 text-sm text-gray-600 dark:text-gray-800 h-24 bg-white dark:bg-gray-300 dark:shadow-gray-500 dark:shadow-md"
               >
               <div className="flex flex-col items-start justify-between h-full">
