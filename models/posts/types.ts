@@ -52,9 +52,23 @@ export type HotList = Array<{
 export type PostCreateData = Prisma.postsCreateInput
 export type PostUpdateData = Prisma.postsUpdateInput
 
-// 帖子详情（含标签/分类关系）类型，供详情页与服务层复用
+// 帖子详情（含标签/分类关系）类型，供详情页与服务层复用。
+// 使用显式 select 排除 password 等敏感字段，避免公开接口（如 /api/post/about）泄露。
 export type PostWithRelationships = Prisma.postsGetPayload<{
-  include: {
+  select: {
+    cid: true
+    uid: true
+    title: true
+    slug: true
+    text: true
+    type: true
+    status: true
+    commentsNum: true
+    allowComment: true
+    viewsNum: true
+    likesNum: true
+    createdAt: true
+    updatedAt: true
     relationships: {
       include: {
         metas: { select: { name: true, slug: true, type: true } }

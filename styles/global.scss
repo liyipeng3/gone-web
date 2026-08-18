@@ -88,9 +88,10 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  // 深色模式下将根元素背景对齐 header 色（dark-light），
-  // 避免 iOS 顶部安全区 / overscroll 回弹露出比 header 更暗的画布背景
-  html.dark {
+  // 深色模式下将 body 背景对齐 header 色（dark-light #161b22），
+  // 避免 iOS 顶部/底部安全区与 overscroll 回弹露出比 header 更暗的 body 背景（#020817）。
+  // 正文区域由 .document (dark:bg-dark) 覆盖，此处仅影响安全区/回弹露出部分。
+  .dark body {
     background-color: theme('colors.dark-light');
   }
 }

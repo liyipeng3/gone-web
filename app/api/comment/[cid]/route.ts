@@ -3,7 +3,7 @@ import { createComment, deleteComment, getCommentsByCid, updateComment, getComme
 import { sendCommentNotification, sendReplyNotification, sendCommentApprovedNotification } from '@/lib/email'
 import { getPostInfoByCid } from '@/models/posts'
 import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
-import { commentCreateSchema } from '@/lib/validations/comment'
+import { commentCreateSchema, commentUpdateSchema, commentDeleteSchema } from '@/lib/validations/comment'
 
 export async function POST (request: Request, context: { params: { cid: string } }) {
   const body = await request.json()
@@ -51,8 +51,12 @@ export async function DELETE (request: Request, context: { params: { cid: string
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const { coid } = await request.json()
-  await deleteComment(coid)
+  const parsed = commentDeleteSchema.safeParse(await request.json())
+  if (!parsed.success) {
+    return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
+  }
+
+  await deleteComment(parsed.data.coid)
   return NextResponse.json({ success: true })
 }
 
@@ -65,13 +69,18 @@ export async function PATCH (request: Request, context: { params: { cid: string 
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const { coid, comment } = await request.json()
+  const parsed = commentUpdateSchema.safeParse(await request.json())
+  if (!parsed.success) {
+    return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
+  }
+
+  const { coid, comment } = parsed.data
 
   // 获取更新前的评论信息
-  const oldComment = await getCommentById(Number(coid))
+  const oldComment = await getCommentById(coid)
 
-  // 更新评论
-  await updateComment(Number(coid), comment)
+  // 仅更新经白名单校验的字段（status），杜绝质量赋值
+  await updateComment(coid, comment)
 
   // 如果评论状态从待审核变为已批准，则发送审核通过通知
   if (oldComment && oldComment.status !== 'approved' && comment.status === 'approved' && oldComment.email) {

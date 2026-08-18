@@ -75,7 +75,9 @@ export async function PATCH (
     }
 
     // 验证用户是否有权限更新此信息（只能更新自己的信息）
-    if (currentUser.id !== params.uid) {
+    // currentUser.id 来自 token，实为 users.uid（number）；params.uid 为 string，
+    // 需显式字符串化比较，否则 number !== string 恒为 true，导致对所有人恒返回 403。
+    if (String(currentUser.id) !== params.uid) {
       return NextResponse.json(
         { error: '无权更新此用户信息' },
         { status: 403 }

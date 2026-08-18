@@ -13,3 +13,27 @@ export const commentCreateSchema = z.object({
 })
 
 export type CommentCreateInput = z.infer<typeof commentCreateSchema>
+
+/**
+ * 评论审核状态更新校验（PATCH /api/comment/[cid]）
+ *
+ * 仅允许更新 status，防止管理员端把整个客户端对象写入 prisma.update
+ * 造成质量赋值（Mass Assignment）——注入 cid/author/created/parent 等字段。
+ */
+export const commentUpdateSchema = z.object({
+  coid: z.number().int().positive(),
+  comment: z.object({
+    status: z.enum(['approved', 'waiting', 'spam'])
+  })
+})
+
+export type CommentUpdateInput = z.infer<typeof commentUpdateSchema>
+
+/**
+ * 评论删除校验（DELETE /api/comment/[cid]）
+ */
+export const commentDeleteSchema = z.object({
+  coid: z.number().int().positive()
+})
+
+export type CommentDeleteInput = z.infer<typeof commentDeleteSchema>

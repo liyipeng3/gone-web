@@ -139,7 +139,22 @@ export const getPostBySlug = async (slug: string): Promise<PostWithRelationships
   }
 
   const post = await prisma.posts.findUnique({
-    include: {
+    // 显式 select 非敏感字段，排除 password/order/parent，
+    // 避免 /api/post/about 等公开接口泄露密码保护文章的 password。
+    select: {
+      cid: true,
+      uid: true,
+      title: true,
+      slug: true,
+      text: true,
+      type: true,
+      status: true,
+      commentsNum: true,
+      allowComment: true,
+      viewsNum: true,
+      likesNum: true,
+      createdAt: true,
+      updatedAt: true,
       relationships: {
         include: {
           metas: {
