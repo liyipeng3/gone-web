@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import { getPostBySlug, getPostList } from '@/models/posts'
 import marked from '@/lib/marked'
+import { buildExcerpt } from '@/lib/excerpt'
 import prisma from '@/lib/prisma'
 import { type ListProps } from '@/components/custom/List'
 
@@ -113,16 +114,15 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
     .filter((relation: any) => relation.metas.type === 'tag')
     .map((relation: any) => relation.metas.slug)
 
-  const category = post.relationships
-    .filter((relation: any) => relation.metas.type === 'category')
-    .map((relation: any) => relation.metas.slug)
+  const categoryRelation = post.relationships
+    .find((relation: any) => relation.metas.type === 'category')
 
   return {
     title: post.title as string,
     content,
     createdAt: post.createdAt,
-    name: post.relationships[0].metas.name as string,
-    category: category[0] as string,
+    name: (categoryRelation?.metas.name ?? '') as string,
+    category: (categoryRelation?.metas.slug ?? '') as string,
     viewsNum: post.viewsNum as number,
     likesNum: post.likesNum as number || 0,
     cid: post.cid,
@@ -240,9 +240,7 @@ export const getPageTagPostList = cache(async ({
       ...item.posts,
       category: category?.slug ?? '',
       name: category?.name ?? '',
-      description: (marked.parse((item.posts.text?.split('<!--more-->')[0]
-        .replaceAll(/```(\n|\r|.)*?```/g, '')
-        .slice(0, 150)) ?? '') as string)?.replaceAll(/<.*?>/g, '')
+      description: buildExcerpt(item.posts.text)
     }
   })
 

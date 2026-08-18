@@ -20,7 +20,11 @@ export const cacheKeys = {
   tags: 'tags',
   categories: 'categories',
   archive: 'posts:archive',
-  post: 'posts:single'
+  post: 'posts:single',
+  gallery: 'gallery',
+  galleryTags: 'gallery:tags',
+  galleryCategories: 'gallery:categories',
+  galleryStats: 'gallery:stats'
 }
 
 // 缓存服务

@@ -29,7 +29,8 @@ const mocks = vi.hoisted(() => {
     tx,
     transaction: vi.fn(),
     clearPostRelatedCaches: vi.fn(),
-    cacheDeleteByPrefix: vi.fn()
+    cacheDeleteByPrefix: vi.fn(),
+    cacheDelete: vi.fn()
   }
 })
 
@@ -42,8 +43,8 @@ vi.mock('@/models/posts/cache-utils', () => ({
 }))
 
 vi.mock('@/lib/cache', () => ({
-  cacheService: { delByPrefix: mocks.cacheDeleteByPrefix },
-  cacheKeys: { tags: 'tags' }
+  cacheService: { delByPrefix: mocks.cacheDeleteByPrefix, del: mocks.cacheDelete },
+  cacheKeys: { tags: 'tags', categories: 'categories' }
 }))
 
 const existingDraft = (tags: string[], category?: string) => ({
@@ -133,6 +134,8 @@ describe('saveDraftAtomic', () => {
 
     // category 变化 → syncCategoryTx 执行
     expect(mocks.tx.relationships.findFirst).toHaveBeenCalled()
+    // category 变化 → 失效分类列表缓存
+    expect(mocks.cacheDelete).toHaveBeenCalledWith('categories')
   })
 
   it('slug 冲突时抛 DraftSlugConflictError', async () => {

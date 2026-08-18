@@ -1,6 +1,6 @@
 // 帖子列表和归档相关操作
 import prisma from '@/lib/prisma'
-import { marked } from 'marked'
+import { buildExcerpt } from '@/lib/excerpt'
 import { type GetPostListParams, type ArchiveList, type HotList } from './types'
 import {
   getHotListFromCache,
@@ -182,14 +182,7 @@ export const getPostList = async ({
     const name = categoryRelation?.metas.name ?? '未分类'
 
     // 提取并处理描述
-    let description = ''
-    if (post.text) {
-      const textPart = post.text.split('<!--more-->')[0]
-        .replaceAll(/```(\n|\r|.)*?```/g, '')
-        .slice(0, 150)
-
-      description = (marked.parse(textPart) as string).replaceAll(/<.*?>/g, '')
-    }
+    const description = buildExcerpt(post.text)
 
     const commentsNum = post._count?.comments || 0
 
@@ -228,7 +221,22 @@ export const getArchiveList = async (): Promise<ArchiveList> => {
     select: {
       title: true,
       slug: true,
-      createdAt: true
+      createdAt: true,
+      relationships: {
+        include: {
+          metas: {
+            select: {
+              slug: true,
+              type: true
+            }
+          }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
+        }
+      }
     },
     where: {
       status: 'publish',
@@ -246,11 +254,20 @@ export const getArchiveList = async (): Promise<ArchiveList> => {
     const date = post.createdAt ? new Date(post.createdAt) : new Date()
     const time = `${date.getFullYear()} 年 ${String(date.getMonth() + 1).padStart(2, '0')} 月`
 
+    // 带上分类 slug，供归档页拼接文章链接 /post/{category}/{slug}
+    const category = post.relationships?.[0]?.metas?.slug ?? 'uncategorized'
+    const item = {
+      title: post.title,
+      slug: post.slug,
+      createdAt: post.createdAt,
+      category
+    }
+
     if (!archiveMap.has(time)) {
       archiveMap.set(time, [])
     }
 
-    archiveMap.get(time).push(post)
+    archiveMap.get(time).push(item)
   })
 
   // 转换为数组格式

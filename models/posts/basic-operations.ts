@@ -94,6 +94,11 @@ export const getPostInfoByCid = async (cid: number) => {
               type: true
             }
           }
+        },
+        where: {
+          metas: {
+            type: 'category'
+          }
         }
       }
     },

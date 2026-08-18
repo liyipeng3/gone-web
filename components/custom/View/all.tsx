@@ -7,7 +7,7 @@ const AllView: React.FC = () => {
   useEffect(() => {
     const v = sessionStorage.getItem('iv')
     if (v == null) {
-      sessionStorage.setItem('_v', '1')
+      sessionStorage.setItem('iv', '1')
       void fetch('/api/iv', {
         method: 'GET'
       }).then(_ => {

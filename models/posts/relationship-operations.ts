@@ -335,8 +335,9 @@ export const updatePostCategory = async (cid: number, category: string) => {
   // 使用事务处理所有数据库操作，确保原子性
   const result = await prisma.$transaction(async (tx) => await syncCategoryTx(tx, cid, category))
 
-  // 清除相关缓存
+  // 清除相关缓存（分类可能新建，需失效分类列表缓存）
   clearPostRelatedCaches({ cid })
+  cacheService.del(cacheKeys.categories)
 
   return result
 }
@@ -469,6 +470,9 @@ export const saveDraftAtomic = async (
     clearPostRelatedCaches({ cid: result.draft.cid })
     if (result.tagsChanged) {
       cacheService.delByPrefix(cacheKeys.tags)
+    }
+    if (result.categoryChanged) {
+      cacheService.del(cacheKeys.categories)
     }
   }
 

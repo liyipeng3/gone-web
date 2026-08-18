@@ -1,6 +1,19 @@
 import prisma from '@/lib/prisma'
 import type { gallery } from '@prisma/client'
 import { deleteFromOSS } from '@/lib/oss'
+import { cacheService, cacheKeys } from '@/lib/cache'
+
+/**
+ * 失效相册聚合类缓存（标签/分类/统计）。
+ * 相册项的增删改都会影响这些聚合结果，写操作后统一调用。
+ */
+const clearGalleryAggregateCaches = (): void => {
+  cacheService.delMany([
+    cacheKeys.galleryTags,
+    cacheKeys.galleryCategories,
+    cacheKeys.galleryStats
+  ])
+}
 
 export interface GalleryItem extends gallery {
   // 可以添加一些计算属性
@@ -45,12 +58,14 @@ export interface GalleryQuery {
 
 // 创建相册项
 export async function createGalleryItem (data: GalleryCreateInput): Promise<gallery> {
-  return await prisma.gallery.create({
+  const created = await prisma.gallery.create({
     data: {
       ...data,
       tags: data.tags ? JSON.stringify(data.tags) : null
     }
   })
+  clearGalleryAggregateCaches()
+  return created
 }
 
 // 获取相册列表
@@ -109,13 +124,15 @@ export async function getGalleryById (gid: number): Promise<gallery | null> {
 
 // 更新相册项
 export async function updateGalleryItem (gid: number, data: GalleryUpdateInput): Promise<gallery> {
-  return await prisma.gallery.update({
+  const updated = await prisma.gallery.update({
     where: { gid },
     data: {
       ...data,
       tags: data.tags ? JSON.stringify(data.tags) : undefined
     }
   })
+  clearGalleryAggregateCaches()
+  return updated
 }
 
 // 删除相册项
@@ -153,11 +170,18 @@ export async function deleteGalleryItem (gid: number): Promise<gallery> {
     }
   })
 
+  clearGalleryAggregateCaches()
+
   return deletedItem
 }
 
 // 获取所有分类
 export async function getGalleryCategories (): Promise<string[]> {
+  const cached = cacheService.get<string[]>(cacheKeys.galleryCategories)
+  if (cached) {
+    return cached
+  }
+
   const result = await prisma.gallery.findMany({
     where: {
       isPublic: true,
@@ -169,13 +193,22 @@ export async function getGalleryCategories (): Promise<string[]> {
     distinct: ['category']
   })
 
-  return result
+  const categories = result
     .map(item => item.category)
     .filter(Boolean) as string[]
+
+  cacheService.set(cacheKeys.galleryCategories, categories)
+
+  return categories
 }
 
 // 获取所有标签
 export async function getGalleryTags (): Promise<string[]> {
+  const cached = cacheService.get<string[]>(cacheKeys.galleryTags)
+  if (cached) {
+    return cached
+  }
+
   const result = await prisma.gallery.findMany({
     where: {
       isPublic: true,
@@ -199,7 +232,10 @@ export async function getGalleryTags (): Promise<string[]> {
     }
   })
 
-  return Array.from(allTags)
+  const tags = Array.from(allTags)
+  cacheService.set(cacheKeys.galleryTags, tags)
+
+  return tags
 }
 
 // 获取相册统计信息
@@ -209,6 +245,16 @@ export async function getGalleryStats (): Promise<{
   totalTags: number
   recentImages: gallery[]
 }> {
+  const cached = cacheService.get<{
+    totalImages: number
+    totalCategories: number
+    totalTags: number
+    recentImages: gallery[]
+  }>(cacheKeys.galleryStats)
+  if (cached) {
+    return cached
+  }
+
   const [totalImages, categories, tags, recentImages] = await Promise.all([
     prisma.gallery.count({ where: { isPublic: true } }),
     getGalleryCategories(),
@@ -220,12 +266,16 @@ export async function getGalleryStats (): Promise<{
     })
   ])
 
-  return {
+  const stats = {
     totalImages,
     totalCategories: categories.length,
     totalTags: tags.length,
     recentImages
   }
+
+  cacheService.set(cacheKeys.galleryStats, stats)
+
+  return stats
 }
 
 // 获取相邻的照片（用于导航）
@@ -240,33 +290,53 @@ export async function getAdjacentPhotos (currentGid: number, category?: string):
     where.category = category
   }
 
-  // 获取所有公开照片的ID，按拍摄时间排序
-  const allPhotos = await prisma.gallery.findMany({
-    where,
-    select: { gid: true },
-    orderBy: { takenAt: 'desc' }
+  // 先确认当前照片在集合内，并取出用于定位的 takenAt
+  const current = await prisma.gallery.findFirst({
+    where: { ...where, gid: currentGid },
+    select: { gid: true, takenAt: true }
   })
 
-  const currentIndex = allPhotos.findIndex(photo => photo.gid === currentGid)
-
-  if (currentIndex === -1) {
-    return { previous: null, next: null, current: 0, total: allPhotos.length }
+  if (!current) {
+    const total = await prisma.gallery.count({ where })
+    return { previous: null, next: null, current: 0, total }
   }
 
-  // 获取前一张和后一张照片的详细信息
-  const [previous, next] = await Promise.all([
-    currentIndex > 0
-      ? prisma.gallery.findUnique({ where: { gid: allPhotos[currentIndex - 1].gid } })
-      : null,
-    currentIndex < allPhotos.length - 1
-      ? prisma.gallery.findUnique({ where: { gid: allPhotos[currentIndex + 1].gid } })
-      : null
+  // 稳定排序：takenAt 降序，同一时间以 gid 降序兜底
+  const orderBy = [{ takenAt: 'desc' as const }, { gid: 'desc' as const }]
+
+  // 位于当前项“之前”（列表更靠前 = 更新）的判定条件，用于计算序号
+  // MySQL 在 desc 排序下将 NULL 视为最后，因此 takenAt 更大或（同值 gid 更大）者排在前
+  const beforeWhere = current.takenAt != null
+    ? {
+        ...where,
+        OR: [
+          { takenAt: { gt: current.takenAt } },
+          { takenAt: current.takenAt, gid: { gt: currentGid } }
+        ]
+      }
+    : {
+        ...where,
+        OR: [
+          { takenAt: { not: null } },
+          { takenAt: null, gid: { gt: currentGid } }
+        ]
+      }
+
+  const [previous, next, total, beforeCount] = await Promise.all([
+    // 列表中位于当前项之前的一张（更新）
+    prisma.gallery.findMany({ where, orderBy, cursor: { gid: currentGid }, skip: 1, take: -1 })
+      .then(rows => rows[0] ?? null),
+    // 列表中位于当前项之后的一张（更旧）
+    prisma.gallery.findMany({ where, orderBy, cursor: { gid: currentGid }, skip: 1, take: 1 })
+      .then(rows => rows[0] ?? null),
+    prisma.gallery.count({ where }),
+    prisma.gallery.count({ where: beforeWhere })
   ])
 
   return {
     previous,
     next,
-    current: currentIndex + 1,
-    total: allPhotos.length
+    current: beforeCount + 1,
+    total
   }
 }

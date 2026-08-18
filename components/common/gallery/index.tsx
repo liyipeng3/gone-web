@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { gallery } from '@prisma/client'
 import Pagination from '@/components/common/pagination'
 import ImagePreview from '@/components/common/image'
@@ -25,7 +25,7 @@ interface GalleryItemProps {
   style?: React.CSSProperties
 }
 
-const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style }) => {
+const GalleryItem: React.FC<GalleryItemProps> = React.memo(({ item, onPreview, index, style }) => {
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
 
@@ -100,7 +100,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ item, onPreview, index, style
       </div>
     </div>
   )
-}
+})
+
+GalleryItem.displayName = 'GalleryItem'
 
 const GalleryWaterfall: React.FC<GalleryGridProps> = ({
   items,
@@ -170,7 +172,7 @@ const GalleryWaterfall: React.FC<GalleryGridProps> = ({
     setPreviewVisible(true)
   }, [])
 
-  const previewImages = items.map(item => item.imagePath)
+  const previewImages = useMemo(() => items.map(item => item.imagePath), [items])
 
   return (
     <>
