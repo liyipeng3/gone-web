@@ -8,11 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { getCountries, getProvinces, getCities } from '@/lib/regions'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
+import RegionSelect from './gallery-form/region-select'
+import { parseLocationString, parseTags, joinLocation } from './gallery-form/location'
 
 interface GalleryEditDialogProps {
   item: gallery
@@ -47,45 +47,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
     }
   })
 
-  const parseLocationString = (location: string | null): {
-    country: string
-    province: string
-    city: string
-  } => {
-    if (!location) {
-      return { country: '中国', province: '', city: '' }
-    }
-
-    const parts = location.split('·').map(part => part.trim()).filter(Boolean)
-    if (parts.length === 0) {
-      return { country: '中国', province: '', city: '' }
-    }
-
-    if (parts.length === 1) {
-      const singlePart = parts[0]
-      const countries = getCountries()
-      if (countries.includes(singlePart)) {
-        return { country: singlePart, province: '', city: '' }
-      }
-      return { country: '中国', province: singlePart, city: '' }
-    }
-
-    if (parts.length === 2) {
-      const countries = getCountries()
-      if (countries.includes(parts[0])) {
-        return { country: parts[0], province: parts[1], city: '' }
-      } else {
-        return { country: '中国', province: parts[0], city: parts[1] }
-      }
-    }
-
-    if (parts.length >= 3) {
-      return { country: parts[0], province: parts[1], city: parts[2] }
-    }
-
-    return { country: '中国', province: '', city: '' }
-  }
-
   useEffect(() => {
     if (item) {
       const tags = item.tags ? JSON.parse(item.tags) : []
@@ -111,13 +72,6 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
       })
     }
   }, [item])
-
-  const parseTags = (tagsString: string): string[] => {
-    return tagsString
-      .split(/[,，\s]+/)
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0)
-  }
 
   const validateForm = (): boolean => {
     const errors = {
@@ -157,7 +111,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
           description: formData.description || undefined,
           category: formData.category || undefined,
           tags: parseTags(formData.tags),
-          location: [formData.country, formData.province, formData.city].filter(Boolean).join(' · ') || formData.location || undefined,
+          location: joinLocation(formData.country, formData.province, formData.city) || formData.location || undefined,
           isPublic: formData.isPublic,
           takenAt: finalTakenAt
         })
@@ -259,105 +213,34 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
-              <div className="space-y-2">
-                <Label>国家 <span className="text-red-500">*</span></Label>
-                <Select
-                  value={formData.country ?? ''}
-                  onValueChange={(val) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      country: val || undefined,
-                      province: undefined,
-                      city: undefined,
-                      errors: {
-                        ...prev.errors,
-                        country: false,
-                        province: false,
-                        city: false
-                      }
-                    }))
-                  }}
-                  required
-                >
-                  <SelectTrigger className={formData.errors?.country ? 'border-red-500 focus:border-red-500' : ''}>
-                    <SelectValue placeholder="选择国家" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getCountries().map(c => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formData.errors?.country && (
-                  <p className="text-sm text-red-500">请选择国家</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>省/州 <span className="text-red-500">*</span></Label>
-                <Select
-                  value={formData.province ?? ''}
-                  onValueChange={(val) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      province: val || undefined,
-                      city: undefined,
-                      errors: {
-                        ...prev.errors,
-                        province: false,
-                        city: false
-                      }
-                    }))
-                  }}
-                  disabled={!formData.country}
-                  required
-                >
-                  <SelectTrigger className={formData.errors?.province ? 'border-red-500 focus:border-red-500' : ''}>
-                    <SelectValue placeholder="选择省/州" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getProvinces(formData.country).map(p => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formData.errors?.province && (
-                  <p className="text-sm text-red-500">请选择省/州</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>市/地区 <span className="text-red-500">*</span></Label>
-                <Select
-                  value={formData.city ?? ''}
-                  onValueChange={(val) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      city: val || undefined,
-                      errors: {
-                        ...prev.errors,
-                        city: false
-                      }
-                    }))
-                  }}
-                  disabled={!formData.country || !formData.province}
-                  required
-                >
-                  <SelectTrigger className={formData.errors?.city ? 'border-red-500 focus:border-red-500' : ''}>
-                    <SelectValue placeholder="选择市/地区" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getCities(formData.country, formData.province).map(city => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formData.errors?.city && (
-                  <p className="text-sm text-red-500">请选择市/地区</p>
-                )}
-              </div>
-            </div>
-          </div>
+          <RegionSelect
+            value={{ country: formData.country, province: formData.province, city: formData.city }}
+            errors={formData.errors}
+            onCountryChange={(country) => {
+              setFormData(prev => ({
+                ...prev,
+                country,
+                province: undefined,
+                city: undefined,
+                errors: { ...prev.errors, country: false, province: false, city: false }
+              }))
+            }}
+            onProvinceChange={(province) => {
+              setFormData(prev => ({
+                ...prev,
+                province,
+                city: undefined,
+                errors: { ...prev.errors, province: false, city: false }
+              }))
+            }}
+            onCityChange={(city) => {
+              setFormData(prev => ({
+                ...prev,
+                city,
+                errors: { ...prev.errors, city: false }
+              }))
+            }}
+          />
 
           <div className="flex items-center space-x-2">
             <Switch

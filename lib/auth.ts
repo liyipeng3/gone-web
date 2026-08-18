@@ -30,7 +30,6 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize (credentials, req) {
-        // console.log('===', await bcryptjs.genSalt(10))
         const user = await prisma.users.findUnique({
           where: {
             username: credentials?.username
@@ -58,11 +57,11 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session ({ token, session }) {
-      if (token !== null) {
+      if (token != null) {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
-        session.user.image = token.image as string
+        session.user.image = token.picture as string
       }
 
       return session
@@ -84,8 +83,7 @@ export const authOptions: NextAuthOptions = {
       return {
         id: dbUser.uid,
         name: dbUser.username,
-        email: dbUser.email,
-        picture: dbUser.nickname
+        email: dbUser.email
       } as unknown as JWT
     }
   }

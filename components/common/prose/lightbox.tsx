@@ -4,25 +4,25 @@ import { useEffect, useState } from 'react'
 import Image from '@/components/common/image'
 
 import {
-  X,
-  ChevronLeft,
-  ChevronRight,
-  RotateCcw,
-  RotateCw,
-  ZoomIn,
-  ZoomOut
-} from 'lucide-react'
+  CloseOutlined,
+  LeftOutlined,
+  RightOutlined,
+  RotateLeftOutlined,
+  RotateRightOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined
+} from '@ant-design/icons'
 import { type PreviewProps } from '@/components/common/image/Preview'
 import { getOffset } from '@/lib/utils'
 
 export const defaultIcons: PreviewProps['icons'] = {
-  rotateLeft: <RotateCcw/>,
-  rotateRight: <RotateCw/>,
-  zoomIn: <ZoomIn/>,
-  zoomOut: <ZoomOut/>,
-  close: <X/>,
-  left: <ChevronLeft/>,
-  right: <ChevronRight/>
+  rotateLeft: <RotateLeftOutlined/>,
+  rotateRight: <RotateRightOutlined/>,
+  zoomIn: <ZoomInOutlined/>,
+  zoomOut: <ZoomOutOutlined/>,
+  close: <CloseOutlined/>,
+  left: <LeftOutlined/>,
+  right: <RightOutlined/>
 }
 
 const Lightbox = () => {
@@ -43,7 +43,6 @@ const Lightbox = () => {
           left,
           top
         } = getOffset(e.target as HTMLImageElement)
-        console.log(left, top)
         setMousePosition({
           x: left + img.width / 2,
           y: top + img.height / 2

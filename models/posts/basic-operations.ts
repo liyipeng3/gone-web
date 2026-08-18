@@ -1,6 +1,6 @@
 // 帖子基本操作模块
 import prisma from '@/lib/prisma'
-import { type PostCreateData, type PostUpdateData } from './types'
+import { type PostCreateData, type PostUpdateData, type PostWithRelationships } from './types'
 import { clearPostRelatedCaches, getPostFromCache, setPostCache } from './cache-utils'
 
 /**
@@ -132,8 +132,8 @@ export const getPostSlugByCid = async (cid: number): Promise<string | null> => {
 /**
  * 根据 slug 获取帖子
  */
-export const getPostBySlug = async (slug: string) => {
-  const cachedPost = getPostFromCache<any>(slug)
+export const getPostBySlug = async (slug: string): Promise<PostWithRelationships | null> => {
+  const cachedPost = getPostFromCache<PostWithRelationships>(slug)
   if (cachedPost) {
     return cachedPost
   }

@@ -16,7 +16,6 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
   src,
   blurIntensity = 10,
   onLoad,
-  loading = 'lazy',
   ...imageProps
 }) => {
   const [isFullImageLoaded, setIsFullImageLoaded] = useState(false)
@@ -48,7 +47,7 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
         alt=''
         src={src}
         overrideSrc={src}
-        loading={loading}
+        loading='eager'
         style={{
           display: display ? 'block' : 'none'
         }}
@@ -59,9 +58,6 @@ const ProgressiveNextImage: React.FC<ProgressiveImageProps> = ({
         onLoad={handleLoad}
         src={thumbnailSrc}
         overrideSrc={thumbnailSrc}
-        onError={(e) => {
-          console.log('onError', e)
-        }}
         alt=''
         style={{
           ...imageProps.style,

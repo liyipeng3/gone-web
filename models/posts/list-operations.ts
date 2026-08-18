@@ -1,7 +1,8 @@
 // 帖子列表和归档相关操作
 import prisma from '@/lib/prisma'
+import { type Prisma } from '@prisma/client'
 import { buildExcerpt } from '@/lib/excerpt'
-import { type GetPostListParams, type ArchiveList, type HotList } from './types'
+import { type GetPostListParams, type ArchiveList, type HotList, type PostListItem } from './types'
 import {
   getHotListFromCache,
   setHotListCache,
@@ -76,7 +77,7 @@ export const getPostList = async ({
   mid,
   search = ''
 }: GetPostListParams): Promise<{
-  list: any[]
+  list: PostListItem[]
   total: number
 }> => {
   const cachedData = getPostListFromCache(pageNum, pageSize, mid, search)
@@ -89,7 +90,7 @@ export const getPostList = async ({
   const skip = (pageNum - 1) * pageSize
 
   // 构建查询条件
-  const where: any = {
+  const where: Prisma.postsWhereInput = {
     status: 'publish',
     type: 'post'
   }

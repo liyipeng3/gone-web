@@ -1,107 +1,17 @@
 import classnames from 'classnames'
-import type { DialogProps as IDialogPropTypes } from 'rc-dialog'
 import Dialog from 'rc-dialog'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { PreviewGroupContext } from './context'
-import type { TransformAction, TransformType } from './hooks/useImageTransform'
 import useImageTransform from './hooks/useImageTransform'
 import useMouseEvent from './hooks/useMouseEvent'
 import useTouchEvent from './hooks/useTouchEvent'
-import useStatus from './hooks/useStatus'
 import Operations from './Operations'
+import PreviewImage from './PreviewImage'
 import { BASE_SCALE_RATIO } from './previewConfig'
 import { addEventListener } from '@/lib/utils'
+import type { PreviewProps, ToolbarRenderInfoType } from './Preview.types'
 
-export interface ToolbarRenderInfoType {
-  icons: {
-    flipYIcon: React.ReactNode
-    flipXIcon: React.ReactNode
-    rotateLeftIcon: React.ReactNode
-    rotateRightIcon: React.ReactNode
-    zoomOutIcon: React.ReactNode
-    zoomInIcon: React.ReactNode
-  }
-  actions: {
-    onFlipY: () => void
-    onFlipX: () => void
-    onRotateLeft: () => void
-    onRotateRight: () => void
-    onZoomOut: () => void
-    onZoomIn: () => void
-  }
-  transform: TransformType
-  current: number
-  total: number
-}
-
-export interface PreviewProps extends Omit<IDialogPropTypes, 'onClose'> {
-  imgCommonProps?: React.ImgHTMLAttributes<HTMLImageElement>
-  src?: string
-  alt?: string
-  fallback?: string
-  movable?: boolean
-  rootClassName?: string
-  icons?: {
-    rotateLeft?: React.ReactNode
-    rotateRight?: React.ReactNode
-    zoomIn?: React.ReactNode
-    zoomOut?: React.ReactNode
-    close?: React.ReactNode
-    left?: React.ReactNode
-    right?: React.ReactNode
-    flipX?: React.ReactNode
-    flipY?: React.ReactNode
-  }
-  current?: number
-  count?: number
-  closeIcon?: React.ReactNode
-  countRender?: (current: number, total: number) => React.ReactNode
-  scaleStep?: number
-  minScale?: number
-  maxScale?: number
-  imageRender?: (
-    originalNode: React.ReactElement,
-    info: { transform: TransformType, current?: number },
-  ) => React.ReactNode
-  onClose?: () => void
-  onTransform?: (info: { transform: TransformType, action: TransformAction }) => void
-  toolbarRender?: (
-    originalNode: React.ReactElement,
-    info: ToolbarRenderInfoType,
-  ) => React.ReactNode
-  onChange?: (current: any, prev: any) => void
-}
-
-interface PreviewImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  fallback?: string
-  imgRef: React.MutableRefObject<HTMLImageElement | null>
-}
-
-const PreviewImage: React.FC<PreviewImageProps> = ({
-  fallback,
-  src,
-  imgRef,
-  ...props
-}) => {
-  const [getImgRef, srcAndOnload] = useStatus({
-    src: src ?? '',
-    fallback
-  })
-
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      ref={ref => {
-        imgRef.current = ref
-        if (!ref) return
-        getImgRef(ref)
-      }}
-      alt=""
-      {...props}
-      {...srcAndOnload}
-    />
-  )
-}
+export type { PreviewProps, ToolbarRenderInfoType }
 
 const Preview: React.FC<PreviewProps> = props => {
   const {

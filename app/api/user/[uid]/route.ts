@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { type Prisma } from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 
@@ -85,8 +86,8 @@ export async function PATCH (
     const body = await request.json()
 
     // 只允许更新特定字段
-    const allowedFields = ['url', 'nickname']
-    const updateData: any = {}
+    const allowedFields = ['url', 'nickname'] as const
+    const updateData: Prisma.usersUpdateInput = {}
 
     for (const field of allowedFields) {
       if (field in body) {

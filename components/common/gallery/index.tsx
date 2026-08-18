@@ -7,7 +7,7 @@ import ImagePreview from '@/components/common/image'
 import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
-import ProgressiveNextImage from '../image/ProgressiveNextImage'
+import ProgressiveImage from '../image/ProgressiveImage'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -47,19 +47,19 @@ const GalleryItem: React.FC<GalleryItemProps> = React.memo(({ item, onPreview, i
     >
       <div
         className="relative bg-gray-100 dark:bg-gray-700 cursor-pointer overflow-hidden"
-        style={{ height: cardHeight }}
         onClick={handleClick}
       >
         {!imageError && (
           <>
-            <ProgressiveNextImage
+            <ProgressiveImage
               src={item.imagePath}
               thumbnailSrc={item.thumbnailPath ?? ''}
               alt={item.title ?? '相册图片'}
-              fill
-              className={'object-cover transition-all duration-300 group-hover:scale-[1.02]'}
+              className={'w-full h-auto object-cover transition-all duration-300 group-hover:scale-[1.02]'}
               onError={() => { setImageError(true) }}
-              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, (max-width: 1536px) 25vw, 20vw"
+              style={{
+                height: cardHeight
+              }}
             />
 
             {/* {!imageLoaded && (

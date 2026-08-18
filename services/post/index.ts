@@ -1,5 +1,6 @@
 import { cache } from 'react'
 import { getPostBySlug, getPostList } from '@/models/posts'
+import { type PostListItem } from '@/models/posts/types'
 import marked from '@/lib/marked'
 import { buildExcerpt } from '@/lib/excerpt'
 import prisma from '@/lib/prisma'
@@ -12,7 +13,7 @@ export const getPagePostList = async ({
   pageNum?: number
   search?: string
 }): Promise<{
-  list: any[]
+  list: PostListItem[]
   total: number
 }> => {
   const {
@@ -46,7 +47,7 @@ export const getPagePost = cache(async (slug: string): Promise<{
     title: post.title as string,
     content,
     cid: post.cid,
-    createdAt: post.createdAt
+    createdAt: post.createdAt as Date
   }
 })
 
@@ -109,20 +110,21 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   }
   const content = marked.parse(post.text ?? '') as string
 
-  // 获取文章的标签信息
+  // 获取文章的标签信息（slug 可能为空，过滤后再返回）
   const tags = post.relationships
-    .filter((relation: any) => relation.metas.type === 'tag')
-    .map((relation: any) => relation.metas.slug)
+    .filter((relation) => relation.metas.type === 'tag')
+    .map((relation) => relation.metas.slug)
+    .filter((slug): slug is string => slug != null)
 
   const categoryRelation = post.relationships
-    .find((relation: any) => relation.metas.type === 'category')
+    .find((relation) => relation.metas.type === 'category')
 
   return {
     title: post.title as string,
     content,
-    createdAt: post.createdAt,
-    name: (categoryRelation?.metas.name ?? '') as string,
-    category: (categoryRelation?.metas.slug ?? '') as string,
+    createdAt: post.createdAt as Date,
+    name: categoryRelation?.metas.name ?? '',
+    category: categoryRelation?.metas.slug ?? '',
     viewsNum: post.viewsNum as number,
     likesNum: post.likesNum as number || 0,
     cid: post.cid,
