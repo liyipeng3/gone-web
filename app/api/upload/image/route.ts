@@ -97,12 +97,9 @@ export async function POST (request: NextRequest) {
         const metadata = await sharp(buffer).metadata()
         imageWidth = imageWidth || metadata.width || null
         imageHeight = imageHeight || metadata.height || null
-        console.log('Sharp 获取图片尺寸:', { width: metadata.width, height: metadata.height, final: { width: imageWidth, height: imageHeight } })
       } catch (error) {
         console.error('Sharp 获取图片尺寸失败:', error)
       }
-    } else {
-      console.log('使用 EXIF 中的图片尺寸:', { width: imageWidth, height: imageHeight })
     }
 
     const fileName = generateFileName(file.name, 'img')
@@ -139,7 +136,6 @@ export async function POST (request: NextRequest) {
       }
 
       thumbnailResult = await uploadToOSS(thumbnailBuffer, thumbnailFileName, { headers: thumbnailHeaders })
-      console.log('缩略图生成并上传成功:', thumbnailResult.fileName)
     } catch (error) {
       console.error('缩略图生成或上传失败:', error)
       // 缩略图失败不影响主图片上传

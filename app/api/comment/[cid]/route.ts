@@ -61,7 +61,7 @@ export async function GET (request: Request, context: { params: { cid: string } 
   return NextResponse.json(comments)
 }
 
-export async function PATCH (request: Request, context: { params: any }) {
+export async function PATCH (request: Request, context: { params: { cid: string } }) {
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 

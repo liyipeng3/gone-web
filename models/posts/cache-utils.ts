@@ -1,6 +1,12 @@
 // 帖子缓存相关工具函数
 import { cacheService, cacheKeys } from '@/lib/cache'
-import { type HotList, type ArchiveList } from './types'
+import { type HotList, type ArchiveList, type PostListItem } from './types'
+
+// 帖子列表缓存载荷
+export interface PostListCachePayload {
+  list: PostListItem[]
+  total: number
+}
 
 /**
  * 获取热门列表缓存键
@@ -110,15 +116,15 @@ export const getPostListCacheKey = (pageNum: number, pageSize: number, mid?: num
 /**
  * 从缓存获取帖子列表
  */
-export const getPostListFromCache = (pageNum: number, pageSize: number, mid?: number, search?: string): any => {
+export const getPostListFromCache = (pageNum: number, pageSize: number, mid?: number, search?: string): PostListCachePayload | undefined => {
   const cacheKey = getPostListCacheKey(pageNum, pageSize, mid, search)
-  return cacheService.get(cacheKey)
+  return cacheService.get<PostListCachePayload>(cacheKey)
 }
 
 /**
  * 设置帖子列表缓存
  */
-export const setPostListCache = (pageNum: number, pageSize: number, data: any, mid?: number, search?: string): void => {
+export const setPostListCache = (pageNum: number, pageSize: number, data: PostListCachePayload, mid?: number, search?: string): void => {
   const cacheKey = getPostListCacheKey(pageNum, pageSize, mid, search)
   // 缓存结果，设置较短的缓存时间（2分钟）
   cacheService.set(cacheKey, data, 120)

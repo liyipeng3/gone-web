@@ -2,7 +2,7 @@
 
 interface HttpError extends Error {
   status?: number
-  data?: any
+  data?: unknown
 }
 
 const request = async <T>(url: string, options: RequestInit): Promise<T> => {
@@ -24,7 +24,7 @@ const request = async <T>(url: string, options: RequestInit): Promise<T> => {
   }
 }
 
-const post = async <T>(url: string, body?: any): Promise<T> => {
+const post = async <T>(url: string, body?: unknown): Promise<T> => {
   return await request<T>(url, {
     method: 'post',
     headers: {
@@ -43,7 +43,7 @@ const del = async <T>(url: string): Promise<T> => {
   })
 }
 
-const get = async <T>(url: string, params?: Record<string, any>): Promise<T> => {
+const get = async <T>(url: string, params?: Record<string, unknown>): Promise<T> => {
   if (params) {
     const searchParams = new URLSearchParams()
     for (const key in params) {

@@ -1,10 +1,10 @@
-// export { getServerSideProps } from '../page/[num]'
-import Page from '@/app/(web)/page/[num]/page'
+import List from '@/components/custom/List'
 import React from 'react'
 
-const Search: React.FC<any> = (props) => {
-  return (
-    <Page {...props} />
-  )
+const Search: React.FC<{
+  searchParams?: Record<string, string | string[] | undefined>
+}> = ({ searchParams }) => {
+  return <List searchParams={searchParams}/>
 }
+
 export default Search

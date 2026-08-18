@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma'
-import type { gallery } from '@prisma/client'
+import type { gallery, Prisma } from '@prisma/client'
 import { deleteFromOSS } from '@/lib/oss'
 import { cacheService, cacheKeys } from '@/lib/cache'
 
@@ -83,7 +83,7 @@ export async function getGalleryList (query: GalleryQuery = {}): Promise<{
     isPublic = true
   } = query
 
-  const where: any = {}
+  const where: Prisma.galleryWhereInput = {}
 
   // 只有当 isPublic 不是 undefined 时才添加到查询条件中
   if (query.isPublic !== undefined) {
@@ -285,7 +285,7 @@ export async function getAdjacentPhotos (currentGid: number, category?: string):
   current: number
   total: number
 }> {
-  const where: any = { isPublic: true }
+  const where: Prisma.galleryWhereInput = { isPublic: true }
   if (category) {
     where.category = category
   }

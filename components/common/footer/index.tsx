@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import React, { useEffect } from 'react'
 import duration from 'dayjs/plugin/duration'
-import { Github } from 'lucide-react'
+import { AiOutlineGithub } from 'react-icons/ai'
 import { getDurationTime } from '@/lib/utils'
 import { Assistant } from '@/components/custom/Assistant'
 import { siteConfig } from '@/config/site'
@@ -47,8 +47,8 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
       </button>
       <div className="flex flex-row my-3 md:my-0">
-        <Github className="github hover:text-black dark:hover:text-white transition-all cursor-pointer"
-                onClick={() => window.open(siteConfig.github, '_blank')}/>
+        <AiOutlineGithub className="github hover:text-black dark:hover:text-white transition-all"
+                         onClick={() => window.open(siteConfig.github, '_blank')}/>
       </div>
       <Assistant/>
     </footer>

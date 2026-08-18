@@ -1,6 +1,13 @@
 import prisma from '@/lib/prisma'
 import { cache } from 'react'
+import { type Prisma } from '@prisma/client'
 import { cacheService, cacheKeys } from '@/lib/cache'
+
+// 评论创建入参：调用方提供的字段，cid/parent/status 由 createComment 内部补全
+export type CreateCommentData = Pick<
+Prisma.commentsUncheckedCreateInput,
+'author' | 'text' | 'url' | 'agent' | 'ip'
+> & { email: string }
 
 // 使用 React.cache 在同一请求内去重（文章页与 CommentList 会各调用一次）
 export const getCommentsByCid = cache(async (cid: number) => {
@@ -15,7 +22,7 @@ export const getCommentById = async (coid: number) => {
   })
 }
 
-export const createComment = async (cid: number, parent: number = 0, data: any) => {
+export const createComment = async (cid: number, parent: number = 0, data: CreateCommentData) => {
   const email = data.email
   let status = 'waiting'
   // 同一邮箱只需审核一次
@@ -54,7 +61,7 @@ export const deleteComment = async (coid: number) => {
   })
 }
 
-export const updateComment = async (coid: number, data: any) => {
+export const updateComment = async (coid: number, data: Prisma.commentsUpdateInput) => {
   // 清除评论相关的缓存
   cacheService.delByPrefix(cacheKeys.recentComments)
 
