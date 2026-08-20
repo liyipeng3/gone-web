@@ -34,15 +34,24 @@ export const deletePostByCid = async (cid: number) => {
 
 /**
  * 增加帖子浏览量
+ *
+ * 显式回写 `updatedAt` 原值以抵消 Prisma `@updatedAt` 的自动刷新：
+ * 浏览量属于统计计数，不应改变文章的“最后修改时间”（否则会污染
+ * sitemap 的 lastModified 与后台按 updatedAt 的排序）。
  */
 export const incrementViews = async (cid: number) => {
-  // 更新浏览量
+  const post = await prisma.posts.findUnique({
+    where: { cid },
+    select: { updatedAt: true }
+  })
+  if (!post) return
+
+  // 更新浏览量，同时回写原 updatedAt（保持“最后修改时间”不变）
   await prisma.posts.update({
     where: { cid },
     data: {
-      viewsNum: {
-        increment: 1
-      }
+      viewsNum: { increment: 1 },
+      updatedAt: post.updatedAt
     }
   })
 

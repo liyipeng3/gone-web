@@ -12,23 +12,25 @@ export async function POST (
       return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
     }
 
-    // 查找文章是否存在
+    // 查找文章是否存在（顺带取 updatedAt 用于回写，避免额外查询）
     const post = await prisma.posts.findUnique({
-      where: { cid }
+      where: { cid },
+      select: { updatedAt: true }
     })
 
     if (!post) {
       return NextResponse.json({ error: '文章不存在' }, { status: 404 })
     }
 
-    // 增加点赞数
+    // 增加点赞数，同时回写原 updatedAt（抵消 Prisma @updatedAt 自动刷新：
+    // 点赞属于统计计数，不应改变文章“最后修改时间”）。
     const updatedPost = await prisma.posts.update({
       where: { cid },
       data: {
-        likesNum: {
-          increment: 1
-        }
-      }
+        likesNum: { increment: 1 },
+        updatedAt: post.updatedAt
+      },
+      select: { likesNum: true }
     })
 
     return NextResponse.json({
