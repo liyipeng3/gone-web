@@ -2,25 +2,63 @@ import { NextResponse } from 'next/server'
 import { createComment, deleteComment, getCommentsByCid, updateComment, getCommentById } from '@/models/comments'
 import { sendCommentNotification, sendReplyNotification, sendCommentApprovedNotification } from '@/lib/email'
 import { getPostInfoByCid } from '@/models/posts'
-import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
-import { commentCreateSchema, commentUpdateSchema, commentDeleteSchema } from '@/lib/validations/comment'
+import { requireAdmin, isAuthResponse, isAdministrator } from '@/lib/api-auth'
+import { getCurrentUser } from '@/lib/session'
+import { commentCreateSchema, commentUpdateSchema, commentDeleteSchema, commentAdminReplySchema } from '@/lib/validations/comment'
 
 export async function POST (request: Request, context: { params: { cid: string } }) {
+  const cid = Number(context.params.cid)
   const body = await request.json()
+  const agent = request.headers.get('User-Agent')
+  const ip = request.headers.get('X-Forwarded-For')
+
+  // 管理员回复分支：作者身份取自 session，直接通过审核，避免信任客户端字段
+  const currentUser = await getCurrentUser()
+  const isAdmin = currentUser ? await isAdministrator(currentUser) : false
+  if (isAdmin && body.author === undefined && body.email === undefined) {
+    const parsed = commentAdminReplySchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
+    }
+
+    const { text, parent } = parsed.data
+    const comment = await createComment(cid, parent, {
+      author: currentUser?.name ?? '管理员',
+      email: currentUser?.email ?? process.env.ADMIN_EMAIL ?? '',
+      url: process.env.SITE_URL ?? '',
+      text,
+      agent,
+      ip,
+      status: 'approved'
+    })
+
+    // 回复通知不阻塞响应：通知被回复者（若非管理员自己）
+    void (async () => {
+      const [postInfo, originalComment] = await Promise.all([
+        getPostInfoByCid(cid),
+        getCommentById(parent)
+      ])
+      const postUrl = `${process.env.SITE_URL}/post/${postInfo.category}/${postInfo.slug}`
+      if (originalComment?.email && originalComment.email !== comment.email) {
+        await sendReplyNotification(originalComment, comment, postInfo.title ?? '暂无标题', postUrl)
+      }
+    })().catch(err => { console.error('管理员回复通知邮件发送失败:', err) })
+
+    return NextResponse.json(comment)
+  }
+
   const parsed = commentCreateSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
   }
 
   const { author, text, parent = 0, email, url } = parsed.data
-  const agent = request.headers.get('User-Agent')
-  const ip = request.headers.get('X-Forwarded-For')
-  const comment = await createComment(Number(context.params.cid), Number(parent), { author, text, email, url, agent, ip })
+  const comment = await createComment(cid, Number(parent), { author, text, email, url, agent, ip })
 
   // 邮件通知不阻塞响应：后台并行取数并发送，失败仅记录日志
   void (async () => {
     const [postInfo, originalComment] = await Promise.all([
-      getPostInfoByCid(Number(context.params.cid)),
+      getPostInfoByCid(cid),
       parent && parent > 0 ? getCommentById(Number(parent)) : Promise.resolve(null)
     ])
     const postUrl = `${process.env.SITE_URL}/post/${postInfo.category}/${postInfo.slug}`

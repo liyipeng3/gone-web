@@ -15,6 +15,11 @@ export const dashboardConfig: DashboardConfig = {
   ],
   sidebarNav: [
     {
+      title: '概览',
+      href: '/dashboard/overview',
+      icon: 'dashboard'
+    },
+    {
       title: 'Posts',
       href: '/dashboard',
       icon: 'post'

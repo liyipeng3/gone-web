@@ -3,11 +3,12 @@ import { cache } from 'react'
 import { type Prisma } from '@prisma/client'
 import { cacheService, cacheKeys } from '@/lib/cache'
 
-// 评论创建入参：调用方提供的字段，cid/parent/status 由 createComment 内部补全
+// 评论创建入参：调用方提供的字段，cid/parent 由 createComment 补全；
+// status 可选——公开评论按邮箱规则自动判定，管理员回复可显式传入 'approved'
 export type CreateCommentData = Pick<
 Prisma.commentsUncheckedCreateInput,
 'author' | 'text' | 'url' | 'agent' | 'ip'
-> & { email: string }
+> & { email: string, status?: string }
 
 // 使用 React.cache 在同一请求内去重（文章页与 CommentList 会各调用一次）
 export const getCommentsByCid = cache(async (cid: number) => {
@@ -23,19 +24,22 @@ export const getCommentById = async (coid: number) => {
 }
 
 export const createComment = async (cid: number, parent: number = 0, data: CreateCommentData) => {
+  const { status: statusOverride, ...commentData } = data
   const email = data.email
-  let status = 'waiting'
-  // 同一邮箱只需审核一次
-  const beforeComment = await prisma.comments.findFirst({
-    where: { email, status: 'approved' }
-  })
-  if (beforeComment) {
-    status = 'approved'
+  let status = statusOverride ?? 'waiting'
+  // 未显式指定状态时，同一邮箱只需审核一次
+  if (!statusOverride) {
+    const beforeComment = await prisma.comments.findFirst({
+      where: { email, status: 'approved' }
+    })
+    if (beforeComment) {
+      status = 'approved'
+    }
   }
 
   const result = await prisma.comments.create({
     data: {
-      ...data,
+      ...commentData,
       cid,
       parent,
       status

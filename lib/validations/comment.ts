@@ -15,16 +15,34 @@ export const commentCreateSchema = z.object({
 export type CommentCreateInput = z.infer<typeof commentCreateSchema>
 
 /**
- * 评论审核状态更新校验（PATCH /api/comment/[cid]）
+ * 管理员回复校验（POST /api/comment/[cid]，管理员分支）
  *
- * 仅允许更新 status，防止管理员端把整个客户端对象写入 prisma.update
+ * 作者身份由服务端 session 派生，客户端仅提供正文与被回复评论 id，
+ * 避免信任客户端传入的 author/email。
+ */
+export const commentAdminReplySchema = z.object({
+  text: z.string().min(1).max(5000),
+  parent: z.number().int().positive()
+})
+
+export type CommentAdminReplyInput = z.infer<typeof commentAdminReplySchema>
+
+/**
+ * 评论更新校验（PATCH /api/comment/[cid]）
+ *
+ * 仅允许更新 status 与 text，防止管理员端把整个客户端对象写入 prisma.update
  * 造成质量赋值（Mass Assignment）——注入 cid/author/created/parent 等字段。
+ * status/text 至少提供其一。
  */
 export const commentUpdateSchema = z.object({
   coid: z.number().int().positive(),
   comment: z.object({
-    status: z.enum(['approved', 'waiting', 'spam'])
-  })
+    status: z.enum(['approved', 'waiting', 'spam']).optional(),
+    text: z.string().min(1).max(5000).optional()
+  }).refine(
+    (data) => data.status !== undefined || data.text !== undefined,
+    { message: '至少需要提供 status 或 text' }
+  )
 })
 
 export type CommentUpdateInput = z.infer<typeof commentUpdateSchema>

@@ -22,7 +22,8 @@ import {
   User,
   X,
   MessageSquareText,
-  Crown
+  Crown,
+  LayoutDashboard
 } from 'lucide-react'
 
 export const Icons = {
@@ -32,6 +33,7 @@ export const Icons = {
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   trash: Trash,
+  dashboard: LayoutDashboard,
   post: FileText,
   page: File,
   media: Image,
