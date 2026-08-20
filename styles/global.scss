@@ -1,5 +1,78 @@
 @import "tailwindcss";
-@config "../tailwind.config.js";
+
+// v4 原生插件加载（替代旧 tailwind.config.js 的 plugins 字段）
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/container-queries";
+
+// 暗色模式按 class 触发（替代旧 config 的 darkMode: 'class'）。
+// 保留 269+ 处 dark:* 工具类的行为，避免退回 prefers-color-scheme。
+@custom-variant dark (&:where(.dark, .dark *));
+
+// 主题 token（替代旧 config 的 theme.extend）。
+// 颜色沿用 :root/.dark 中的 HSL 分量变量，用 @theme inline 桥接，保持零视觉变化。
+@theme inline {
+  --color-dark: #0d1117;
+  --color-dark-light: #161b22;
+  --color-light-line: rgba(0, 0, 0, 0.1);
+  --color-dark-line: rgba(255, 255, 255, 0.1);
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-out: fade-out 3s linear forwards;
+  --animate-fade-in: fade-in 300ms ease-in forwards;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+@keyframes fade-out {
+  from { opacity: 0.5; }
+  to { opacity: 0.1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// container 居中 + 内边距（v4 移除了旧 config 的 container.center/padding）
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
 
 // Tailwind v4 将工具类置于 @layer utilities。以下自有基础样式含裸元素选择器
 // （如 header svg），必须并入 @layer base，否则无层级样式会盖过工具类，
@@ -95,7 +168,7 @@
   // 避免 iOS 顶部/底部安全区与 overscroll 回弹露出比 header 更暗的 body 背景（#020817）。
   // 正文区域由 .document (dark:bg-dark) 覆盖，此处仅影响安全区/回弹露出部分。
   .dark body {
-    background-color: theme('colors.dark-light');
+    background-color: var(--color-dark-light);
   }
 }
 
