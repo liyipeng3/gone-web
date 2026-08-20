@@ -28,37 +28,34 @@ export default async function DashboardPage ({
   const pageSize = 10
   const skip = (page - 1) * pageSize
 
-  const totalPosts = await prisma.posts.count({
-    where: {
-      uid: parseInt(user.id),
-      type: 'post',
-      status: {
-        not: 'deleted'
-      }
+  const postsWhere = {
+    uid: parseInt(user.id),
+    type: 'post',
+    status: {
+      not: 'deleted'
     }
-  })
+  }
 
-  const posts: any = await prisma.posts.findMany({
-    where: {
-      uid: parseInt(user.id),
-      type: 'post',
-      status: {
-        not: 'deleted'
-      }
-    },
-    select: {
-      cid: true,
-      title: true,
-      createdAt: true,
-      updatedAt: true,
-      status: true
-    },
-    orderBy: {
-      updatedAt: 'desc'
-    },
-    skip,
-    take: pageSize
-  })
+  const [totalPosts, posts] = await Promise.all([
+    prisma.posts.count({
+      where: postsWhere
+    }),
+    prisma.posts.findMany({
+      where: postsWhere,
+      select: {
+        cid: true,
+        title: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true
+      },
+      orderBy: {
+        updatedAt: 'desc'
+      },
+      skip,
+      take: pageSize
+    })
+  ]) as [number, any]
 
   // 批量查询草稿，避免逐篇查询（N+1）
   const cids = posts.map((post: { cid: number }) => post.cid)
@@ -68,12 +65,13 @@ export default async function DashboardPage ({
         parent: { in: cids },
         type: 'post_draft'
       },
-      include: {
-        relationships: {
-          include: {
-            metas: true
-          }
-        }
+      // 列表仅展示草稿的标题与时间，无需关联 metas
+      select: {
+        cid: true,
+        parent: true,
+        title: true,
+        createdAt: true,
+        updatedAt: true
       }
     })
 

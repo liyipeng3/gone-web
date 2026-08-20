@@ -24,48 +24,60 @@ export default async function CommentsPage ({
     ? {}
     : { status: filter }
 
-  const totalComments = await prisma.comments.count({
-    where: whereCondition
-  })
-
-  const comments = await prisma.comments.findMany({
-    where: whereCondition,
-    select: {
-      coid: true,
-      cid: true,
-      createdAt: true,
-      author: true,
-      email: true,
-      ip: true,
-      text: true,
-      status: true,
-      posts: {
-        select: {
-          title: true,
-          slug: true,
-          relationships: {
-            select: {
-              metas: {
-                select: {
-                  slug: true
+  const [totalComments, statusCounts, comments] = await Promise.all([
+    prisma.comments.count({
+      where: whereCondition
+    }),
+    // 各状态的真实总数，独立于当前筛选与分页
+    prisma.comments.groupBy({
+      by: ['status'],
+      _count: true
+    }),
+    prisma.comments.findMany({
+      where: whereCondition,
+      select: {
+        coid: true,
+        cid: true,
+        createdAt: true,
+        author: true,
+        email: true,
+        ip: true,
+        text: true,
+        status: true,
+        posts: {
+          select: {
+            title: true,
+            slug: true,
+            relationships: {
+              select: {
+                metas: {
+                  select: {
+                    slug: true
+                  }
                 }
-              }
-            },
-            where: {
-              metas: {
-                type: 'category'
+              },
+              where: {
+                metas: {
+                  type: 'category'
+                }
               }
             }
           }
         }
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    skip,
-    take: pageSize
-  })
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip,
+      take: pageSize
+    })
+  ])
+
+  // 各状态总数映射，供筛选 Tab 展示真实数量
+  const countByStatus = statusCounts.reduce<Record<string, number>>((acc, cur) => {
+    if (cur.status) acc[cur.status] = cur._count
+    return acc
+  }, {})
 
   return (
     <DashboardShell>
@@ -80,7 +92,7 @@ export default async function CommentsPage ({
             { href: '/dashboard/comments?filter=spam', label: '垃圾评论', status: 'spam' }
           ].map(({ href, label, status }) => {
             const isActive = filter === status
-            const statusCount = comments.filter(c => c.status === status).length
+            const statusCount = countByStatus[status] ?? 0
 
             return (
               <Link
