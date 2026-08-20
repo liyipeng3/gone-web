@@ -128,7 +128,7 @@ export default async function CommentsPage ({
                   </td>
                   <td className="px-4 py-5">
                     <div className=" space-x-3 h-full flex items-center justify-start">
-                      <div className="relative flex-shrink-0 h-full ">
+                      <div className="relative shrink-0 h-full ">
                         <Image
                           src={getAvatarUrl(comment.email ?? '')}
                           alt={`${comment.author}的头像`}

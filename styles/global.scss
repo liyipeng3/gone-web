@@ -1,14 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind screens;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
-@import "dark";
-@import "layout";
-@import "prose";
-@import "icon";
-@import "assistant";
-@import "image";
+// Tailwind v4 将工具类置于 @layer utilities。以下自有基础样式含裸元素选择器
+// （如 header svg），必须并入 @layer base，否则无层级样式会盖过工具类，
+// 导致 w-*/h-* 等对 header/footer 内的 svg 失效（图标缩回固有尺寸）。
+@layer base {
+  @import "dark";
+  @import "layout";
+  @import "prose";
+  @import "icon";
+  @import "assistant";
+  @import "image";
+}
 
 @layer base {
   :root {

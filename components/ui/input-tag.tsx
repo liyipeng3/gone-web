@@ -80,7 +80,7 @@ const InputTag: FC<InputTagProps> = ({
         </div>
       ))}
       <div
-        className="flex-grow focus:outline-none "
+        className="grow focus:outline-none "
         contentEditable
         suppressContentEditableWarning
         onKeyDown={(event) => {

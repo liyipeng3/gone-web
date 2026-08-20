@@ -77,7 +77,7 @@ const GalleryItem: React.FC<GalleryItemProps> = React.memo(({ item, onPreview, i
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end pointer-events-none">
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-end pointer-events-none">
           <div className="w-full p-3 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-end justify-between">
               <div className="flex-1 min-w-0">
@@ -90,7 +90,7 @@ const GalleryItem: React.FC<GalleryItemProps> = React.memo(({ item, onPreview, i
               </div>
               <button
                 onClick={handlePreviewClick}
-                className="ml-2 px-2 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded text-xs transition-all duration-200 backdrop-blur-sm flex-shrink-0 pointer-events-auto"
+                className="ml-2 px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-xs transition-all duration-200 backdrop-blur-sm shrink-0 pointer-events-auto"
               >
                 🔍 预览
               </button>

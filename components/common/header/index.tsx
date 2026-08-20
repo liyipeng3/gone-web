@@ -135,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div
         className={cn('flex flex-col-reverse text-sm text-gray-700 items-center mt-8 md:mt-0 dark:text-white md:h-auto duration-200 transition-all', menuType === 'search' ? 'h-56 opacity-100' : 'h-0 opacity-0 md:opacity-100')}>
         <div
-          className={cn('flex-1 md:space-x-5 space-y-1.5 flex flex-col md:flex-row justify-center items-end duration-100 transition-[opacity]', menuType === 'search' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
+          className={cn('flex-1 md:space-x-5 space-y-1.5 md:space-y-reverse flex flex-col md:flex-row justify-center items-end duration-100 transition-[opacity]', menuType === 'search' ? 'opacity-100 md:opacity-0' : 'opacity-0 md:opacity-100')}>
           {menus.map((menu, index) => {
             return ((menu.children?.length) != null)
               ? (
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <MenuItems className="absolute -left-8 z-10 mt-2 w-24 origin-top-right
-                                    rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5
+                                    rounded-md bg-white shadow-lg ring-1 ring-black/5
                                     focus:outline-none dark:bg-dark-light dark:ring-dark-line ">
                       <div className="py-1">
                         {menu.children.map((child, index) => {
