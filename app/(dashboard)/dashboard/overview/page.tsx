@@ -11,7 +11,7 @@ import { Icons } from '@/components/common/icons'
 import { FileText, Image as ImageIcon, MessageSquareText, Eye, Heart, Users } from 'lucide-react'
 
 export const metadata = {
-  title: '概览'
+  title: 'Overview'
 }
 
 interface StatCardProps {
@@ -24,19 +24,19 @@ interface StatCardProps {
 
 function StatCard ({ label, value, hint, href, icon }: StatCardProps) {
   const content = (
-    <div className="flex items-center justify-between rounded-lg border bg-white dark:bg-gray-900 p-5 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
+    <div className="flex h-full items-start justify-between rounded-lg border bg-white dark:bg-gray-900 p-5 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
       <div className="space-y-1">
         <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
         <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value.toLocaleString()}</p>
         {hint && <p className="text-xs text-gray-400 dark:text-gray-500">{hint}</p>}
       </div>
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
         {icon}
       </div>
     </div>
   )
 
-  return href ? <Link href={href}>{content}</Link> : content
+  return href ? <Link href={href} className="block h-full">{content}</Link> : content
 }
 
 export default async function OverviewPage () {
@@ -47,7 +47,7 @@ export default async function OverviewPage () {
 
   return (
     <DashboardShell>
-      <DashboardHeader heading="概览" text="站点数据一览。" />
+      <DashboardHeader heading="Overview" text="Site data at a glance." />
 
       {stats.comments.waiting > 0 && (
         <Link
