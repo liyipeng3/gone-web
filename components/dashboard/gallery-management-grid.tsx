@@ -287,7 +287,7 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
         <Pagination
           pages={totalPages}
           current={currentPage}
-          baseLink="/dashboard/gallery/page/"
+          baseLink="/dashboard/gallery?page="
         />
       )}
 
