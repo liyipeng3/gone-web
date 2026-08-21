@@ -121,22 +121,22 @@ export default function CommentsTable ({ comments, filter, page }: CommentsTable
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
       {/* 批量操作栏：选中 > 0 时浮现 */}
       {selectedIds.length > 0 && (
-        <div className="flex items-center justify-between gap-3 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950 px-4 py-2.5">
-          <span className="text-sm text-gray-700 dark:text-gray-200">
+        <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/60 px-4 py-2.5 dark:bg-muted/40">
+          <span className="text-sm text-foreground">
             已选择 <span className="font-semibold">{selectedIds.length}</span> 条
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={() => { void handleBatchSpam() }}
               disabled={isProcessing}
-              className="rounded-md px-3 py-1.5 text-xs font-medium text-orange-700 hover:bg-orange-100 dark:text-orange-400 dark:hover:bg-orange-900 disabled:opacity-50"
+              className="rounded-md bg-orange-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-orange-500 dark:text-black dark:hover:bg-orange-400"
             >
               批量标记垃圾
             </button>
             <button
               onClick={clearSelection}
               disabled={isProcessing}
-              className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             >
               取消选择
             </button>

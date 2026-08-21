@@ -54,6 +54,20 @@ export const Header: React.FC<HeaderProps> = ({
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    const handleVisibilityChange = (): void => {
+      const input = inputRef.current
+      if (document.visibilityState === 'hidden' && input !== null && document.activeElement === input) {
+        input.blur()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  useEffect(() => {
     void fetch('/api/category')
       .then(async res => await res.json())
       .then(res => {
