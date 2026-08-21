@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { formatDate } from '@/lib/utils'
 import { Calendar, Camera, MapPin, Info, Eye, EyeOff, Tag } from 'lucide-react'
+import { parseStoredTags } from './gallery-form/location'
 
 interface GalleryDetailDialogProps {
   item: gallery | null
@@ -50,7 +51,7 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
 
   if (!item) return null
 
-  const tags = item.tags ? JSON.parse(item.tags) : []
+  const tags = parseStoredTags(item.tags)
 
   return (
     <>
@@ -163,7 +164,7 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
               </div>
 
               {/* 分类和标签信息 */}
-              {(item.category ?? tags.length > 0) && (
+              {(Boolean(item.category) || tags.length > 0) && (
                 <div className="space-y-3">
                   <h4 className="text-base font-semibold flex items-center gap-2">
                     <Tag className="h-4 w-4" />
@@ -210,7 +211,7 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
               </div>
 
               {/* EXIF 信息 */}
-              {(item.camera ?? item.aperture ?? item.iso ?? item.focalLength) && (
+              {(Boolean(item.camera) || Boolean(item.aperture) || Boolean(item.iso) || Boolean(item.focalLength)) && (
                 <div className="space-y-3">
                   <h4 className="text-base font-semibold flex items-center gap-2">
                     <Camera className="h-4 w-4" />
@@ -257,7 +258,7 @@ const GalleryDetailDialog: React.FC<GalleryDetailDialogProps> = ({
                 </div>
               )}
 
-              {(item.location ?? item.latitude) && (
+              {(Boolean(item.location) || item.latitude != null) && (
                 <div className="space-y-3">
                   <h4 className="text-base font-semibold flex items-center gap-2">
                     <MapPin className="h-4 w-4" />

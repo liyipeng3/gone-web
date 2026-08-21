@@ -45,6 +45,20 @@ export const parseLocationString = (location: string | null): ParsedLocation => 
 }
 
 /**
+ * 将数据库中存储的标签 JSON 字符串安全解析为数组，脏数据时返回空数组。
+ */
+export const parseStoredTags = (tags: string | null): string[] => {
+  if (!tags) return []
+  try {
+    const parsed = JSON.parse(tags)
+    return Array.isArray(parsed) ? parsed as string[] : []
+  } catch (error) {
+    console.error('解析标签失败:', error)
+    return []
+  }
+}
+
+/**
  * 将逗号/空格分隔的标签字符串解析为去空标签数组。
  */
 export const parseTags = (tagsString: string): string[] => {

@@ -21,7 +21,7 @@ interface GalleryManagementPageProps {
 }
 
 export default async function GalleryManagementPage ({ searchParams }: GalleryManagementPageProps) {
-  const page = parseInt(searchParams.page ?? '1')
+  const page = Number(searchParams.page) || 1
   const pageSize = 12
   const offset = (page - 1) * pageSize
 

@@ -16,9 +16,13 @@ export const metadata = {
 export default async function ProfilePage () {
   const user = await getCurrentUser()
 
+  if (!user) {
+    redirect(authOptions?.pages?.signIn ?? '/login')
+  }
+
   const userInfo = await prisma.users.findUnique({
     where: {
-      uid: parseInt(user?.id ?? '0')
+      uid: parseInt(user.id)
     },
     select: {
       uid: true,
@@ -28,10 +32,6 @@ export default async function ProfilePage () {
       nickname: true
     }
   })
-
-  if (!user) {
-    redirect(authOptions?.pages?.signIn ?? '/login')
-  }
 
   return (
     <DashboardShell>
