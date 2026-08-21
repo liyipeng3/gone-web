@@ -31,7 +31,7 @@ const Archive = async () => {
                   </span>
                   <Link
                     href={`/post/${post.category}/${post.slug}`}
-                    className="text-gray-700 hover:text-black dark:hover:text-white text-sm ml-2"
+                    className="text-gray-700 dark:text-gray-100 hover:text-black dark:hover:text-white text-sm ml-2"
                   >
                     {post.title}
                   </Link>
