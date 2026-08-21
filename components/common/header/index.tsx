@@ -54,20 +54,6 @@ export const Header: React.FC<HeaderProps> = ({
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const handleVisibilityChange = (): void => {
-      const input = inputRef.current
-      if (document.visibilityState === 'hidden' && input !== null && document.activeElement === input) {
-        input.blur()
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [])
-
-  useEffect(() => {
     void fetch('/api/category')
       .then(async res => await res.json())
       .then(res => {
@@ -201,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div
           className={cn('w-48 search md:absolute md:right-28 translate-x-3 duration-[50ms] md:duration-200 transition-all', menuType === 'search' ? 'md:translate-y-1 opacity-100 ' : '-translate-y-4 opacity-0 md:-translate-y-3')}>
           <input
-            className="border-b rounded-none border-solid border-gray-500 text-center h-8 pr-5 outline-0 w-full box-border bg-white dark:bg-dark-light text-gray-700 dark:text-white placeholder-gray-400 appearance-none outline-none"
+            className="border-b rounded-none border-solid border-gray-500 text-center text-base md:text-sm h-8 pr-5 outline-0 w-full box-border bg-white dark:bg-dark-light text-gray-700 dark:text-white placeholder-gray-400 appearance-none outline-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 startSearch()
