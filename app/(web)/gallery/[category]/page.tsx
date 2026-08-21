@@ -12,7 +12,6 @@ interface CategoryGalleryPageProps {
   }
   searchParams: {
     tag?: string
-    page?: string
   }
 }
 
@@ -27,27 +26,22 @@ export async function generateMetadata ({ params }: CategoryGalleryPageProps): P
 
 export default async function CategoryGalleryPage ({ params, searchParams }: CategoryGalleryPageProps) {
   const category = decodeURIComponent(params.category)
-  const page = parseInt(searchParams.page ?? '1')
   const pageSize = 24
-  const offset = (page - 1) * pageSize
 
   const categories = await getGalleryCategories()
   if (!categories.includes(category)) {
     redirect('/gallery')
   }
 
-  const galleryData = await getGalleryList({
+  const { items, total } = await getGalleryList({
     category,
     tag: searchParams.tag,
     limit: pageSize,
-    offset,
+    offset: 0,
     orderBy: 'takenAt',
     orderDirection: 'desc',
     isPublic: true
   })
-
-  const { items, total } = galleryData
-  const totalPages = Math.ceil(total / pageSize)
 
   return (
     <div className="md:max-w-6xl max-w-full text-left flex-1 w-screen lg:w-[72rem] md:w-[48rem] mx-auto px-4 pb-10 pt-3">
@@ -72,12 +66,12 @@ export default async function CategoryGalleryPage ({ params, searchParams }: Cat
       />
 
       <GalleryWaterfall
+        key={`${category}-${searchParams.tag ?? ''}`}
         items={items}
         total={total}
-        currentPage={page}
-        totalPages={totalPages}
         pageSize={pageSize}
-        basePath={`/gallery/${category}`}
+        category={category}
+        tag={searchParams.tag}
       />
 
       {items.length === 0 && (

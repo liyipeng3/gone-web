@@ -13,29 +13,21 @@ interface GalleryPageProps {
   searchParams: {
     category?: string
     tag?: string
-    page?: string
   }
 }
 
 export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
-  const page = parseInt(searchParams.page ?? '1')
   const pageSize = 24
-  const offset = (page - 1) * pageSize
 
-  const [galleryData] = await Promise.all([
-    getGalleryList({
-      category: searchParams.category,
-      tag: searchParams.tag,
-      limit: pageSize,
-      offset,
-      orderBy: 'takenAt',
-      orderDirection: 'desc',
-      isPublic: true
-    })
-  ])
-
-  const { items, total } = galleryData
-  const totalPages = Math.ceil(total / pageSize)
+  const { items, total } = await getGalleryList({
+    category: searchParams.category,
+    tag: searchParams.tag,
+    limit: pageSize,
+    offset: 0,
+    orderBy: 'takenAt',
+    orderDirection: 'desc',
+    isPublic: true
+  })
 
   return (
     <div className=" max-w-full text-left flex-1 w-screen mx-auto md:px-12 px-4 pb-10 pt-3">
@@ -60,12 +52,12 @@ export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
       <div className='md:h-8'></div>
 
       <GalleryWaterfall
+        key={`${searchParams.category ?? 'all'}-${searchParams.tag ?? ''}`}
         items={items}
         total={total}
-        currentPage={page}
-        totalPages={totalPages}
         pageSize={pageSize}
-        basePath="/gallery"
+        category={searchParams.category}
+        tag={searchParams.tag}
       />
 
       {items.length === 0 && (
