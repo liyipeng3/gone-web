@@ -103,9 +103,12 @@ export async function getGalleryList (query: GalleryQuery = {}): Promise<{
   const [items, total] = await Promise.all([
     prisma.gallery.findMany({
       where,
-      orderBy: {
-        [orderBy]: orderDirection
-      },
+      // 以 gid 作为稳定兜底键：takenAt/order 存在 null 或并列时，
+      // 保证分批 offset 查询顺序稳定，避免无限滚动边界处重复/漏项
+      orderBy: [
+        { [orderBy]: orderDirection },
+        { gid: 'desc' }
+      ],
       take: limit,
       skip: offset
     }),

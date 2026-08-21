@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
 import RegionSelect from './gallery-form/region-select'
-import { parseLocationString, parseTags, joinLocation } from './gallery-form/location'
+import { parseLocationString, parseTags, joinLocation, parseStoredTags } from './gallery-form/location'
 
 interface GalleryEditDialogProps {
   item: gallery
@@ -49,7 +49,7 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
 
   useEffect(() => {
     if (item) {
-      const tags = item.tags ? JSON.parse(item.tags) : []
+      const tags = parseStoredTags(item.tags)
       const parsedLocation = parseLocationString(item.location)
       setFormData({
         title: item.title ?? '',
