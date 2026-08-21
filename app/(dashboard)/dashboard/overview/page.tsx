@@ -119,7 +119,7 @@ export default async function OverviewPage () {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     <span className="font-medium text-gray-900 dark:text-gray-100">{comment.author}</span>
-                    <span>{dayjs(comment.createdAt).format('MM-DD HH:mm')}</span>
+                    <span>{dayjs(comment.createdAt).format('YYYY-MM-DD HH:mm')}</span>
                     {comment.posts?.title && (
                       <Link
                         href={`/post/${comment.posts?.category}/${comment.posts?.slug}`}
