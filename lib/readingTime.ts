@@ -1,10 +1,13 @@
 /**
- * 计算文本的预计阅读时间
- * @param text 文本内容
+ * 一次遍历同时计算字数与阅读时间，避免长文对整篇 HTML 重复去标签与计数。
+ * @param text 文本内容（可含 HTML 标签）
  * @param wordsPerMinute 每分钟阅读的字数，默认为 300
- * @returns 预计阅读时间（分钟）
+ * @returns 字数与预计阅读时间（分钟）
  */
-export function calculateReadingTime (text: string, wordsPerMinute: number = 300): number {
+export function getReadingStats (text: string, wordsPerMinute: number = 300): {
+  wordCount: number
+  readingTime: number
+} {
   // 移除 HTML 标签
   const cleanText = text.replace(/<\/?[^>]+(>|$)/g, '')
 
@@ -15,30 +18,12 @@ export function calculateReadingTime (text: string, wordsPerMinute: number = 300
   const englishWords = cleanText.replace(/[\u4e00-\u9fa5]/g, '').trim().split(/\s+/).filter(Boolean).length
 
   // 总字数（中文字符 + 英文单词）
-  const totalWordCount = chineseCharCount + englishWords
+  const wordCount = chineseCharCount + englishWords
 
-  // 计算阅读时间（分钟）
-  const minutes = totalWordCount / wordsPerMinute
+  // 计算阅读时间（分钟），最小为 1 分钟
+  const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute))
 
-  // 返回阅读时间，最小为 1 分钟
-  return Math.max(1, Math.ceil(minutes))
-}
-
-/**
- * 获取文本总字数
- * @param text 文本内容
- * @returns 总字数
- */
-export function getWordCount (text: string): number {
-  // 移除 HTML 标签
-  const cleanText = text.replace(/<\/?[^>]+(>|$)/g, '')
-
-  // 计算字数（中文和英文单词）
-  const chineseCharCount = (cleanText.match(/[\u4e00-\u9fa5]/g) ?? []).length
-  const englishWords = cleanText.replace(/[\u4e00-\u9fa5]/g, '').trim().split(/\s+/).filter(Boolean).length
-
-  // 总字数（中文字符 + 英文单词）
-  return chineseCharCount + englishWords
+  return { wordCount, readingTime }
 }
 
 /**

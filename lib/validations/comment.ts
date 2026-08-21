@@ -55,3 +55,15 @@ export const commentDeleteSchema = z.object({
 })
 
 export type CommentDeleteInput = z.infer<typeof commentDeleteSchema>
+
+/**
+ * 评论批量标记垃圾校验（PATCH /api/comment）
+ *
+ * coids 至少一项、至多 200 项，防止一次提交过大集合。
+ */
+export const commentBatchUpdateSchema = z.object({
+  coids: z.array(z.number().int().positive()).min(1).max(200),
+  status: z.literal('spam')
+})
+
+export type CommentBatchUpdateInput = z.infer<typeof commentBatchUpdateSchema>

@@ -268,6 +268,12 @@ const GalleryWaterfall: React.FC<GalleryGridProps> = ({
 
   const previewImages = useMemo(() => loadedItems.map(item => item.imagePath), [loadedItems])
 
+  // 列宽对所有卡片一致，渲染前算一次，避免在 map 内对每个 item 重复读取 offsetWidth
+  const columnCount = getColumnCount()
+  const containerWidth = containerRef.current?.offsetWidth ?? 1200
+  const gap = containerWidth > 1280 ? 24 : containerWidth > 768 ? 20 : 16
+  const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount
+
   return (
     <>
       <div
@@ -278,11 +284,6 @@ const GalleryWaterfall: React.FC<GalleryGridProps> = ({
         {loadedItems.map((item, index) => {
           const position = itemPositions[index]
           if (!position) return null
-
-          const columnCount = getColumnCount()
-          const containerWidth = containerRef.current?.offsetWidth ?? 1200
-          const gap = containerWidth > 1280 ? 24 : containerWidth > 768 ? 20 : 16
-          const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount
 
           return (
             <GalleryItem

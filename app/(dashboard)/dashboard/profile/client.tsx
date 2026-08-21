@@ -42,9 +42,10 @@ export default function Profile ({ user }: { user?: {
         headers: {
           'Content-Type': 'application/json'
         },
+        // 后端白名单仅允许 url / nickname；username 为只读展示字段，不提交
         body: JSON.stringify({
           url: userData.url,
-          username: userData.username
+          nickname: userData.nickname
         })
       })
 
@@ -55,13 +56,14 @@ export default function Profile ({ user }: { user?: {
           variant: 'default'
         })
       } else {
-        throw new Error('更新失败')
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.error ?? '更新失败')
       }
     } catch (error) {
       console.error('更新用户数据失败', error)
       toast({
         title: '更新失败',
-        description: '更新个人信息时发生错误，请稍后再试',
+        description: (error as Error).message || '更新个人信息时发生错误，请稍后再试',
         variant: 'destructive'
       })
     } finally {

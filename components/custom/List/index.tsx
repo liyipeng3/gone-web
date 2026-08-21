@@ -7,14 +7,12 @@ import cn from 'classnames'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import Pagination from '@/components/common/pagination'
-import type { HotList } from '@/types'
 import { parseEmoji } from '@/lib/emoji'
 
 export interface ListProps {
   pageNum?: number
   list?: any[]
   total?: number
-  hotList?: HotList
   description?: string
   baseLink?: string
   searchParams?: Record<string, string | string[] | undefined>
@@ -28,14 +26,13 @@ const List: React.FC<ListProps> = async ({
   searchParams,
   params,
   list,
-  total,
-  hotList
+  total
 }) => {
   const num = pageNum ?? params?.num ?? searchParams?.p as string ?? '1'
   const search = searchParams?.q as string ?? ''
   const currentPage = parseInt((num ?? '1') as unknown as string)
 
-  if (!list || !total || !hotList) {
+  if (!list || !total) {
     const res = await getPagePostList({
       pageNum: currentPage,
       search

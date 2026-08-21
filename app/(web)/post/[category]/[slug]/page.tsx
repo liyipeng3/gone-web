@@ -8,7 +8,7 @@ import PostView from '@/components/custom/View/post'
 import { type Metadata } from 'next/types'
 import Link from 'next/link'
 import { getCommentsByCid } from '@/models/comments'
-import { calculateReadingTime, getWordCount } from '@/lib/readingTime'
+import { getReadingStats } from '@/lib/readingTime'
 import CommentList from '@/components/common/comment'
 import LikeButton from '@/components/common/like-button'
 
@@ -53,8 +53,7 @@ const Content: React.FC<{ params: { slug: string } }> = async (
   const comments = cid ? await getCommentsByCid(cid) : []
   const commentsNum = comments.length
 
-  const readingTime = calculateReadingTime(content)
-  const wordCount = getWordCount(content)
+  const { readingTime, wordCount } = getReadingStats(content)
 
   return (
     <Main>

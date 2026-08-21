@@ -75,6 +75,20 @@ export const updateComment = async (coid: number, data: Prisma.commentsUpdateInp
   })
 }
 
+// 批量更新评论状态（后台批量审核/标记）。updateMany 为单条 SQL，原子且高效；
+// 批量操作不逐条触发审核通过邮件通知，属于刻意取舍。
+export const batchUpdateCommentStatus = async (coids: number[], status: string) => {
+  const result = await prisma.comments.updateMany({
+    where: { coid: { in: coids } },
+    data: { status }
+  })
+
+  // 清除评论相关的缓存
+  cacheService.delByPrefix(cacheKeys.recentComments)
+
+  return result
+}
+
 export const getRecentComments = async (limit: number = 10) => {
   // 使用缓存键
   const cacheKey = `${cacheKeys.recentComments}:${limit}`

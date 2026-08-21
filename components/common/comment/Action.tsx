@@ -13,9 +13,13 @@ interface CommentActionsProps {
     text?: string | null
     // 其他必要的评论属性
   }
+  // 删除成功后的回调（用于删空当前页时回退上一页）；未传则默认 router.refresh()
+  onDeleted?: () => void
+  // 状态变更成功后的回调（用于该条移出当前筛选且删空当前页时回退上一页）；未传则默认 router.refresh()
+  onStatusChanged?: (newStatus: string) => void
 }
 
-export default function CommentActions ({ comment }: CommentActionsProps) {
+export default function CommentActions ({ comment, onDeleted, onStatusChanged }: CommentActionsProps) {
   const router = useRouter()
   const [status, setStatus] = useState(comment.status)
 
@@ -28,7 +32,11 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
       })
       if (response.ok) {
         setStatus(newStatus)
-        router.refresh()
+        if (onStatusChanged) {
+          onStatusChanged(newStatus)
+        } else {
+          router.refresh()
+        }
       } else {
         throw new Error('更新状态失败')
       }
@@ -68,7 +76,11 @@ export default function CommentActions ({ comment }: CommentActionsProps) {
           body: JSON.stringify({ coid: comment.coid })
         })
         if (response.ok) {
-          router.refresh()
+          if (onDeleted) {
+            onDeleted()
+          } else {
+            router.refresh()
+          }
         } else {
           throw new Error('删除失败')
         }
