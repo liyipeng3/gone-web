@@ -1,6 +1,22 @@
 import React from 'react'
-import { getPageTagPostList } from '@/services/post'
+import { getPageTagPostList, getTagName } from '@/services/post'
 import List from '@/components/custom/List'
+import { type Metadata } from 'next/types'
+
+export async function generateMetadata (
+  { params }: { params: { key: string } }
+): Promise<Metadata> {
+  const tag = decodeURIComponent(params?.key ?? '')
+  const name = await getTagName(tag)
+  const displayName = name ?? tag
+  return {
+    title: `标签：${displayName}`,
+    description: `标签 ${displayName} 下的文章列表`,
+    alternates: {
+      canonical: `/tag/${params.key}`
+    }
+  }
+}
 
 const Tag: React.FC<{
   searchParams: Record<string, string | string[] | undefined>

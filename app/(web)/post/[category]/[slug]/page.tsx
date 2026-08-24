@@ -11,43 +11,77 @@ import { getCommentsByCid } from '@/models/comments'
 import { getReadingStats } from '@/lib/readingTime'
 import CommentList from '@/components/common/comment'
 import LikeButton from '@/components/common/like-button'
+import { siteConfig } from '@/config/site'
+
+/** 从正文 HTML 提取第一张图片地址，作为社交分享封面 */
+const extractFirstImage = (html: string): string | undefined => {
+  const match = /<img[^>]+src=["']([^"']+)["']/i.exec(html)
+  return match?.[1]
+}
+
+/** 从正文 HTML 生成纯文本摘要（去标签、压空白、截断） */
+const buildPlainDescription = (html: string, length = 150): string | undefined => {
+  if (!html) return undefined
+  const text = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+  return text ? text.slice(0, length) : undefined
+}
 
 export async function generateMetadata (
-  { params }: { params: { slug: string } }
+  { params }: { params: { category: string, slug: string } }
 ): Promise<Metadata> {
   const {
     title,
-    content
+    content,
+    createdAt,
+    updatedAt,
+    tagNames
   } = await getPagePostInfo({ slug: params.slug })
 
-  // 从正文提取纯文本摘要（去 HTML 标签，截断 150 字）
-  const description = content
-    ? content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 150)
-    : undefined
+  const description = buildPlainDescription(content)
+  const image = extractFirstImage(content)
+  const url = `/post/${params.category}/${params.slug}`
 
   return {
     title,
     description,
+    keywords: tagNames && tagNames.length > 0 ? tagNames : undefined,
+    alternates: {
+      canonical: url
+    },
     openGraph: {
       title,
       description,
-      type: 'article'
+      type: 'article',
+      url,
+      publishedTime: createdAt ? new Date(createdAt).toISOString() : undefined,
+      modifiedTime: updatedAt ? new Date(updatedAt).toISOString() : undefined,
+      authors: [siteConfig.name],
+      tags: tagNames,
+      images: image ? [{ url: image }] : undefined
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: image ? [image] : undefined
     }
   }
 }
 
-const Content: React.FC<{ params: { slug: string } }> = async (
+const Content: React.FC<{ params: { category: string, slug: string } }> = async (
   { params }) => {
   const {
     title,
     content,
     createdAt,
+    updatedAt,
     name,
     category,
     viewsNum,
     cid,
     likesNum,
-    tags
+    tags,
+    tagNames
   } = await getPagePostInfo({ slug: params.slug })
 
   const comments = cid ? await getCommentsByCid(cid) : []
@@ -55,8 +89,40 @@ const Content: React.FC<{ params: { slug: string } }> = async (
 
   const { readingTime, wordCount } = getReadingStats(content)
 
+  // BlogPosting 结构化数据，帮助搜索引擎理解文章元信息
+  const canonicalUrl = `${siteConfig.url.replace(/\/$/, '')}/post/${params.category}/${params.slug}`
+  const image = extractFirstImage(content)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: buildPlainDescription(content),
+    datePublished: createdAt ? new Date(createdAt).toISOString() : undefined,
+    dateModified: (updatedAt ?? createdAt) ? new Date(updatedAt ?? createdAt).toISOString() : undefined,
+    author: {
+      '@type': 'Person',
+      name: siteConfig.name,
+      url: siteConfig.url
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name
+    },
+    keywords: tagNames && tagNames.length > 0 ? tagNames.join(', ') : undefined,
+    image: image ? [image] : undefined,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl
+    }
+  }
+
   return (
     <Main>
+      <script
+        type="application/ld+json"
+        // 转义 < 防止正文中出现 </script> 提前闭合标签
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <div className="md:max-w-3xl max-w-full md:min-w-[48rem] min-w-[88vw]">
         <article className="md:max-w-3xl max-w-full md:min-w-[48rem] text-left flex-1 prose min-h-[22vh]">
           <Breadcrumb items={[{

@@ -7,7 +7,8 @@ export default function robots (): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/(dashboard|editor|api)/*'
+      // robots.txt 不支持正则分组，需逐条列出待屏蔽路径
+      disallow: ['/dashboard', '/editor', '/api']
     },
     sitemap: `${baseUrl}/sitemap.xml`
   }

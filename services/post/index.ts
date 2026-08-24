@@ -51,6 +51,26 @@ export const getPagePost = cache(async (slug: string): Promise<{
   }
 })
 
+/** 按 slug 获取分类展示名，供 generateMetadata 使用（字符串入参利于 react.cache 去重） */
+export const getCategoryName = cache(async (slug: string): Promise<string | null> => {
+  if (!slug) return null
+  const meta = await prisma.metas.findFirst({
+    where: { type: 'category', slug },
+    select: { name: true }
+  })
+  return meta?.name ?? null
+})
+
+/** 按 slug 获取标签展示名，供 generateMetadata 使用（字符串入参利于 react.cache 去重） */
+export const getTagName = cache(async (slug: string): Promise<string | null> => {
+  if (!slug) return null
+  const meta = await prisma.metas.findFirst({
+    where: { type: 'tag', slug },
+    select: { name: true }
+  })
+  return meta?.name ?? null
+})
+
 export const getPageCategoryPostList = cache(async ({
   pageNum = 1,
   category = ''
@@ -97,12 +117,14 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   title: string
   content: string
   createdAt: Date
+  updatedAt?: Date
   name: string
   viewsNum: number
   likesNum: number
   category?: string
   cid?: number
   tags?: string[]
+  tagNames?: string[]
 }> => {
   const post = await getPostBySlug(slug)
   if (post === null) {
@@ -111,10 +133,17 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
   const content = marked.parse(post.text ?? '') as string
 
   // 获取文章的标签信息（slug 可能为空，过滤后再返回）
-  const tags = post.relationships
+  const tagRelations = post.relationships
     .filter((relation) => relation.metas.type === 'tag')
+
+  const tags = tagRelations
     .map((relation) => relation.metas.slug)
     .filter((slug): slug is string => slug != null)
+
+  // 标签展示名，用于结构化数据 keywords
+  const tagNames = tagRelations
+    .map((relation) => relation.metas.name)
+    .filter((name): name is string => name != null)
 
   const categoryRelation = post.relationships
     .find((relation) => relation.metas.type === 'category')
@@ -123,12 +152,14 @@ export const getPagePostInfo = cache(async ({ slug }: { slug: string }): Promise
     title: post.title as string,
     content,
     createdAt: post.createdAt as Date,
+    updatedAt: post.updatedAt ?? undefined,
     name: categoryRelation?.metas.name ?? '',
     category: categoryRelation?.metas.slug ?? '',
     viewsNum: post.viewsNum as number,
     likesNum: post.likesNum as number || 0,
     cid: post.cid,
-    tags
+    tags,
+    tagNames
   }
 })
 

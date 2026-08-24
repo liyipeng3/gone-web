@@ -39,7 +39,9 @@ export default async function sitemap (): Promise<MetadataRoute.Sitemap> {
       const category = post.relationships[0]?.metas?.slug ?? 'uncategorized'
       return {
         url: `${baseUrl}/post/${category}/${post.slug as string}`,
-        lastModified: post.updatedAt ?? post.createdAt ?? new Date()
+        lastModified: post.updatedAt ?? post.createdAt ?? new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8
       }
     })
 
@@ -55,15 +57,18 @@ export default async function sitemap (): Promise<MetadataRoute.Sitemap> {
       url: meta.type === 'category'
         ? `${baseUrl}/category/${meta.slug as string}`
         : `${baseUrl}/tag/${meta.slug as string}`,
-      lastModified: new Date()
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.5
     }))
 
   const staticEntries: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date() },
-    { url: `${baseUrl}/archive`, lastModified: new Date() },
-    { url: `${baseUrl}/gallery`, lastModified: new Date() },
-    { url: `${baseUrl}/links`, lastModified: new Date() },
-    { url: `${baseUrl}/about`, lastModified: new Date() }
+    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    { url: `${baseUrl}/archive`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
+    { url: `${baseUrl}/gallery`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
+    { url: `${baseUrl}/links`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${baseUrl}/guestbook`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 }
   ]
 
   return [...staticEntries, ...postEntries, ...metaEntries]
