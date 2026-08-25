@@ -6,6 +6,7 @@ import GalleryManagementGrid from '@/components/dashboard/gallery-management-gri
 import GalleryUploadButton from '@/components/dashboard/gallery-upload-button'
 import { EmptyPlaceholder } from '@/components/dashboard/empty-placeholder'
 import { type Metadata } from 'next'
+import { DASHBOARD_GALLERY_PAGE_SIZE } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: '相册管理',
@@ -22,7 +23,7 @@ interface GalleryManagementPageProps {
 
 export default async function GalleryManagementPage ({ searchParams }: GalleryManagementPageProps) {
   const page = Number(searchParams.page) || 1
-  const pageSize = 12
+  const pageSize = DASHBOARD_GALLERY_PAGE_SIZE
   const offset = (page - 1) * pageSize
 
   const { items, total } = await getGalleryList({

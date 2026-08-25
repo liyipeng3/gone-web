@@ -6,7 +6,8 @@ import cn from 'classnames'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 import { useRouter } from 'next/navigation'
-import { setTheme, updateTheme } from './theme'
+import { setTheme, updateTheme, initTheme } from './theme'
+import http from '@/lib/http'
 
 interface HeaderProps {
   logo?: string | ReactNode
@@ -54,8 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    void fetch('/api/category')
-      .then(async res => await res.json())
+    void http.get<Array<{ name: string, slug: string }>>('/api/category')
       .then(res => {
         setMenus(menus => menus.map(item => {
           if (item.id === 'category') {
@@ -72,6 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
           return item
         }))
       })
+      .catch(error => { console.error('获取分类失败:', error) })
   }, [])
   const router = useRouter()
   const clickTheme = (): void => {
@@ -82,25 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }
 
-  useIsomorphicLayoutEffect(() => {
-    if (typeof window !== 'undefined') {
-      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        setTheme('dark')
-      } else {
-        setTheme('light')
-      }
-    }
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.addEventListener('change', (event) => {
-      if (event.matches) {
-        setTheme('dark')
-      } else {
-        setTheme('light')
-      }
-    })
-  }, [])
+  useIsomorphicLayoutEffect(() => initTheme(), [])
 
   useIsomorphicLayoutEffect(() => {
     function onStorage () {

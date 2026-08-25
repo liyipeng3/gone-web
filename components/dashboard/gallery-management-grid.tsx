@@ -14,6 +14,7 @@ import GalleryDeleteDialog from './gallery-delete-dialog'
 import GalleryDetailDialog from './gallery-detail-dialog'
 import { defaultIcons } from '../common/prose/lightbox'
 import ProgressiveNextImage from '../common/image/ProgressiveNextImage'
+import http from '@/lib/http'
 
 interface GalleryManagementGridProps {
   items: gallery[]
@@ -247,21 +248,8 @@ const GalleryManagementGrid: React.FC<GalleryManagementGridProps> = ({
 
   const handleToggleVisibility = useCallback(async (item: gallery) => {
     try {
-      const response = await fetch(`/api/gallery/${item.gid}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          isPublic: !item.isPublic
-        })
-      })
-
-      if (response.ok) {
-        router.refresh()
-      } else {
-        console.error('更新可见性失败')
-      }
+      await http.patch(`/api/gallery/${item.gid}`, { isPublic: !item.isPublic })
+      router.refresh()
     } catch (error) {
       console.error('更新可见性失败:', error)
     }

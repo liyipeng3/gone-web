@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import CommentItem from './Item'
+import { type comments } from '@prisma/client'
 
 const List = ({ commentsData, nameMap }: {
-  commentsData: any[]
+  commentsData: comments[]
   nameMap: Record<number, string>
 }) => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -21,7 +22,7 @@ const List = ({ commentsData, nameMap }: {
   }
 
   return <>
-    {currentComments.map((comment: any) => (
+    {currentComments.map((comment) => (
       <CommentItem key={comment.coid} comment={comment} nameMap={nameMap} />
     ))}
     {totalPages > 1 && commentsData.length > 5 && (

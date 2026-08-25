@@ -1,5 +1,3 @@
-'use client'
-
 interface HttpError extends Error {
   status?: number
   data?: unknown
@@ -10,7 +8,8 @@ const request = async <T>(url: string, options: RequestInit): Promise<T> => {
     const response = await fetch(url, options)
     const data = await response.json()
     if (!response.ok) {
-      const error: HttpError = new Error(data.message || 'API请求失败')
+      // 后端错误响应统一使用 error 字段，兼容历史的 message 字段
+      const error: HttpError = new Error(data.error ?? data.message ?? 'API请求失败')
       error.status = response.status
       error.data = data
       throw error
@@ -34,12 +33,23 @@ const post = async <T>(url: string, body?: unknown): Promise<T> => {
   })
 }
 
-const del = async <T>(url: string): Promise<T> => {
+const del = async <T>(url: string, body?: unknown): Promise<T> => {
   return await request<T>(url, {
     method: 'delete',
     headers: {
       'Content-Type': 'application/json'
-    }
+    },
+    body: body !== undefined ? JSON.stringify(body) : undefined
+  })
+}
+
+const patch = async <T>(url: string, body?: unknown): Promise<T> => {
+  return await request<T>(url, {
+    method: 'patch',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : '{}'
   })
 }
 
@@ -65,6 +75,7 @@ const http = {
   request,
   post,
   del,
+  patch,
   get
 }
 

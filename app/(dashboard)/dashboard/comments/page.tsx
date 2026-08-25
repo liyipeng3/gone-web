@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { Pagination } from '@/components/ui/pagination'
 import CommentsTable from '@/components/dashboard/comments-table'
+import { DASHBOARD_COMMENTS_PAGE_SIZE } from '@/lib/constants'
 
 export default async function CommentsPage ({
   searchParams
@@ -13,7 +14,7 @@ export default async function CommentsPage ({
   const filter = searchParams.filter as string || 'approved'
 
   const page = Number(searchParams.page) || 1
-  const pageSize = 10
+  const pageSize = DASHBOARD_COMMENTS_PAGE_SIZE
   const skip = (page - 1) * pageSize
 
   const whereCondition = filter === 'all'

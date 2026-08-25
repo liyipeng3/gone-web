@@ -1,23 +1,15 @@
 import prisma from '@/lib/prisma'
+import { type links } from '@prisma/client'
 import { cacheService, cacheKeys } from '@/lib/cache'
 
-export const getLinks = async (limit?: number) => {
+export const getLinks = async (limit?: number): Promise<links[]> => {
   // 使用全局缓存服务，key 带前缀
   const cacheKey = `${cacheKeys.links}:${limit ?? 'all'}`
-  const cachedData = cacheService.get(cacheKey)
+  const cachedData = cacheService.get<links[]>(cacheKey)
 
   // 如果缓存中有数据，直接返回
   if (cachedData) {
-    return cachedData as Array<{
-      lid: number
-      name: string | null
-      url: string | null
-      sort: string | null
-      image: string | null
-      description: string | null
-      user: string | null
-      order: number | null
-    }>
+    return cachedData
   }
 
   const links = await prisma.links.findMany({

@@ -4,10 +4,11 @@ import { Header } from '@/components/common/header'
 import { Footer } from '@/components/common/footer'
 import { siteConfig } from '@/config/site'
 import FloatingButtons from '@/components/common/floating-buttons'
+import { type HotList } from '@/types'
 
 interface LayoutProps {
   children: ReactNode
-  hotList?: any[]
+  hotList?: HotList
 }
 
 export const Layout: React.FC<LayoutProps> = ({

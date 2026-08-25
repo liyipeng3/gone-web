@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { siteConfig } from '@/config/site'
 import Link from 'next/link'
+import http from '@/lib/http'
 
 interface CommentFormProps {
   cid: number
@@ -65,16 +66,13 @@ const CommentForm: React.FC<CommentFormProps> = ({ cid, parent, nameMap = {}, us
 
     try {
       setIsSubmitting(true)
-      await fetch(`/api/comment/${cid}`, {
-        method: 'POST',
-        body: JSON.stringify({
-          author,
-          email,
-          url,
-          cid,
-          parent: parent ?? 0,
-          text
-        })
+      await http.post(`/api/comment/${cid}`, {
+        author,
+        email,
+        url,
+        cid,
+        parent: parent ?? 0,
+        text
       })
       toast({
         title: '提交成功',

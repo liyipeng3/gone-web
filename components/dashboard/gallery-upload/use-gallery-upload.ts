@@ -8,6 +8,7 @@ import {
   uploadFileToServer,
   validateFilePreviews
 } from './gallery-upload-utils'
+import http from '@/lib/http'
 
 interface UseGalleryUploadOptions {
   onClose: () => void
@@ -116,30 +117,20 @@ export const useGalleryUpload = ({ onClose }: UseGalleryUploadOptions) => {
           ? Math.floor(filePreview.takenAt.getTime() / 1000)
           : uploadResult.exif.takenAt
 
-        const response = await fetch('/api/gallery', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            title: filePreview.title,
-            description: filePreview.description,
-            imagePath: uploadResult.url,
-            thumbnailPath: uploadResult.thumbnailUrl ?? undefined,
-            category: filePreview.category || undefined,
-            tags: filePreview.tags,
-            isPublic: filePreview.isPublic,
-            mimeType: filePreview.file.type,
-            fileSize: filePreview.file.size,
-            ...uploadResult.exif,
-            location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined,
-            takenAt: finalTakenAt
-          })
+        await http.post('/api/gallery', {
+          title: filePreview.title,
+          description: filePreview.description,
+          imagePath: uploadResult.url,
+          thumbnailPath: uploadResult.thumbnailUrl ?? undefined,
+          category: filePreview.category || undefined,
+          tags: filePreview.tags,
+          isPublic: filePreview.isPublic,
+          mimeType: filePreview.file.type,
+          fileSize: filePreview.file.size,
+          ...uploadResult.exif,
+          location: selectedLocation || filePreview.location || uploadResult.exif.location || undefined,
+          takenAt: finalTakenAt
         })
-
-        if (!response.ok) {
-          throw new Error(`上传 ${filePreview.file.name} 失败`)
-        }
       }
 
       resetFiles()

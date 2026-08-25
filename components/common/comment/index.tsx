@@ -14,8 +14,8 @@ const CommentList: React.FC<CommentListProps> = async ({ cid, title = '评论', 
   const user = await getCurrentUser()
 
   const nameMap: Record<number, string> = {}
-  commentsData.forEach((comment: any) => {
-    nameMap[comment.coid] = comment.author
+  commentsData.forEach((comment) => {
+    nameMap[comment.coid] = comment.author ?? ''
   })
 
   return (

@@ -28,8 +28,27 @@ interface Category {
   description: string
 }
 
+// 编辑器可编辑草稿状态：仅保留编辑页真正读写的字段
+interface EditorDraft {
+  cid?: number
+  title?: string | null
+  slug?: string
+  text?: string | null
+  category?: string | null
+  tags?: string[]
+  updatedAt?: string | Date | null
+}
+
+// 编辑器加载的文章状态（含服务端草稿引用）
+interface EditorPost {
+  cid?: number
+  status?: string | null
+  updatedAt?: string | Date | null
+  draft?: (EditorDraft & { slug?: string | null }) | null
+}
+
 // 从编辑态中提取可保存/可快照的内容字段
-const buildContent = (draft: any): DraftSnapshotContent => ({
+const buildContent = (draft: EditorDraft): DraftSnapshotContent => ({
   title: draft?.title ?? null,
   slug: draft?.slug,
   text: draft?.text ?? null,
@@ -38,8 +57,8 @@ const buildContent = (draft: any): DraftSnapshotContent => ({
 })
 
 const EditorPage: React.FC<EditorProps> = ({ params }) => {
-  const [post, setPost] = useState<any>({})
-  const [draft, setDraft] = useState<any>({})
+  const [post, setPost] = useState<EditorPost>({})
+  const [draft, setDraft] = useState<EditorDraft>({})
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
 
@@ -47,8 +66,8 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   const enabled = Boolean(draft.slug)
 
   const onDraftCreated = useCallback((newCid: number) => {
-    setDraft((d: any) => (d.cid === newCid ? d : { ...d, cid: newCid }))
-    setPost((p: any) => (p?.draft?.cid === newCid
+    setDraft((d) => (d.cid === newCid ? d : { ...d, cid: newCid }))
+    setPost((p) => (p?.draft?.cid === newCid
       ? p
       : { ...p, draft: { ...(p?.draft ?? {}), cid: newCid } }))
   }, [])
@@ -72,10 +91,10 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
   })
 
   const getData = useCallback(async () => {
-    const res: any = await http.get(`/api/post/${params.cid}`)
+    const res = await http.get<EditorPost & { draft?: (EditorDraft & { slug?: string | null }) | null }>(`/api/post/${params.cid}`)
     setPost(res)
-    const editable = res.draft?.cid
-      ? { ...res.draft, slug: res.draft.slug.slice(1) }
+    const editable: EditorDraft = res.draft?.cid
+      ? { ...res.draft, slug: (res.draft.slug ?? '').slice(1) }
       : res
     setDraft(editable)
     initSavedAt(editable.updatedAt ? new Date(editable.updatedAt) : null)
@@ -90,9 +109,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     loading: deleteDraftLoading
   } = useRequest(async () => {
     if (post.cid !== draft.cid) {
-      await fetch(`/api/post/${post.cid}/draft`, {
-        method: 'delete'
-      }).then(async res => await res.json())
+      await http.del(`/api/post/${post.cid}/draft`)
       clearSnapshot()
       await getData()
       resetInitial()
@@ -130,29 +147,29 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
     void (async () => {
       const server = await getData()
 
-      void http.get('/api/category').then(res => {
-        setCategories(res as Category[])
-      })
+      void http.get<Category[]>('/api/category').then(res => {
+        setCategories(res)
+      }).catch(() => {})
 
       detectRecovery(server)
     })()
   }, [params.cid])
 
   const translateTitle = useCallback(debounce(({ title }) => {
-    void fetch(`/api/utils/translate?q=${title}`).then(async res => await res.json()).then(res => {
+    void http.get<{ text?: string }>(`/api/utils/translate?q=${title}`).then(res => {
       if (res) {
-        setDraft((post: any) => ({
+        setDraft((post) => ({
           ...post,
-          slug: res?.text.replaceAll(' ', '-').toLowerCase()
+          slug: res?.text?.replaceAll(' ', '-').toLowerCase()
         }))
       }
-    })
+    }).catch(() => {})
   }, 1000), [])
 
   const onApplyRecovery = useCallback(() => {
     const recovered = applyRecovery()
     if (!recovered) return
-    setDraft((d: any) => ({
+    setDraft((d) => ({
       ...d,
       title: recovered.title,
       slug: recovered.slug,
@@ -202,14 +219,14 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             </>
           </Link>
           <p className="text-sm text-muted-foreground">
-            {(post?.draft?.cid || post.status !== 'publish') ? '草稿' : '已发布'}
+            {(post?.draft?.cid != null || post.status !== 'publish') ? '草稿' : '已发布'}
           </p>
           {renderSaveStatus()}
         </div>
         <div className="flex gap-5">
           <div>
-            <Select value={draft.category} onValueChange={(value) => {
-              setDraft((post: any) => ({
+            <Select value={draft.category ?? undefined} onValueChange={(value) => {
+              setDraft((post) => ({
                 ...post,
                 category: value
               }))
@@ -239,7 +256,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
           }
 
           {
-            (post?.draft?.cid || post.status !== 'publish')
+            (post?.draft?.cid != null || post.status !== 'publish')
               ? <button type="submit" className={cn(buttonVariants())}
                         onClick={() => {
                           publish()
@@ -259,7 +276,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         <Input
           id="title"
           placeholder="标题"
-          value={draft?.title}
+          value={draft?.title ?? ''}
           onChange={(e) => {
             const title = e.target.value
             setDraft({
@@ -277,7 +294,7 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
             slug: e.target.value
           })
         }}/>
-        <InputTag placeholder="请输入标签" value={draft?.tags || []} onChange={(value) => {
+        <InputTag placeholder="请输入标签" value={draft?.tags ?? []} onChange={(value) => {
           setDraft({
             ...draft,
             tags: value
@@ -285,9 +302,9 @@ const EditorPage: React.FC<EditorProps> = ({ params }) => {
         }}/>
       </div>
       <div className="flex min-w-full w-full flex-1 py-4 gap-4">
-        <Editor className="w-full min-w-full h-full focus:outline-0 min-h-[25rem]" value={draft.text}
+        <Editor className="w-full min-w-full h-full focus:outline-0 min-h-[25rem]" value={draft.text ?? ''}
                 onChange={(value) => {
-                  setDraft((draft: any) => ({
+                  setDraft((draft) => ({
                     ...draft,
                     text: value
                   }))

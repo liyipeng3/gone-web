@@ -17,7 +17,6 @@ interface Post {
   slug: string
   category?: string
   tags?: string[]
-  [key: string]: any
 }
 
 export default function AboutPage () {
@@ -27,11 +26,11 @@ export default function AboutPage () {
 
   const fetchAboutPage = async () => {
     try {
-      const response = await http.get('/api/post/about')
+      const response = await http.get<Post>('/api/post/about')
       if (response) {
-        setPost(response as Post)
-        setTitle((response as Post).title ?? '')
-        setContent((response as Post).text ?? '')
+        setPost(response)
+        setTitle(response.title ?? '')
+        setContent(response.text ?? '')
       }
     } catch (error) {
       toast({

@@ -5,6 +5,7 @@ import marked from '@/lib/marked'
 import { buildExcerpt } from '@/lib/excerpt'
 import prisma from '@/lib/prisma'
 import { type ListProps } from '@/components/custom/List'
+import { pageSize } from '@/lib/constants'
 
 export const getPagePostList = async ({
   pageNum = 1,
@@ -21,7 +22,7 @@ export const getPagePostList = async ({
     total
   } = await getPostList({
     pageNum,
-    pageSize: 7,
+    pageSize,
     search
   })
 
@@ -96,7 +97,7 @@ export const getPageCategoryPostList = cache(async ({
     total
   } = await getPostList({
     pageNum,
-    pageSize: 7,
+    pageSize,
     mid: categoryData[0].mid
   })
   if (list.length === 0) {
@@ -187,7 +188,6 @@ export const getPageTagPostList = cache(async ({
   }
 
   // 自定义查询获取与标签关联的文章
-  const pageSize = 7
   const data = await prisma.relationships.findMany({
     include: {
       posts: {

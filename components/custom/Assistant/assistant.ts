@@ -1,3 +1,5 @@
+import http from '@/lib/http'
+
 export const assistant = async function (prop: {
   model?: any
   tips?: any
@@ -163,13 +165,9 @@ export const assistant = async function (prop: {
 
   const hitokoto = async () => {
     try {
-      await fetch('/api/sentence').then(async res => await res.json()).then((res: {
-        hitokoto: string
-        from: string
-      }) => {
-        const str = `${res.hitokoto} ——《${res.from}》`
-        modules.render(str, 9000)
-      })
+      const res = await http.get<{ hitokoto: string, from: string }>('/api/sentence')
+      const str = `${res.hitokoto} ——《${res.from}》`
+      modules.render(str, 9000)
     } catch (e) {
 
     }

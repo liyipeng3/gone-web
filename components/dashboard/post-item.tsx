@@ -2,9 +2,10 @@ import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PostOperations } from '@/components/dashboard/post-operations'
 import dayjs from 'dayjs'
+import { type DashboardPostItem } from '@/models/dashboard'
 
 interface PostItemProps {
-  post: any
+  post: DashboardPostItem
 }
 
 export function PostItem ({ post }: PostItemProps) {
@@ -24,17 +25,17 @@ export function PostItem ({ post }: PostItemProps) {
             className="text-gray-500 text-xs">
             {
               post?.status !== 'publish'
-                ? `（未发布:${dayjs(post.draft?.updatedAt || post.draft.createdAt).format('YYYY-M-D HH:mm')}）`
+                ? `（未发布:${dayjs(post.draft?.updatedAt ?? post.draft?.createdAt).format('YYYY-M-D HH:mm')}）`
                 : post.draft?.cid
-                  ? `（草稿:${dayjs(post.draft?.updatedAt || post.draft.createdAt).format('YYYY-M-D HH:mm')}）`
+                  ? `（草稿:${dayjs(post.draft?.updatedAt ?? post.draft?.createdAt).format('YYYY-M-D HH:mm')}）`
                   : null
             }
           </span>
         </Link>
         <div>
           <p className="text-sm text-muted-foreground grid grid-cols-2 gap-2">
-                   <span>Create: {dayjs(post.createdAt || post.draft.createdAt).format('YYYY年M月D日 HH:mm')}</span>
-        <span>Update: {dayjs(post?.updatedAt || post.draft?.updatedAt).format('YYYY年M月D日 HH:mm')}</span>
+                   <span>Create: {dayjs(post.createdAt ?? post.draft?.createdAt).format('YYYY年M月D日 HH:mm')}</span>
+        <span>Update: {dayjs(post?.updatedAt ?? post.draft?.updatedAt).format('YYYY年M月D日 HH:mm')}</span>
           </p>
         </div>
       </div>

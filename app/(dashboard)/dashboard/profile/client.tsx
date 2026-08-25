@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from '@/components/ui/use-toast'
 import { Loader2 } from 'lucide-react'
+import http from '@/lib/http'
 
 export default function Profile ({ user }: { user?: {
   uid: number
@@ -37,28 +38,17 @@ export default function Profile ({ user }: { user?: {
     setIsSaving(true)
 
     try {
-      const response = await fetch(`/api/user/${user?.uid}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        // 后端白名单仅允许 url / nickname；username 为只读展示字段，不提交
-        body: JSON.stringify({
-          url: userData.url,
-          nickname: userData.nickname
-        })
+      // 后端白名单仅允许 url / nickname；username 为只读展示字段，不提交
+      await http.patch(`/api/user/${user?.uid}`, {
+        url: userData.url,
+        nickname: userData.nickname
       })
 
-      if (response.ok) {
-        toast({
-          title: '个人信息已更新',
-          description: '您的个人信息已成功更新',
-          variant: 'default'
-        })
-      } else {
-        const data = await response.json().catch(() => null)
-        throw new Error(data?.error ?? '更新失败')
-      }
+      toast({
+        title: '个人信息已更新',
+        description: '您的个人信息已成功更新',
+        variant: 'default'
+      })
     } catch (error) {
       console.error('更新用户数据失败', error)
       toast({

@@ -8,10 +8,18 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import Pagination from '@/components/common/pagination'
 import { parseEmoji } from '@/lib/emoji'
+import { type PostListItem } from '@/models/posts/types'
+
+// 列表页渲染项：标签页与分类页产出的形状略有差异（标签页不含 tags/commentsNum），
+// 故将这两个字段设为可选，兼容两个数据来源。
+export type ListPostItem = Omit<PostListItem, 'tags' | 'commentsNum'> & {
+  tags?: string[]
+  commentsNum?: number
+}
 
 export interface ListProps {
   pageNum?: number
-  list?: any[]
+  list?: ListPostItem[]
   total?: number
   description?: string
   baseLink?: string
@@ -54,29 +62,29 @@ const List: React.FC<ListProps> = async ({
       {list?.length === 0 &&
         <div className="text-center text-gray-500 dark:text-gray-400 m-auto md:w-[48rem] pt-48">暂无内容</div>}
       {(list)?.map((item, index) => <div className={cn('text-left w-full', index === 0 && 'md:pt-4 mt-5')}
-                                         key={item.slug as string}>
+                                         key={item.slug}>
         <div className="text-base font-bold dark:text-white">
-          <Link href={`/post/${item?.category as string}/${item?.slug as string}`} className='post-title'> {item.title}</Link>
+          <Link href={`/post/${item?.category}/${item?.slug}`} className='post-title'> {item.title}</Link>
         </div>
         <div className="text-xs text-gray-500 space-x-1.5 mt-2 dark:text-gray-400">
           <span>{dayjs(item.createdAt).format('YYYY-MM-DD')}</span>
           <span className="text-gray-400">•</span>
           <span>{item.name}</span>
-          {item.commentsNum > 0 && <span className="text-gray-400">•</span>}
-          {item.commentsNum > 0 && <span>{item.commentsNum}条评论</span>}
+          {(item.commentsNum ?? 0) > 0 && <span className="text-gray-400">•</span>}
+          {(item.commentsNum ?? 0) > 0 && <span>{item.commentsNum}条评论</span>}
           <span className="text-gray-400">•</span>
           <span>{item.viewsNum}人阅读</span>
-          {item.likesNum > 0 && <span className="text-gray-400">•</span>}
-          {item.likesNum > 0 && <span>{item.likesNum}人喜欢</span>}
+          {(item.likesNum ?? 0) > 0 && <span className="text-gray-400">•</span>}
+          {(item.likesNum ?? 0) > 0 && <span>{item.likesNum}人喜欢</span>}
         </div>
         <div className="text-sm mt-4 text-gray-600 dark:text-gray-300 max-w-3xl break-all text-justify">
           <Link
-            href={`/post/${item?.category as string}/${item?.slug as string}`}>
-            {parseEmoji(item.description !== '' ? item.description?.length < 150 ? item.description : item.description as string + '...' : '暂无描述')}
+            href={`/post/${item?.category}/${item?.slug}`}>
+            {parseEmoji(item.description !== '' ? (item.description?.length ?? 0) < 150 ? item.description : item.description + '...' : '暂无描述')}
           </Link>
         </div>
         <div className="w-fit mx-auto text-sm text-gray-500 my-5 dark:text-gray-400">
-          <Link href={`/post/${item?.category as string}/${item?.slug as string}`}>- 阅读全文 -</Link>
+          <Link href={`/post/${item?.category}/${item?.slug}`}>- 阅读全文 -</Link>
         </div>
       </div>)}
       <Pagination pages={pages} current={currentPage} baseLink={baseLink}/>

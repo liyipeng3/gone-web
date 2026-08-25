@@ -76,3 +76,23 @@ export type PostWithRelationships = Prisma.postsGetPayload<{
     }
   }
 }>
+
+// getPostByCid 返回的帖子详情：帖子全字段 + 关系，并附带计算出的 category/tags 与可选草稿。
+type PostWithMetaRelationships = Prisma.postsGetPayload<{
+  include: {
+    relationships: {
+      include: {
+        metas: { select: { name: true, slug: true, type: true } }
+      }
+    }
+  }
+}>
+
+export type PostDetail = Partial<PostWithMetaRelationships> & {
+  category?: string | null
+  tags?: Array<string | null | undefined>
+  draft?: (Partial<PostWithMetaRelationships> & {
+    category?: string | null
+    tags?: Array<string | null | undefined>
+  }) | null
+}

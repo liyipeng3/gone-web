@@ -17,6 +17,24 @@ export interface DashboardStats {
   visitTimes: number
 }
 
+// 后台文章列表项：文章基本字段 + 可选草稿（供 PostItem/PostOperations 复用）
+export interface DashboardPostDraft {
+  cid: number
+  parent?: number | null
+  title: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
+}
+
+export interface DashboardPostItem {
+  cid: number
+  title: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
+  status: string | null
+  draft?: DashboardPostDraft
+}
+
 /**
  * 聚合后台概览统计。所有查询并行执行，数据均为只读聚合。
  */

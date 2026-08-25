@@ -7,6 +7,7 @@ import { defaultIcons } from '../prose/lightbox'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 import ProgressiveImage from '../image/ProgressiveImage'
+import http from '@/lib/http'
 
 interface GalleryGridProps {
   items: gallery[]
@@ -227,9 +228,7 @@ const GalleryWaterfall: React.FC<GalleryGridProps> = ({
       if (category) params.set('category', category)
       if (tag) params.set('tag', tag)
 
-      const res = await fetch(`/api/gallery?${params.toString()}`)
-      if (!res.ok) throw new Error(`加载失败: ${res.status}`)
-      const data = await res.json() as { items: gallery[], total: number }
+      const data = await http.get<{ items: gallery[], total: number }>(`/api/gallery?${params.toString()}`)
 
       offsetRef.current += data.items.length
 

@@ -2,13 +2,18 @@ import { NextResponse } from 'next/server'
 import { createComment, deleteComment, getCommentsByCid, updateComment, getCommentById } from '@/models/comments'
 import { sendCommentNotification, sendReplyNotification, sendCommentApprovedNotification } from '@/lib/email'
 import { getPostInfoByCid } from '@/models/posts'
-import { requireAdmin, isAuthResponse, isAdministrator } from '@/lib/api-auth'
+import { requireAdmin, isAuthResponse, isAdministrator, parseId } from '@/lib/api-auth'
+import { readJson } from '@/lib/api-response'
 import { getCurrentUser } from '@/lib/session'
 import { commentCreateSchema, commentUpdateSchema, commentDeleteSchema, commentAdminReplySchema } from '@/lib/validations/comment'
 
 export async function POST (request: Request, context: { params: { cid: string } }) {
-  const cid = Number(context.params.cid)
-  const body = await request.json()
+  const cid = parseId(context.params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
+
+  const body = await readJson<Record<string, unknown>>(request)
+  if (isAuthResponse(body)) return body
+
   const agent = request.headers.get('User-Agent')
   const ip = request.headers.get('X-Forwarded-For')
 
@@ -89,7 +94,10 @@ export async function DELETE (request: Request, context: { params: { cid: string
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const parsed = commentDeleteSchema.safeParse(await request.json())
+  const body = await readJson(request)
+  if (isAuthResponse(body)) return body
+
+  const parsed = commentDeleteSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
   }
@@ -99,7 +107,10 @@ export async function DELETE (request: Request, context: { params: { cid: string
 }
 
 export async function GET (request: Request, context: { params: { cid: string } }) {
-  const comments = await getCommentsByCid(Number(context.params.cid))
+  const cid = parseId(context.params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
+
+  const comments = await getCommentsByCid(cid)
   return NextResponse.json(comments)
 }
 
@@ -107,7 +118,10 @@ export async function PATCH (request: Request, context: { params: { cid: string 
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const parsed = commentUpdateSchema.safeParse(await request.json())
+  const body = await readJson(request)
+  if (isAuthResponse(body)) return body
+
+  const parsed = commentUpdateSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
   }

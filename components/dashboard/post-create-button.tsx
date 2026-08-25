@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { type ButtonProps, buttonVariants } from '@/components/ui/button'
 import { toast } from '@/components/ui/use-toast'
 import { Icons } from '@/components/common/icons'
+import http from '@/lib/http'
 
 interface PostCreateButtonProps extends ButtonProps {
 }
@@ -22,29 +23,23 @@ export function PostCreateButton ({
   async function onClick () {
     setIsLoading(true)
 
-    const response = await fetch('/api/post/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    try {
+      const post = await http.post<{ cid: number }>('/api/post/create')
 
-    setIsLoading(false)
+      // This forces a cache invalidation.
+      router.refresh()
 
-    if (!response?.ok) {
-      return toast({
+      router.push(`/editor/${post.cid}`)
+    } catch (error) {
+      console.error('创建文章失败:', error)
+      toast({
         title: 'Something went wrong.',
         description: 'Your post was not created. Please try again.',
         variant: 'destructive'
       })
+    } finally {
+      setIsLoading(false)
     }
-
-    const post = await response.json()
-
-    // This forces a cache invalidation.
-    router.refresh()
-
-    router.push(`/editor/${post.cid}`)
   }
 
   return (

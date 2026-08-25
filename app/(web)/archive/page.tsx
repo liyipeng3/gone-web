@@ -24,7 +24,7 @@ const Archive = async () => {
           <div key={time} className="mb-3">
             <h3 className="text-base font-bold mb-2">{time}</h3>
             <ul className="space-y-1 list-disc ml-8">
-              {posts.map((post: any) => (
+              {posts.map((post) => (
                 <li key={post.slug} className="flex items-center list-item">
                   <span className="text-black dark:text-gray-400 text-sm">
                     {dayjs(post.createdAt).format('MM/DD')}:

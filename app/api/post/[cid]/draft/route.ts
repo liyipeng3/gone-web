@@ -6,7 +6,8 @@ import {
   saveDraftAtomic,
   DraftSlugConflictError
 } from '@/models/posts'
-import { requireAdmin, isAuthResponse } from '@/lib/api-auth'
+import { requireAdmin, isAuthResponse, parseId } from '@/lib/api-auth'
+import { handleApiError, readJson } from '@/lib/api-response'
 import { postDraftSchema } from '@/lib/validations/post'
 
 export async function POST (
@@ -16,12 +17,12 @@ export async function POST (
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const cid = parseInt(context.params.cid)
-  if (isNaN(cid)) {
-    return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
-  }
+  const cid = parseId(context.params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
 
-  const body = await request.json()
+  const body = await readJson(request)
+  if (isAuthResponse(body)) return body
+
   const parsed = postDraftSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: '参数校验失败', issues: parsed.error.issues }, { status: 400 })
@@ -42,10 +43,9 @@ export async function POST (
     return NextResponse.json(res)
   } catch (error) {
     if (error instanceof DraftSlugConflictError) {
-      return new NextResponse('slug is already exist', { status: 409 })
+      return NextResponse.json({ error: 'slug 已存在' }, { status: 409 })
     }
-    console.error('保存草稿失败:', error)
-    return NextResponse.json({ error: '保存草稿失败' }, { status: 500 })
+    return handleApiError(error, '保存草稿失败')
   }
 }
 
@@ -56,10 +56,9 @@ export async function DELETE (
   const auth = await requireAdmin()
   if (isAuthResponse(auth)) return auth
 
-  const cid = parseInt(context.params.cid)
-  if (isNaN(cid)) {
-    return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
-  }
+  const cid = parseId(context.params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
+
   const draftPost = await getDraftPostByCid(cid)
 
   if (draftPost) {

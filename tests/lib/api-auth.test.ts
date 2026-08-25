@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { isAdministrator, requireAdmin } from '@/lib/api-auth'
+import { isAdministrator, requireAdmin, parseId, requireSelf } from '@/lib/api-auth'
 
 const mocks = vi.hoisted(() => ({
   getCurrentUser: vi.fn(),
@@ -63,5 +63,51 @@ describe('administrator authorization', () => {
 
     expect(result).toBe(false)
     expect(mocks.findUnique).not.toHaveBeenCalled()
+  })
+})
+
+describe('parseId', () => {
+  it('parses a valid numeric id', () => {
+    expect(parseId('42', '文章ID')).toBe(42)
+  })
+
+  it('returns a 400 response for a non-numeric id', async () => {
+    const result = parseId('abc', '文章ID')
+
+    expect(result).toBeInstanceOf(Response)
+    expect((result as Response).status).toBe(400)
+    await expect((result as Response).json()).resolves.toEqual({ error: '无效的文章ID' })
+  })
+})
+
+describe('requireSelf', () => {
+  beforeEach(() => {
+    mocks.getCurrentUser.mockResolvedValue({
+      id: '7',
+      name: 'user',
+      email: 'user@example.com'
+    })
+  })
+
+  it('returns the user when operating on their own resource', async () => {
+    const result = await requireSelf('7')
+
+    expect(result).toEqual(expect.objectContaining({ id: '7' }))
+  })
+
+  it('rejects an unauthenticated request with 401', async () => {
+    mocks.getCurrentUser.mockResolvedValue(null)
+
+    const result = await requireSelf('7')
+
+    expect(result).toBeInstanceOf(Response)
+    expect((result as Response).status).toBe(401)
+  })
+
+  it('rejects operating on another user resource with 403', async () => {
+    const result = await requireSelf('8')
+
+    expect(result).toBeInstanceOf(Response)
+    expect((result as Response).status).toBe(403)
   })
 })

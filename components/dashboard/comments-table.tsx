@@ -8,6 +8,7 @@ import { getAvatarUrl } from '@/lib/avatar'
 import { Checkbox } from '@/components/ui/checkbox'
 import CommentActions from '@/components/common/comment/Action'
 import { toast } from '@/components/ui/use-toast'
+import http from '@/lib/http'
 
 interface CommentMeta {
   slug?: string | null
@@ -97,12 +98,7 @@ export default function CommentsTable ({ comments, filter, page }: CommentsTable
     if (selectedIds.length === 0) return
     setIsProcessing(true)
     try {
-      const response = await fetch('/api/comment', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coids: selectedIds, status: 'spam' })
-      })
-      if (!response.ok) throw new Error('批量更新失败')
+      await http.patch('/api/comment', { coids: selectedIds, status: 'spam' })
 
       toast({ title: `已将 ${selectedIds.length} 条评论标记为垃圾`, variant: 'success' })
       // 非「垃圾/全部」筛选下，被标记的评论会移出当前列表

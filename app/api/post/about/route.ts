@@ -13,8 +13,9 @@ export async function GET () {
 
     return NextResponse.json(post)
   } catch (error) {
+    console.error('获取 About 页面失败:', error)
     return NextResponse.json(
-      { error: (error as Error).message || '获取 About 页面失败' },
+      { error: '获取 About 页面失败' },
       { status: 500 }
     )
   }

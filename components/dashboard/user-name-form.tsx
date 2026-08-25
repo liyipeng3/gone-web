@@ -14,9 +14,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from '@/components/ui/use-toast'
 import { Icons } from '@/components/common/icons'
+import http from '@/lib/http'
 
 interface UserNameFormProps extends React.HTMLAttributes<HTMLFormElement> {
-  user: any
+  user: {
+    id: string | number
+    name?: string | null
+  }
 }
 
 type FormData = z.infer<typeof userNameSchema>
@@ -42,31 +46,24 @@ export function UserNameForm ({
   async function onSubmit (data: FormData) {
     setIsSaving(true)
 
-    const response = await fetch(`/api/user/${user.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: data.name
+    try {
+      await http.patch(`/api/user/${user.id}`, { name: data.name })
+
+      toast({
+        description: 'Your name has been updated.'
       })
-    })
 
-    setIsSaving(false)
-
-    if (!response?.ok) {
-      return toast({
+      router.refresh()
+    } catch (error) {
+      console.error('更新用户名失败:', error)
+      toast({
         title: 'Something went wrong.',
         description: 'Your name was not updated. Please try again.',
         variant: 'destructive'
       })
+    } finally {
+      setIsSaving(false)
     }
-
-    toast({
-      description: 'Your name has been updated.'
-    })
-
-    router.refresh()
   }
 
   return (

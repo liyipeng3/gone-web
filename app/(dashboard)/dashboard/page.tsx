@@ -6,8 +6,9 @@ import { PostItem } from '@/components/dashboard/post-item'
 import { DashboardShell } from '@/components/dashboard/shell'
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import { type Key } from 'react'
 import { Pagination } from '@/components/ui/pagination'
+import { type DashboardPostItem, type DashboardPostDraft } from '@/models/dashboard'
+import { DASHBOARD_POSTS_PAGE_SIZE } from '@/lib/constants'
 
 export const metadata = {
   title: 'Dashboard'
@@ -25,7 +26,7 @@ export default async function DashboardPage ({
   }
 
   const page = Number(searchParams.page) || 1
-  const pageSize = 10
+  const pageSize = DASHBOARD_POSTS_PAGE_SIZE
   const skip = (page - 1) * pageSize
 
   const postsWhere = {
@@ -55,10 +56,10 @@ export default async function DashboardPage ({
       skip,
       take: pageSize
     })
-  ]) as [number, any]
+  ]) as [number, DashboardPostItem[]]
 
   // 批量查询草稿，避免逐篇查询（N+1）
-  const cids = posts.map((post: { cid: number }) => post.cid)
+  const cids = posts.map((post) => post.cid)
   if (cids.length > 0) {
     const drafts = await prisma.posts.findMany({
       where: {
@@ -75,7 +76,7 @@ export default async function DashboardPage ({
       }
     })
 
-    const draftMap = new Map<number, any>()
+    const draftMap = new Map<number, DashboardPostDraft>()
     drafts.forEach((draft) => {
       // 保留第一条，与原 getDraftPostByCid 的 findFirst 语义一致
       if (draft.parent != null && !draftMap.has(draft.parent)) {
@@ -83,7 +84,7 @@ export default async function DashboardPage ({
       }
     })
 
-    posts.forEach((post: any) => {
+    posts.forEach((post) => {
       const draft = draftMap.get(post.cid)
       if (draft) {
         post.draft = draft
@@ -100,7 +101,7 @@ export default async function DashboardPage ({
         {((posts?.length) !== 0)
           ? (
             <div className="divide-y divide-border rounded-md border">
-              {posts.map((post: { cid: Key | null | undefined }) => (
+              {posts.map((post: DashboardPostItem) => (
                 <PostItem key={post.cid} post={post}/>
               ))}
             </div>

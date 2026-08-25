@@ -2,6 +2,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { incrementViews } from '@/models/posts'
+import { isAuthResponse, parseId } from '@/lib/api-auth'
+import { handleApiError } from '@/lib/api-response'
 
 // postView cookie 中保留的最近浏览 cid 上限，防止无限拼接导致 cookie 体积膨胀
 const MAX_TRACKED_VIEWS = 200
@@ -10,12 +12,10 @@ export async function GET (
   request: NextRequest,
   context: { params: { cid: string } }
 ) {
-  try {
-    const cid = parseInt(context.params.cid)
-    if (isNaN(cid)) {
-      return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
-    }
+  const cid = parseId(context.params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
 
+  try {
     const cookiesStore = cookies()
     const postView = cookiesStore.get('postView')?.value
 
@@ -30,7 +30,6 @@ export async function GET (
 
     return NextResponse.json({})
   } catch (error) {
-    console.error('更新浏览量失败:', error)
-    return NextResponse.json({ error: '更新浏览量失败' }, { status: 500 })
+    return handleApiError(error, '更新浏览量失败')
   }
 }

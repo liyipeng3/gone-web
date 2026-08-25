@@ -4,6 +4,8 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
 import List from './List' // 直接导入列表组件，不使用懒加载
+import { type comments } from '@prisma/client'
+import { type CommentUser } from './types'
 
 // 只对表单组件使用懒加载
 const CommentForm = dynamic(async () => await import('./Form'), {
@@ -12,10 +14,10 @@ const CommentForm = dynamic(async () => await import('./Form'), {
 })
 
 interface CommentsProps {
-  commentsData: any[]
+  commentsData: comments[]
   nameMap: Record<number, string>
   cid: number
-  user: any
+  user?: CommentUser
 }
 
 const Comments: React.FC<CommentsProps> = ({ commentsData, nameMap, cid, user }) => {

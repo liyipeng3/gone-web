@@ -42,7 +42,7 @@ function StatCard ({ label, value, hint, href, icon }: StatCardProps) {
 export default async function OverviewPage () {
   const [stats, recentComments] = await Promise.all([
     getDashboardStats(),
-    getRecentComments(6) as Promise<any[]>
+    getRecentComments(6)
   ])
 
   return (

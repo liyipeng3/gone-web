@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { Loader2, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
+import http from '@/lib/http'
 
 interface GalleryDeleteDialogProps {
   item: gallery
@@ -26,16 +27,9 @@ const GalleryDeleteDialog: React.FC<GalleryDeleteDialogProps> = ({
     setLoading(true)
 
     try {
-      const response = await fetch(`/api/gallery/${item.gid}`, {
-        method: 'DELETE'
-      })
-
-      if (response.ok) {
-        onOpenChange(false)
-        router.refresh()
-      } else {
-        throw new Error('删除失败')
-      }
+      await http.del(`/api/gallery/${item.gid}`)
+      onOpenChange(false)
+      router.refresh()
     } catch (error) {
       console.error('删除相册项失败:', error)
       alert('删除失败，请重试')

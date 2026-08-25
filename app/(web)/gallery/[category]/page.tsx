@@ -5,6 +5,7 @@ import Breadcrumb from '@/components/common/breadcrumb'
 import { getGalleryList, getGalleryCategories } from '@/models/gallery'
 import GalleryWaterfall from '@/components/common/gallery'
 import GalleryFilter from '@/components/common/gallery/filter'
+import { GALLERY_PAGE_SIZE } from '@/lib/constants'
 
 interface CategoryGalleryPageProps {
   params: {
@@ -26,7 +27,7 @@ export async function generateMetadata ({ params }: CategoryGalleryPageProps): P
 
 export default async function CategoryGalleryPage ({ params, searchParams }: CategoryGalleryPageProps) {
   const category = decodeURIComponent(params.category)
-  const pageSize = 24
+  const pageSize = GALLERY_PAGE_SIZE
 
   const categories = await getGalleryCategories()
   if (!categories.includes(category)) {

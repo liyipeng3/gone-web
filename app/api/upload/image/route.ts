@@ -33,41 +33,21 @@ export async function POST (request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        {
-          error: '未选择文件',
-          debug: {
-            formDataKeys: Array.from(formData.keys()),
-            fileValue: formData.get('file')
-          }
-        },
+        { error: '未选择文件' },
         { status: 400 }
       )
     }
 
     if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
       return NextResponse.json(
-        {
-          error: '不支持的文件类型，请上传 JPG、PNG、WebP 或 GIF 格式的图片',
-          debug: {
-            receivedType: file.type,
-            supportedTypes: SUPPORTED_IMAGE_TYPES,
-            fileName: file.name
-          }
-        },
+        { error: '不支持的文件类型，请上传 JPG、PNG、WebP 或 GIF 格式的图片' },
         { status: 400 }
       )
     }
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        {
-          error: '文件大小超过限制，最大支持50MB',
-          debug: {
-            fileSize: file.size,
-            maxSize: MAX_FILE_SIZE,
-            fileSizeMB: (file.size / 1024 / 1024).toFixed(2) + 'MB'
-          }
-        },
+        { error: '文件大小超过限制，最大支持50MB' },
         { status: 400 }
       )
     }
@@ -256,15 +236,8 @@ export async function POST (request: NextRequest) {
     })
   } catch (error) {
     console.error('图片上传失败:', error)
-
-    // 返回详细错误信息
-    const errorMessage = error instanceof Error ? error.message : '图片上传失败'
-
     return NextResponse.json(
-      {
-        error: errorMessage,
-        details: process.env.NODE_ENV === 'development' ? error : undefined
-      },
+      { error: '图片上传失败' },
       { status: 500 }
     )
   }

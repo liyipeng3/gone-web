@@ -4,6 +4,7 @@ import { Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { miniToast } from '@/components/ui/mini-toast'
+import http from '@/lib/http'
 
 interface LikeButtonProps {
   cid: number
@@ -30,11 +31,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({ cid, initialLikes = 0 }) => {
 
   const fetchLikes = async () => {
     try {
-      const response = await fetch(`/api/post/like/${cid}`)
-      if (response.ok) {
-        const data = await response.json()
-        setLikes(data.likesNum || 0)
-      }
+      const data = await http.get<{ likesNum: number }>(`/api/post/like/${cid}`)
+      setLikes(data.likesNum || 0)
     } catch (error) {
       console.error('获取点赞数失败:', error)
     }
@@ -72,12 +70,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ cid, initialLikes = 0 }) => {
 
     try {
       // 后台发送请求到服务器
-      await fetch(`/api/post/like/${cid}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      await http.post(`/api/post/like/${cid}`)
       // 不再等待响应更新UI
     } catch (error) {
       console.error('点赞请求失败:', error)

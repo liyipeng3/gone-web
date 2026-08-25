@@ -20,27 +20,27 @@ export interface GalleryItem extends gallery {
 }
 
 export interface GalleryCreateInput {
-  title?: string
-  description?: string
+  title?: string | null
+  description?: string | null
   imagePath: string
-  thumbnailPath?: string
-  category?: string
-  tags?: string[]
-  location?: string
-  latitude?: number
-  longitude?: number
-  takenAt?: Date
-  width?: number
-  height?: number
-  fileSize?: number
-  mimeType?: string
-  camera?: string
-  lens?: string
-  focalLength?: string
-  aperture?: string
-  shutterSpeed?: string
-  iso?: number
-  order?: number
+  thumbnailPath?: string | null
+  category?: string | null
+  tags?: string[] | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  takenAt?: Date | null
+  width?: number | null
+  height?: number | null
+  fileSize?: number | null
+  mimeType?: string | null
+  camera?: string | null
+  lens?: string | null
+  focalLength?: string | null
+  aperture?: string | null
+  shutterSpeed?: string | null
+  iso?: number | null
+  order?: number | null
   isPublic?: boolean
 }
 
@@ -131,6 +131,8 @@ export async function updateGalleryItem (gid: number, data: GalleryUpdateInput):
     where: { gid },
     data: {
       ...data,
+      // 更新时故意用 undefined（而非 create 的 null）：undefined 表示“不改动该列”，
+      // 以支持部分更新（PATCH 只传变化字段）；create 则需落 NULL。
       tags: data.tags ? JSON.stringify(data.tags) : undefined
     }
   })

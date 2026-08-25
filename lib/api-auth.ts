@@ -70,3 +70,38 @@ export const requireAdmin = async (): Promise<SessionUser | NextResponse> => {
 export const isAuthResponse = (value: unknown): value is NextResponse => {
   return value instanceof NextResponse
 }
+
+/**
+ * 解析路径参数中的整数 ID。
+ *
+ * 成功返回正整数；非法（非数字/NaN）返回 400 响应。调用方配合 isAuthResponse 提前返回：
+ *   const cid = parseId(context.params.cid, '文章ID')
+ *   if (isAuthResponse(cid)) return cid
+ */
+export const parseId = (raw: string, label = 'ID'): number | NextResponse => {
+  const id = parseInt(raw, 10)
+  if (isNaN(id)) {
+    return NextResponse.json({ error: `无效的${label}` }, { status: 400 })
+  }
+  return id
+}
+
+/**
+ * 要求登录且只能操作自己的资源。
+ *
+ * 未登录返回 401，操作他人资源返回 403，否则返回当前用户。
+ * uid 取自路径参数（string），与 session 中的 user.id 字符串化后比较。
+ */
+export const requireSelf = async (uid: string): Promise<SessionUser | NextResponse> => {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    return NextResponse.json({ error: '未授权访问' }, { status: 401 })
+  }
+
+  if (String(user.id) !== uid) {
+    return NextResponse.json({ error: '无权访问此用户信息' }, { status: 403 })
+  }
+
+  return user
+}

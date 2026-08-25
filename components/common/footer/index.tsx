@@ -6,6 +6,7 @@ import { AiOutlineGithub } from 'react-icons/ai'
 import { getDurationTime } from '@/lib/utils'
 import { Assistant } from '@/components/custom/Assistant'
 import { siteConfig } from '@/config/site'
+import http from '@/lib/http'
 
 dayjs.extend(duration)
 
@@ -16,12 +17,12 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   logo = ''
 }) => {
-  const [visitTimes, setVisitTimes] = React.useState(null)
+  const [visitTimes, setVisitTimes] = React.useState<number | null>(null)
 
   useEffect(() => {
-    void fetch('/api/v').then(async res => await res.json()).then(res => {
+    void http.get<{ visitTimes: number }>('/api/v').then(res => {
       setVisitTimes(res.visitTimes)
-    })
+    }).catch(error => { console.error('获取访问量失败:', error) })
   }, [])
   const establishTime = dayjs('2019-03-27 00:00:00')
   const now = dayjs()

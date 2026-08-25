@@ -1,6 +1,6 @@
 // 帖子基本操作模块
 import prisma from '@/lib/prisma'
-import { type PostCreateData, type PostUpdateData, type PostWithRelationships } from './types'
+import { type PostCreateData, type PostUpdateData, type PostWithRelationships, type PostDetail } from './types'
 import { clearPostRelatedCaches, getPostFromCache, setPostCache } from './cache-utils'
 
 /**
@@ -213,9 +213,9 @@ export const getDraftPostByCid = async (cid: number) => {
 /**
  * 根据 cid 获取帖子详情
  */
-export const getPostByCid = async (cid: number, draft = false) => {
+export const getPostByCid = async (cid: number, draft = false): Promise<PostDetail> => {
   const cacheKey = `${cid}`
-  const cachedPost = getPostFromCache<any>(cacheKey)
+  const cachedPost = getPostFromCache<PostDetail>(cacheKey)
 
   if (cachedPost && !draft) {
     return cachedPost

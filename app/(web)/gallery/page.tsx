@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 
 import { getGalleryList } from '@/models/gallery'
 import GalleryWaterfall from '@/components/common/gallery'
+import { GALLERY_PAGE_SIZE } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: '相册 - 定格当下',
@@ -17,7 +18,7 @@ interface GalleryPageProps {
 }
 
 export default async function GalleryPage ({ searchParams }: GalleryPageProps) {
-  const pageSize = 24
+  const pageSize = GALLERY_PAGE_SIZE
 
   const { items, total } = await getGalleryList({
     category: searchParams.category,

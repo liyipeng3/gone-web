@@ -14,13 +14,13 @@ import {
 import { toast } from '@/components/ui/use-toast'
 import { Icons } from '@/components/common/icons'
 import Modal from '@/components/common/modal'
+import http from '@/lib/http'
 
-async function deletePost (postId: string) {
-  const response = await fetch(`/api/post/${postId}`, {
-    method: 'DELETE'
-  })
-
-  if (!response?.ok) {
+async function deletePost (postId: number | string) {
+  try {
+    await http.del(`/api/post/${postId}`)
+  } catch (error) {
+    console.error('删除文章失败:', error)
     toast({
       title: 'Something went wrong.',
       description: 'Your post was not deleted. Please try again.',
@@ -32,7 +32,7 @@ async function deletePost (postId: string) {
 }
 
 interface PostOperationsProps {
-  post: any
+  post: { cid: number }
 }
 
 export function PostOperations ({ post }: PostOperationsProps) {

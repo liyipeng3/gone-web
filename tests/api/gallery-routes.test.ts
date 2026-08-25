@@ -27,7 +27,13 @@ vi.mock('@/lib/session', () => ({
 
 vi.mock('@/lib/api-auth', () => ({
   requireAdmin: mocks.requireAdmin,
-  isAuthResponse: (value: unknown) => value instanceof Response
+  isAuthResponse: (value: unknown) => value instanceof Response,
+  parseId: (raw: string, label = 'ID') => {
+    const id = parseInt(raw, 10)
+    return isNaN(id)
+      ? Response.json({ error: `无效的${label}` }, { status: 400 })
+      : id
+  }
 }))
 
 vi.mock('@/lib/prisma', () => ({

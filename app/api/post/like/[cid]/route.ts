@@ -1,17 +1,17 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { isAuthResponse, parseId } from '@/lib/api-auth'
+import { handleApiError } from '@/lib/api-response'
 
 // 处理 POST 请求 - 点赞文章
 export async function POST (
   request: NextRequest,
   { params }: { params: { cid: string } }
 ): Promise<NextResponse> {
-  try {
-    const cid = parseInt(params.cid)
-    if (isNaN(cid)) {
-      return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
-    }
+  const cid = parseId(params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
 
+  try {
     // 查找文章是否存在（顺带取 updatedAt 用于回写，避免额外查询）
     const post = await prisma.posts.findUnique({
       where: { cid },
@@ -38,8 +38,7 @@ export async function POST (
       likesNum: updatedPost.likesNum
     })
   } catch (error) {
-    console.error('点赞失败:', error)
-    return NextResponse.json({ error: '点赞失败' }, { status: 500 })
+    return handleApiError(error, '点赞失败')
   }
 }
 
@@ -48,12 +47,10 @@ export async function GET (
   request: NextRequest,
   { params }: { params: { cid: string } }
 ): Promise<NextResponse> {
-  try {
-    const cid = parseInt(params.cid)
-    if (isNaN(cid)) {
-      return NextResponse.json({ error: '无效的文章ID' }, { status: 400 })
-    }
+  const cid = parseId(params.cid, '文章ID')
+  if (isAuthResponse(cid)) return cid
 
+  try {
     // 查找文章
     const post = await prisma.posts.findUnique({
       where: { cid },
@@ -66,7 +63,6 @@ export async function GET (
 
     return NextResponse.json({ likesNum: post.likesNum })
   } catch (error) {
-    console.error('获取点赞数失败:', error)
-    return NextResponse.json({ error: '获取点赞数失败' }, { status: 500 })
+    return handleApiError(error, '获取点赞数失败')
   }
 }

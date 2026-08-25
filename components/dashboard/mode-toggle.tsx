@@ -5,29 +5,11 @@ import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/common/icons'
-import { setTheme } from '../common/header/theme'
+import { setTheme, initTheme } from '../common/header/theme'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 
 export function ModeToggle () {
-  useIsomorphicLayoutEffect(() => {
-    if (typeof window !== 'undefined') {
-      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        setTheme('dark')
-      } else {
-        setTheme('light')
-      }
-    }
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.addEventListener('change', (event) => {
-      if (event.matches) {
-        setTheme('dark')
-      } else {
-        setTheme('light')
-      }
-    })
-  }, [])
+  useIsomorphicLayoutEffect(() => initTheme(), [])
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
 import RegionSelect from './gallery-form/region-select'
 import { parseLocationString, parseTags, joinLocation, parseStoredTags } from './gallery-form/location'
+import http from '@/lib/http'
 
 interface GalleryEditDialogProps {
   item: gallery
@@ -101,28 +102,18 @@ const GalleryEditDialog: React.FC<GalleryEditDialogProps> = ({
         ? Math.floor(formData.takenAt.getTime() / 1000)
         : undefined
 
-      const response = await fetch(`/api/gallery/${item.gid}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: formData.title || undefined,
-          description: formData.description || undefined,
-          category: formData.category || undefined,
-          tags: parseTags(formData.tags),
-          location: joinLocation(formData.country, formData.province, formData.city) || formData.location || undefined,
-          isPublic: formData.isPublic,
-          takenAt: finalTakenAt
-        })
+      await http.patch(`/api/gallery/${item.gid}`, {
+        title: formData.title || undefined,
+        description: formData.description || undefined,
+        category: formData.category || undefined,
+        tags: parseTags(formData.tags),
+        location: joinLocation(formData.country, formData.province, formData.city) || formData.location || undefined,
+        isPublic: formData.isPublic,
+        takenAt: finalTakenAt
       })
 
-      if (response.ok) {
-        onOpenChange(false)
-        router.refresh()
-      } else {
-        throw new Error('更新失败')
-      }
+      onOpenChange(false)
+      router.refresh()
     } catch (error) {
       console.error('更新相册项失败:', error)
       alert('更新失败，请重试')

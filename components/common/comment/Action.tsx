@@ -3,15 +3,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from '@/components/ui/use-toast'
+import http from '@/lib/http'
 
 interface CommentActionsProps {
   comment: {
-    [key: string]: any
     coid?: number
     cid?: number | null
     status?: string | null
     text?: string | null
-    // 其他必要的评论属性
   }
   // 删除成功后的回调（用于删空当前页时回退上一页）；未传则默认 router.refresh()
   onDeleted?: () => void
@@ -25,20 +24,12 @@ export default function CommentActions ({ comment, onDeleted, onStatusChanged }:
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      const response = await fetch(`/api/comment/${comment.coid}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coid: comment.coid, comment: { status: newStatus } })
-      })
-      if (response.ok) {
-        setStatus(newStatus)
-        if (onStatusChanged) {
-          onStatusChanged(newStatus)
-        } else {
-          router.refresh()
-        }
+      await http.patch(`/api/comment/${comment.coid}`, { coid: comment.coid, comment: { status: newStatus } })
+      setStatus(newStatus)
+      if (onStatusChanged) {
+        onStatusChanged(newStatus)
       } else {
-        throw new Error('更新状态失败')
+        router.refresh()
       }
     } catch (error) {
       console.error('更新评论状态时出错:', error)
@@ -71,18 +62,11 @@ export default function CommentActions ({ comment, onDeleted, onStatusChanged }:
   const handleDelete = async () => {
     if (confirm('确定要删除这条评论吗？此操作不可撤销。')) {
       try {
-        const response = await fetch('/api/comment/0', {
-          method: 'DELETE',
-          body: JSON.stringify({ coid: comment.coid })
-        })
-        if (response.ok) {
-          if (onDeleted) {
-            onDeleted()
-          } else {
-            router.refresh()
-          }
+        await http.del('/api/comment/0', { coid: comment.coid })
+        if (onDeleted) {
+          onDeleted()
         } else {
-          throw new Error('删除失败')
+          router.refresh()
         }
       } catch (error) {
         console.error('删除评论时出错:', error)
@@ -104,25 +88,12 @@ export default function CommentActions ({ comment, onDeleted, onStatusChanged }:
 
     setIsSaving(true)
     try {
-      let response: Response
       if (type === 'edit') {
         // 编辑评论正文
-        response = await fetch(`/api/comment/${comment.coid}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ coid: comment.coid, comment: { text } })
-        })
+        await http.patch(`/api/comment/${comment.coid}`, { coid: comment.coid, comment: { text } })
       } else {
         // 管理员回复：作者身份由服务端 session 派生，仅提交正文与被回复评论 id
-        response = await fetch(`/api/comment/${comment.cid}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, parent: comment.coid })
-        })
-      }
-
-      if (!response.ok) {
-        throw new Error(type === 'edit' ? '保存失败' : '回复失败')
+        await http.post(`/api/comment/${comment.cid}`, { text, parent: comment.coid })
       }
 
       toast({

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import http from '@/lib/http'
 
 interface GalleryFilterProps {
   categories: string[]
@@ -23,11 +24,8 @@ const GalleryFilter: React.FC<GalleryFilterProps> = ({
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch('/api/gallery/tags')
-        if (response.ok) {
-          const tagsData = await response.json()
-          setTags(tagsData)
-        }
+        const tagsData = await http.get<string[]>('/api/gallery/tags')
+        setTags(tagsData)
       } catch (error) {
         console.error('获取标签失败:', error)
       }

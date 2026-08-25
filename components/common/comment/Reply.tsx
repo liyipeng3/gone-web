@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
+import { type comments } from '@prisma/client'
 
 const CommentForm = dynamic(async () => await import('./Form'), { ssr: false, loading: () => <div className="flex items-center justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div> })
 
-const Reply = ({ comment, nameMap }: { comment: any, nameMap: Record<number, string> }) => {
+const Reply = ({ comment, nameMap }: { comment: comments, nameMap: Record<number, string> }) => {
   const [showReplyForm, setShowReplyForm] = useState(false)
 
   return (
@@ -21,7 +22,7 @@ const Reply = ({ comment, nameMap }: { comment: any, nameMap: Record<number, str
       </div>
       {showReplyForm && (
         <div className="mt-4 bg-white p-4 rounded-md pb-8">
-          <CommentForm cid={comment.cid} parent={comment.coid} nameMap={nameMap} />
+          <CommentForm cid={comment.cid ?? 0} parent={comment.coid} nameMap={nameMap} />
         </div>
       )}
     </>

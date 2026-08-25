@@ -3,12 +3,14 @@ import { type FC, useEffect, useState } from 'react'
 import cn from 'classnames'
 import Link from 'next/link'
 import { type HotList } from '@/types'
+import { type RecentComment } from '@/models/comments'
+import { type metas, type links } from '@prisma/client'
 
 interface SidebarProps {
   hotList?: HotList
-  recentComments?: any[]
-  tags?: any[]
-  links?: any[]
+  recentComments?: RecentComment[]
+  tags?: metas[]
+  links?: links[]
 }
 
 const Sidebar: FC<SidebarProps> = ({ hotList = [], recentComments = [], tags = [], links = [] }) => {

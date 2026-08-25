@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import { cache } from 'react'
-import { type Prisma } from '@prisma/client'
+import { type comments, type Prisma } from '@prisma/client'
 import { cacheService, cacheKeys } from '@/lib/cache'
 
 // 评论创建入参：调用方提供的字段，cid/parent 由 createComment 补全；
@@ -9,6 +9,16 @@ export type CreateCommentData = Pick<
 Prisma.commentsUncheckedCreateInput,
 'author' | 'text' | 'url' | 'agent' | 'ip'
 > & { email: string, status?: string }
+
+// getRecentComments 返回的评论：附带其所属文章的精简信息（含动态注入的 category）
+export type RecentComment = comments & {
+  posts?: {
+    title: string | null
+    slug: string | null
+    cid: number
+    category?: string
+  } | null
+}
 
 // 使用 React.cache 在同一请求内去重（文章页与 CommentList 会各调用一次）
 export const getCommentsByCid = cache(async (cid: number) => {
@@ -89,10 +99,10 @@ export const batchUpdateCommentStatus = async (coids: number[], status: string) 
   return result
 }
 
-export const getRecentComments = async (limit: number = 10) => {
+export const getRecentComments = async (limit: number = 10): Promise<RecentComment[]> => {
   // 使用缓存键
   const cacheKey = `${cacheKeys.recentComments}:${limit}`
-  const cachedData = cacheService.get(cacheKey)
+  const cachedData = cacheService.get<RecentComment[]>(cacheKey)
 
   // 如果缓存中有数据，直接返回
   if (cachedData) {

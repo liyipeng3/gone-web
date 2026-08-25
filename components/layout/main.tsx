@@ -14,9 +14,9 @@ const Main: React.FC<MainProps> = async ({
 }) => {
   // 并行获取最近回复、标签、热门文章和友链数据
   const [recentComments, tags, hotList, links] = await Promise.all([
-    getRecentComments() as Promise<any[]>,
-    getTags() as Promise<any[]>,
-    getHotList() as Promise<any[]>,
+    getRecentComments(),
+    getTags(),
+    getHotList(),
     getLinks(10) // 获取10个友情链接
   ])
 
